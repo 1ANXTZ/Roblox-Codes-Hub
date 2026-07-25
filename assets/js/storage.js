@@ -1,8 +1,7 @@
 /**
  * storage.js
- * Local persistence layer (localStorage). Isolated so that if
- * favorites/preferences move to a real user account via API in the
- * future, only this file needs to change.
+ * Local persistence layer (localStorage).
+ * Isolated so future migration to user accounts/API only affects this file.
  */
 
 const KEYS = {
@@ -11,81 +10,251 @@ const KEYS = {
   USED_CODES: 'rch:used-codes',
 };
 
+
+function read(key, fallback) {
+
+  try {
+
+    const value = localStorage.getItem(key);
+
+    return value
+      ? JSON.parse(value)
+      : fallback;
+
+  } catch {
+
+    return fallback;
+
+  }
+
+}
+
+
+function write(key, value) {
+
+  try {
+
+    localStorage.setItem(
+      key,
+      JSON.stringify(value)
+    );
+
+  } catch {
+
+    // Ignore storage errors safely.
+
+  }
+
+}
+
+
 export const Storage = {
+
+
   getFavorites() {
-    try {
-      return JSON.parse(localStorage.getItem(KEYS.FAVORITES)) || [];
-    } catch {
-      return [];
-    }
+
+    const favorites = read(
+      KEYS.FAVORITES,
+      []
+    );
+
+
+    return Array.isArray(favorites)
+      ? favorites
+      : [];
+
   },
+
 
   isFavorite(gameId) {
-    return this.getFavorites().includes(gameId);
+
+    return this
+      .getFavorites()
+      .includes(gameId);
+
   },
+
 
   toggleFavorite(gameId) {
-    const favs = this.getFavorites();
-    const idx = favs.indexOf(gameId);
-    if (idx >= 0) {
-      favs.splice(idx, 1);
+
+    const favorites = this.getFavorites();
+
+
+    const index = favorites.indexOf(gameId);
+
+
+    if (index >= 0) {
+
+      favorites.splice(index, 1);
+
     } else {
-      favs.push(gameId);
+
+      favorites.push(gameId);
+
     }
-    localStorage.setItem(KEYS.FAVORITES, JSON.stringify(favs));
-    return favs.includes(gameId);
+
+
+    write(
+      KEYS.FAVORITES,
+      favorites
+    );
+
+
+    return favorites.includes(gameId);
+
   },
+
 
   getTheme() {
-    return localStorage.getItem(KEYS.THEME) || 'dark';
+
+    try {
+
+      return localStorage.getItem(KEYS.THEME)
+        || 'dark';
+
+    } catch {
+
+      return 'dark';
+
+    }
+
   },
+
 
   setTheme(theme) {
-    localStorage.setItem(KEYS.THEME, theme);
+
+    try {
+
+      localStorage.setItem(
+        KEYS.THEME,
+        theme
+      );
+
+    } catch {
+
+      // Ignore storage errors.
+
+    }
+
   },
+
 
   /**
-   * Codes marked as "already used" by the user, per game.
-   * Saved format: { "blox-fruits": ["CODE1", "CODE2"], ... }
+   * Returns used codes map.
+   *
+   * Format:
+   * {
+   *   "blox-fruits": [
+   *      "CODE1",
+   *      "CODE2"
+   *   ]
+   * }
    */
   getUsedMap() {
-    try {
-      return JSON.parse(localStorage.getItem(KEYS.USED_CODES)) || {};
-    } catch {
-      return {};
-    }
+
+    const map = read(
+      KEYS.USED_CODES,
+      {}
+    );
+
+
+    return map &&
+      typeof map === 'object' &&
+      !Array.isArray(map)
+
+      ? map
+
+      : {};
+
   },
+
 
   isCodeUsed(gameId, code) {
+
     const map = this.getUsedMap();
-    return (map[gameId] || []).includes(code);
+
+
+    return (
+      map[gameId] || []
+    ).includes(code);
+
   },
 
-  /** Directly sets the used/unused state of a code. */
+
+  /**
+   * Directly changes used state.
+   */
   setCodeUsed(gameId, code, used) {
+
     const map = this.getUsedMap();
+
+
     map[gameId] = map[gameId] || [];
-    const idx = map[gameId].indexOf(code);
-    if (used && idx < 0) {
+
+
+    const index =
+      map[gameId].indexOf(code);
+
+
+    if (used && index < 0) {
+
       map[gameId].push(code);
-    } else if (!used && idx >= 0) {
-      map[gameId].splice(idx, 1);
+
     }
-    localStorage.setItem(KEYS.USED_CODES, JSON.stringify(map));
+
+
+    if (!used && index >= 0) {
+
+      map[gameId].splice(index, 1);
+
+    }
+
+
+    write(
+      KEYS.USED_CODES,
+      map
+    );
+
+
     return used;
+
   },
 
-  /** Toggles the used/unused state of a code and returns the new state. */
+
+  /**
+   * Toggles used state.
+   */
   toggleCodeUsed(gameId, code) {
+
     const map = this.getUsedMap();
+
+
     map[gameId] = map[gameId] || [];
-    const idx = map[gameId].indexOf(code);
-    if (idx >= 0) {
-      map[gameId].splice(idx, 1);
+
+
+    const index =
+      map[gameId].indexOf(code);
+
+
+    if (index >= 0) {
+
+      map[gameId].splice(index, 1);
+
     } else {
+
       map[gameId].push(code);
+
     }
-    localStorage.setItem(KEYS.USED_CODES, JSON.stringify(map));
+
+
+    write(
+      KEYS.USED_CODES,
+      map
+    );
+
+
     return map[gameId].includes(code);
+
   },
+
 };
