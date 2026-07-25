@@ -8,11 +8,13 @@
  * No business rules here.
  */
 
+
 import { Api } from './api.js';
 import { Games } from './games.js';
 import { Search } from './search.js';
 import { UI } from './ui.js';
 import { Utils } from './utils.js';
+
 
 
 const state = {
@@ -29,50 +31,63 @@ const state = {
 
 
 
+
 const els = {
+
 
   grid:
     document.getElementById('game-grid'),
+
 
 
   emptyState:
     document.getElementById('empty-state'),
 
 
+
   categoryRail:
     document.getElementById('category-rail'),
+
 
 
   searchInput:
     document.getElementById('search-input'),
 
 
+
   searchClear:
     document.getElementById('search-clear'),
+
 
 
   sortSelect:
     document.getElementById('sort-select'),
 
 
+
   resultCount:
     document.getElementById('result-count'),
+
 
 
   themeToggle:
     document.getElementById('theme-toggle'),
 
 
+
   backToTop:
     document.getElementById('back-to-top'),
+
 
 
   statGames:
     document.getElementById('stat-games'),
 
 
+
   statCodes:
     document.getElementById('stat-codes'),
+
 
 
   statCategories:
@@ -133,25 +148,16 @@ function applyFiltersAndRender() {
 
   if (els.resultCount) {
 
+
     els.resultCount.textContent =
+
       `${list.length} game${list.length === 1 ? '' : 's'} found`;
+
 
   }
 
 
-}
-
-
-
-
-async function init() {
-
-
-  UI.setLoading(
-    els.grid,
-    true
-  );
-
+}async function init() {
 
 
   try {
@@ -174,6 +180,7 @@ async function init() {
 
 
     state.allGames =
+
       Games.withComputedFields(
 
         games,
@@ -184,7 +191,9 @@ async function init() {
 
 
 
+
     const categories =
+
       Games.extractCategories(
 
         state.allGames
@@ -193,10 +202,13 @@ async function init() {
 
 
 
+
+
     function onCategorySelect(category) {
 
 
       state.category =
+
         category;
 
 
@@ -218,7 +230,13 @@ async function init() {
       applyFiltersAndRender();
 
 
-    }    UI.renderCategoryChips(
+    }
+
+
+
+
+
+    UI.renderCategoryChips(
 
       els.categoryRail,
 
@@ -229,6 +247,8 @@ async function init() {
       onCategorySelect
 
     );
+
+
 
 
 
@@ -248,58 +268,91 @@ async function init() {
 
 
 
+
+
     if (els.statGames) {
 
+
       els.statGames.textContent =
+
         state.allGames.length;
 
+
     }
+
+
 
 
 
     if (els.statCodes) {
 
+
       els.statCodes.textContent =
+
         totalCodes;
 
+
     }
+
+
 
 
 
     if (els.statCategories) {
 
+
       els.statCategories.textContent =
+
         categories.length;
 
+
     }
+
+
 
 
 
 
     const initialQuery =
+
       Utils.getURLParam('q');
 
 
 
-    if (initialQuery && els.searchInput) {
+
+
+    if (
+
+      initialQuery &&
+
+      els.searchInput
+
+    ) {
 
 
       state.query =
+
         initialQuery;
 
 
 
       els.searchInput.value =
+
         initialQuery;
 
 
 
+
       els.searchClear
+
         ?.classList
+
         .add('is-visible');
 
 
     }
+
+
 
 
 
@@ -309,15 +362,10 @@ async function init() {
 
 
 
-    UI.setLoading(
-      els.grid,
-      false
-    );
 
-
-
-
-    /* ---------------- Search ---------------- */
+    /*
+      Search
+    */
 
 
     els.searchInput?.addEventListener(
@@ -330,12 +378,16 @@ async function init() {
 
 
           state.query =
+
             event.target.value.trim();
 
 
 
+
           els.searchClear
+
             ?.classList
+
             .toggle(
 
               'is-visible',
@@ -343,6 +395,7 @@ async function init() {
               Boolean(state.query)
 
             );
+
 
 
 
@@ -361,7 +414,9 @@ async function init() {
 
 
 
-    /* ---------------- Search clear ---------------- */
+    /*
+      Clear search
+    */
 
 
     els.searchClear?.addEventListener(
@@ -383,13 +438,18 @@ async function init() {
 
 
 
+
         els.searchClear
+
           .classList
+
           .remove('is-visible');
 
 
 
+
         applyFiltersAndRender();
+
 
 
 
@@ -404,7 +464,9 @@ async function init() {
 
 
 
-    /* ---------------- Sort ---------------- */
+    /*
+      Sort
+    */
 
 
     els.sortSelect?.addEventListener(
@@ -415,7 +477,9 @@ async function init() {
 
 
         state.sort =
+
           event.target.value;
+
 
 
 
@@ -429,48 +493,47 @@ async function init() {
 
 
 
-
-    /* ---------------- Theme ---------------- */
+    /*
+      Theme
+    */
 
 
     UI.initThemeToggle(
+
       els.themeToggle
+
     );
 
 
 
 
-
-    /* ---------------- Back to top ---------------- */
+    /*
+      Back to top
+    */
 
 
     UI.initBackToTop(
+
       els.backToTop
+
     );
 
 
+  } catch (error) {
 
-  } finally {
 
-
-    UI.setLoading(
-      els.grid,
-      false
-    );
+    showLoadError(error);
 
 
   }
 
 
-
 }
 
 
-
-
-
-
-/* ---------------- Error handler ---------------- */
+/*
+  Error handler
+*/
 
 
 function showLoadError(error) {
@@ -486,19 +549,28 @@ function showLoadError(error) {
 
 
 
-  UI.setLoading(
-
-    els.grid,
-
-    false
-
-  );
-
-
 
   if (els.grid) {
 
+
     els.grid.innerHTML = '';
+
+
+
+    els.grid.innerHTML = `
+
+      <div class="empty-state">
+
+        <h3>Error loading games</h3>
+
+        <p>
+          Check your connection and try again.
+        </p>
+
+      </div>
+
+    `;
+
 
   }
 
@@ -507,34 +579,43 @@ function showLoadError(error) {
   if (els.emptyState) {
 
 
-    els.emptyState.hidden =
-      false;
+    els.emptyState.hidden = false;
 
 
 
     const title =
+
       els.emptyState.querySelector('h3');
 
 
 
     const text =
+
       els.emptyState.querySelector('p');
+
 
 
 
     if (title) {
 
+
       title.textContent =
+
         'Error loading games';
+
 
     }
 
 
 
+
     if (text) {
 
+
       text.textContent =
+
         'Check your connection and try again.';
+
 
     }
 
@@ -548,9 +629,10 @@ function showLoadError(error) {
 
 
 
-/* ---------------- Start ---------------- */
+
+/*
+  Start app
+*/
 
 
-init()
-
-  .catch(showLoadError);
+init();
