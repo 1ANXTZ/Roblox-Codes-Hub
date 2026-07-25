@@ -12,9 +12,12 @@ export const Games = {
 
 
   /**
-   * Enriches each game with computed data (active codes, last verified).
+   * Enriches each game with computed data.
    */
-  withComputedFields(games, codesMap) {
+  withComputedFields(
+    games = [],
+    codesMap = {}
+  ) {
 
     return games.map(game => {
 
@@ -65,9 +68,11 @@ export const Games = {
 
 
   /**
-   * Extracts the list of categories present in the games, with counts.
+   * Extracts categories with game counts.
    */
-  extractCategories(games) {
+  extractCategories(
+    games = []
+  ) {
 
 
     const counts =
@@ -100,18 +105,20 @@ export const Games = {
       counts.entries()
     )
 
-      .map(([name, count]) => ({
+    .map(
+      ([name, count]) => ({
 
         name,
 
         count,
 
-      }))
+      })
+    )
 
-      .sort(
-        (a, b) =>
-          b.count - a.count
-      );
+    .sort(
+      (a, b) =>
+        b.count - a.count
+    );
 
 
   },
@@ -119,9 +126,12 @@ export const Games = {
 
 
   /**
-   * Sorts games by different modes.
+   * Sort games.
    */
-  sort(games, mode) {
+  sort(
+    games = [],
+    mode = 'popular'
+  ) {
 
 
     const list =
@@ -129,19 +139,15 @@ export const Games = {
 
 
 
-    switch (mode) {
+    switch(mode) {
 
 
       case 'popular':
 
         return list.sort(
-
           (a, b) =>
-
             (b.popularity ?? 0) -
-
             (a.popularity ?? 0)
-
         );
 
 
@@ -149,19 +155,22 @@ export const Games = {
       case 'recent':
 
         return list.sort(
+          (a, b) => {
 
-          (a, b) =>
+            const dateA =
+              new Date(
+                a.lastVerified || 0
+              );
 
-            new Date(
-              b.lastVerified || 0
-            )
+            const dateB =
+              new Date(
+                b.lastVerified || 0
+              );
 
-            -
 
-            new Date(
-              a.lastVerified || 0
-            )
+            return dateB - dateA;
 
+          }
         );
 
 
@@ -169,14 +178,12 @@ export const Games = {
       case 'az':
 
         return list.sort(
-
           (a, b) =>
-
-            a.name.localeCompare(
-              b.name,
-              'en-US'
-            )
-
+            String(a.name)
+              .localeCompare(
+                String(b.name),
+                'en-US'
+              )
         );
 
 
@@ -196,15 +203,21 @@ export const Games = {
   /**
    * Finds a game by ID.
    */
-  findById(games, id) {
+  findById(
+    games = [],
+    id
+  ) {
+
+    if (!id) return null;
+
 
     return games.find(
 
       game =>
-
         game.id === id
 
-    );
+    ) || null;
+
 
   },
 
