@@ -1,87 +1,58 @@
 /**
  * storage.js
- * Local persistence layer (localStorage).
- * Isolated so future migration to user accounts/API only affects this file.
+ * Local persistence layer.
  */
-
 
 const KEYS = {
 
-  FAVORITES:
-    'rch:favorites',
+  FAVORITES: 'rch:favorites',
 
-  THEME:
-    'rch:theme',
+  THEME: 'rch:theme',
 
-  USED_CODES:
-    'rch:used-codes',
+  USED_CODES: 'rch:used-codes',
 
 };
 
 
 
-
-
 function read(key, fallback) {
-
 
   try {
 
-
     const value =
-      localStorage.getItem(
-        key
-      );
-
+      localStorage.getItem(key);
 
 
     return value
-
       ? JSON.parse(value)
-
       : fallback;
-
 
 
   } catch {
 
-
     return fallback;
 
-
   }
-
 
 }
 
 
 
-
-
 function write(key, value) {
-
 
   try {
 
-
     localStorage.setItem(
-
       key,
-
       JSON.stringify(value)
-
     );
-
 
 
   } catch {
 
-
-    // Ignore storage errors safely.
-
+    // Ignore storage errors.
 
   }
-
 
 }
 
@@ -92,9 +63,7 @@ function write(key, value) {
 export const Storage = {
 
 
-
   getFavorites() {
-
 
     const favorites =
       read(
@@ -103,37 +72,31 @@ export const Storage = {
       );
 
 
-
     return Array.isArray(favorites)
 
       ? [...new Set(favorites)]
 
       : [];
 
-
   },
-
-
 
 
 
 
   isFavorite(gameId) {
 
-
     return this
       .getFavorites()
       .includes(gameId);
-
 
   },
 
 
 
 
-
-
   toggleFavorite(gameId) {
+
+    if (!gameId) return false;
 
 
     const favorites =
@@ -142,120 +105,77 @@ export const Storage = {
 
 
     const index =
-      favorites.indexOf(
-        gameId
-      );
+      favorites.indexOf(gameId);
 
 
 
     if (index >= 0) {
 
-
-      favorites.splice(
-        index,
-        1
-      );
-
+      favorites.splice(index, 1);
 
     } else {
 
-
-      favorites.push(
-        gameId
-      );
-
+      favorites.push(gameId);
 
     }
 
 
 
-
-
     write(
-
       KEYS.FAVORITES,
-
       favorites
-
     );
 
 
-
-    return favorites.includes(
-      gameId
-    );
-
+    return favorites.includes(gameId);
 
   },
-
-
 
 
 
 
   getTheme() {
 
-
     try {
-
 
       return localStorage.getItem(
         KEYS.THEME
       ) || 'dark';
 
 
-
     } catch {
-
 
       return 'dark';
 
-
     }
 
-
   },
-
-
 
 
 
 
   setTheme(theme) {
 
-
     try {
 
-
       localStorage.setItem(
-
         KEYS.THEME,
-
         theme
-
       );
-
 
 
     } catch {
 
-
       // Ignore storage errors.
 
-
     }
-
 
   },
 
 
 
 
-
-
-
   getUsedMap() {
-
 
     const map =
       read(
@@ -264,82 +184,62 @@ export const Storage = {
       );
 
 
-
     return map &&
-
       typeof map === 'object' &&
-
       !Array.isArray(map)
-
-
 
       ? map
 
-
-
       : {};
 
-
-
   },
-
-
-
 
 
 
 
   isCodeUsed(gameId, code) {
 
-
     const map =
       this.getUsedMap();
 
 
+    return Array.isArray(map[gameId])
 
-    return (
+      ? map[gameId].includes(code)
 
-      map[gameId] || []
-
-    ).includes(code);
-
-
+      : false;
 
   },
 
 
 
 
-
-
-
   setCodeUsed(gameId, code, used) {
+
+    if (!gameId || !code) {
+      return false;
+    }
 
 
     const map =
       this.getUsedMap();
 
 
-
     map[gameId] =
-      map[gameId] || [];
+      Array.isArray(map[gameId])
+        ? map[gameId]
+        : [];
 
 
 
     const index =
-      map[gameId].indexOf(
-        code
-      );
+      map[gameId].indexOf(code);
 
 
 
-    if (used && index < 0) {
+    if (used && index === -1) {
 
-
-      map[gameId].push(
-        code
-      );
-
+      map[gameId].push(code);
 
     }
 
@@ -347,39 +247,30 @@ export const Storage = {
 
     if (!used && index >= 0) {
 
-
-      map[gameId].splice(
-        index,
-        1
-      );
-
+      map[gameId].splice(index, 1);
 
     }
 
 
 
     write(
-
       KEYS.USED_CODES,
-
       map
-
     );
 
 
-
     return used;
-
 
   },
 
 
 
 
-
-
-
   toggleCodeUsed(gameId, code) {
+
+    if (!gameId || !code) {
+      return false;
+    }
 
 
     const map =
@@ -388,52 +279,37 @@ export const Storage = {
 
 
     map[gameId] =
-      map[gameId] || [];
+      Array.isArray(map[gameId])
+        ? map[gameId]
+        : [];
 
 
 
     const index =
-      map[gameId].indexOf(
-        code
-      );
+      map[gameId].indexOf(code);
 
 
 
     if (index >= 0) {
 
-
-      map[gameId].splice(
-        index,
-        1
-      );
-
+      map[gameId].splice(index, 1);
 
     } else {
 
-
-      map[gameId].push(
-        code
-      );
-
+      map[gameId].push(code);
 
     }
 
 
 
     write(
-
       KEYS.USED_CODES,
-
       map
-
     );
 
 
 
-    return map[gameId].includes(
-      code
-    );
-
+    return map[gameId].includes(code);
 
   },
 
