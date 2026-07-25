@@ -9,24 +9,50 @@
 import { Api } from './api.js';
 import { Utils } from './utils.js';
 
+
 let games = [];
 let codesMap = {};
 
+
 const els = {
 
-  navBtns: Utils.qsa('.admin-nav-btn'),
-  panels: Utils.qsa('.admin-panel'),
+  navBtns:
+    Utils.qsa('.admin-nav-btn'),
 
-  gameForm: document.getElementById('game-form'),
-  gamesTableBody: document.querySelector('#games-table tbody'),
-  gamesEmpty: document.getElementById('games-empty'),
-  formTitle: document.getElementById('game-form-title'),
-  cancelEditBtn: document.getElementById('cancel-edit-btn'),
+  panels:
+    Utils.qsa('.admin-panel'),
 
-  codeForm: document.getElementById('code-form'),
-  codeGameSelect: document.getElementById('c-game'),
-  codesTableBody: document.querySelector('#codes-table tbody'),
-  codesEmpty: document.getElementById('codes-empty-admin'),
+
+  gameForm:
+    document.getElementById('game-form'),
+
+  gamesTableBody:
+    document.querySelector('#games-table tbody'),
+
+  gamesEmpty:
+    document.getElementById('games-empty'),
+
+  formTitle:
+    document.getElementById('game-form-title'),
+
+  cancelEditBtn:
+    document.getElementById('cancel-edit-btn'),
+
+
+
+  codeForm:
+    document.getElementById('code-form'),
+
+  codeGameSelect:
+    document.getElementById('c-game'),
+
+  codesTableBody:
+    document.querySelector('#codes-table tbody'),
+
+  codesEmpty:
+    document.getElementById('codes-empty-admin'),
+
+
 
   categoriesTableBody:
     document.querySelector('#categories-table tbody'),
@@ -34,276 +60,493 @@ const els = {
 };
 
 
+
 let editingGameId = null;
+
 
 
 /* ---------------- Helpers ---------------- */
 
+
 function saveGames() {
-  Api.saveGamesOverride(games);
+
+  Api.saveGamesOverride(
+    games
+  );
+
 }
+
 
 
 function saveCodes() {
-  Api.saveCodesOverride(codesMap);
+
+  Api.saveCodesOverride(
+    codesMap
+  );
+
 }
+
 
 
 function escapeHTML(value = '') {
 
   return String(value)
+
     .replace(/&/g, '&amp;')
+
     .replace(/</g, '&lt;')
+
     .replace(/>/g, '&gt;')
+
     .replace(/"/g, '&quot;')
+
     .replace(/'/g, '&#039;');
 
 }
 
 
+
 /* ---------------- Panel navigation ---------------- */
+
 
 els.navBtns.forEach(btn => {
 
-  btn.addEventListener('click', () => {
 
-    if (!btn.dataset.panel) return;
-
-
-    els.navBtns.forEach(b =>
-      b.classList.remove('is-active')
-    );
+  btn.addEventListener(
+    'click',
+    () => {
 
 
-    els.panels.forEach(panel =>
-      panel.classList.remove('is-active')
-    );
+      if (!btn.dataset.panel) {
+        return;
+      }
 
 
-    btn.classList.add('is-active');
+
+      els.navBtns.forEach(b =>
+
+        b.classList.remove(
+          'is-active'
+        )
+
+      );
 
 
-    document
-      .getElementById(btn.dataset.panel)
-      ?.classList.add('is-active');
 
-  });
+      els.panels.forEach(panel =>
+
+        panel.classList.remove(
+          'is-active'
+        )
+
+      );
+
+
+
+      btn.classList.add(
+        'is-active'
+      );
+
+
+
+      document
+
+        .getElementById(
+          btn.dataset.panel
+        )
+
+        ?.classList.add(
+          'is-active'
+        );
+
+
+    }
+  );
+
 
 });
+
 
 
 /* ---------------- Initial load ---------------- */
 
+
 async function init() {
 
+
   if (window.AdminAuth) {
+
     await window.AdminAuth.checkAuth();
+
   }
 
 
-  games = await Api.fetchGames();
 
-  codesMap = await Api.fetchCodes();
+  games =
+    await Api.fetchGames();
+
+
+
+  codesMap =
+    await Api.fetchCodes();
+
 
 
   renderGamesTable();
+
   renderCategorySelectOptions();
+
   renderCodeGameOptions();
+
   renderCodesTable();
+
   renderCategoriesTable();
 
 
+
   document
+
     .getElementById('lock-admin-btn')
-    ?.addEventListener('click', () => {
-      window.AdminAuth?.lockAdmin();
-    });
+
+    ?.addEventListener(
+      'click',
+      () => {
+
+        window.AdminAuth?.lockAdmin();
+
+      }
+    );
+
 
 }
+
 
 
 /* ---------------- GAMES ---------------- */
 
-els.gameForm.addEventListener('submit', e => {
 
-  e.preventDefault();
-
-
-  const fd = new FormData(
-    els.gameForm
-  );
+els.gameForm?.addEventListener(
+  'submit',
+  e => {
 
 
-  const name =
-    fd.get('name')
+    e.preventDefault();
+
+
+
+    const fd =
+      new FormData(
+        els.gameForm
+      );
+
+
+
+    const name =
+      String(
+        fd.get('name') || ''
+      )
       .trim();
 
 
-  if (!name) return;
+
+    if (!name) {
+      return;
+    }
 
 
-  const id =
-    editingGameId ||
-    Utils.slugify(name);
+
+    const id =
+
+      editingGameId ||
+
+      Utils.slugify(
+        name
+      );
 
 
-  const gameData = {
 
-    id,
+    const gameData = {
 
-    name,
 
-    category:
-      fd.get('category').trim()
-      || 'Other',
+      id,
 
-    description:
-      fd.get('description').trim(),
 
-    tags:
-      fd.get('tags')
+      name,
+
+
+
+      category:
+
+        String(
+          fd.get('category') || ''
+        )
+        .trim()
+
+        || 'Other',
+
+
+
+      description:
+
+        String(
+          fd.get('description') || ''
+        )
+        .trim(),
+
+
+
+      tags:
+
+        String(
+          fd.get('tags') || ''
+        )
+
         .split(',')
-        .map(tag => tag.trim())
+
+        .map(
+          tag =>
+            tag.trim()
+        )
+
         .filter(Boolean),
 
-    popularity:
-      Number(fd.get('popularity'))
-      || 50,
-
-  };
 
 
-  const index =
-    games.findIndex(
-      game => game.id === id
-    );
+      popularity:
+
+        Number(
+          fd.get('popularity')
+        )
+        || 50,
 
 
-  if (index >= 0) {
+    };    const index =
 
-    games[index] = {
-      ...games[index],
-      ...gameData,
-    };
+      games.findIndex(
+        game =>
+          game.id === id
+      );
 
-  } else {
 
-    games.push(gameData);
 
-    codesMap[id] =
-      codesMap[id] || [];
+    if (index >= 0) {
+
+
+      games[index] = {
+
+        ...games[index],
+
+        ...gameData,
+
+      };
+
+
+    } else {
+
+
+      games.push(
+        gameData
+      );
+
+
+      codesMap[id] =
+        codesMap[id] || [];
+
+
+    }
+
+
+
+    saveGames();
+
+    saveCodes();
+
+
+
+    resetGameForm();
+
+
+
+    renderGamesTable();
+
+    renderCategorySelectOptions();
+
+    renderCodeGameOptions();
+
+    renderCategoriesTable();
+
 
   }
 
-
-  saveGames();
-
-
-  resetGameForm();
-
-  renderGamesTable();
-  renderCategorySelectOptions();
-  renderCodeGameOptions();
-  renderCategoriesTable();
-
-});
-
-
-els.cancelEditBtn.addEventListener(
-  'click',
-  resetGameForm
 );
+
+
+
+els.cancelEditBtn?.addEventListener(
+
+  'click',
+
+  resetGameForm
+
+);
+
 
 
 function resetGameForm() {
 
+
   editingGameId = null;
+
 
   els.gameForm.reset();
 
+
+
   els.formTitle.textContent =
+
     'Add new game';
 
+
+
   els.cancelEditBtn.hidden =
+
     true;
+
 
 }
 
 
+
 function editGame(id) {
 
+
   const game =
+
     games.find(
-      item => item.id === id
+
+      item =>
+
+        item.id === id
+
     );
+
 
 
   if (!game) return;
 
 
+
   editingGameId = id;
 
 
+
   els.gameForm.name.value =
+
     game.name;
 
 
+
   els.gameForm.category.value =
+
     game.category;
 
 
+
   els.gameForm.description.value =
+
     game.description || '';
 
 
+
   els.gameForm.tags.value =
-    (game.tags || []).join(', ');
+
+    (game.tags || [])
+
+      .join(', ');
+
 
 
   els.gameForm.popularity.value =
+
     game.popularity ?? 50;
 
 
+
   els.formTitle.textContent =
+
     `Editing: ${game.name}`;
 
 
+
   els.cancelEditBtn.hidden =
+
     false;
 
 
+
   window.scrollTo({
+
     top: 0,
+
     behavior: 'smooth'
+
   });
 
-}/* ---------------- Remove game ---------------- */
+
+}
+
+
+
+/* ---------------- Remove game ---------------- */
+
 
 function removeGame(id) {
 
-  if (!confirm('Remove this game and all its codes?')) {
+
+  if (
+    !confirm(
+      'Remove this game and all its codes?'
+    )
+  ) {
+
     return;
+
   }
 
 
+
   games =
+
     games.filter(
-      game => game.id !== id
+
+      game =>
+
+        game.id !== id
+
     );
+
 
 
   delete codesMap[id];
 
 
+
   saveGames();
+
   saveCodes();
 
 
+
   renderGamesTable();
+
   renderCategorySelectOptions();
+
   renderCodeGameOptions();
+
   renderCodesTable();
+
   renderCategoriesTable();
+
 
 }
 
@@ -311,34 +554,73 @@ function removeGame(id) {
 
 /* ---------------- Render games table ---------------- */
 
+
 function renderGamesTable() {
+
+
+  if (!els.gamesTableBody) return;
+
+
 
   els.gamesTableBody.innerHTML = '';
 
 
-  els.gamesEmpty.style.display =
-    games.length ? 'none' : 'block';
+
+  if (els.gamesEmpty) {
+
+    els.gamesEmpty.style.display =
+
+      games.length
+
+      ? 'none'
+
+      : 'block';
+
+  }
+
 
 
   games.forEach(game => {
 
+
+
     const tr =
-      document.createElement('tr');
+
+      document.createElement(
+        'tr'
+      );
+
 
 
     const codeCount =
-      (codesMap[game.id] || []).length;
+
+      (
+        codesMap[game.id] || []
+      ).length;
+
 
 
     tr.innerHTML = `
 
-      <td>${escapeHTML(game.name)}</td>
+      <td>
+        ${escapeHTML(game.name)}
+      </td>
 
-      <td>${escapeHTML(game.category)}</td>
 
-      <td>${codeCount}</td>
+      <td>
+        ${escapeHTML(game.category || 'Other')}
+      </td>
 
-      <td>${game.popularity ?? '—'}</td>
+
+      <td>
+        ${codeCount}
+      </td>
+
+
+      <td>
+        ${game.popularity ?? '—'}
+      </td>
+
 
       <td class="table-actions">
 
@@ -346,8 +628,13 @@ function renderGamesTable() {
           Edit
         </button>
 
-        <button data-action="remove" class="danger">
+
+        <button 
+          data-action="remove"
+          class="danger">
+
           Remove
+
         </button>
 
       </td>
@@ -355,25 +642,52 @@ function renderGamesTable() {
     `;
 
 
+
     tr
-      .querySelector('[data-action="edit"]')
+
+      .querySelector(
+        '[data-action="edit"]'
+      )
+
       .addEventListener(
+
         'click',
-        () => editGame(game.id)
+
+        () =>
+          editGame(
+            game.id
+          )
+
       );
 
 
+
     tr
-      .querySelector('[data-action="remove"]')
+
+      .querySelector(
+        '[data-action="remove"]'
+      )
+
       .addEventListener(
+
         'click',
-        () => removeGame(game.id)
+
+        () =>
+          removeGame(
+            game.id
+          )
+
       );
 
 
-    els.gamesTableBody.appendChild(tr);
+
+    els.gamesTableBody.appendChild(
+      tr
+    );
+
 
   });
+
 
 }
 
@@ -381,221 +695,407 @@ function renderGamesTable() {
 
 /* ---------------- Codes ---------------- */
 
+
 function renderCodeGameOptions() {
 
+
+  if (!els.codeGameSelect) return;
+
+
+
   els.codeGameSelect.innerHTML =
+
+
     games
-      .map(game =>
-        `<option value="${game.id}">
+
+      .map(
+
+        game =>
+
+        `
+
+        <option value="${game.id}">
+
           ${escapeHTML(game.name)}
-        </option>`
+
+        </option>
+
+        `
+
       )
+
       .join('');
 
-}
 
-
-
-els.codeForm.addEventListener(
+}els.codeForm?.addEventListener(
   'submit',
   e => {
+
 
     e.preventDefault();
 
 
+
     const fd =
+
       new FormData(
         els.codeForm
       );
 
 
+
     const gameId =
+
       fd.get('gameId');
 
 
+
     const code =
-      fd.get('code')
-        .trim()
-        .toUpperCase();
+
+      String(
+        fd.get('code') || ''
+      )
+
+      .trim()
+
+      .toUpperCase();
+
 
 
     if (!gameId || !code) {
+
       return;
+
     }
 
 
+
     codesMap[gameId] =
+
       codesMap[gameId] || [];
+
+
+
+    const exists =
+
+      codesMap[gameId]
+
+        .some(
+
+          item =>
+
+            item.code === code
+
+        );
+
+
+
+    if (exists) {
+
+      alert(
+        'This code already exists.'
+      );
+
+      return;
+
+    }
+
 
 
     codesMap[gameId].push({
 
+
       code,
 
+
       reward:
-        fd.get('reward')
-          .trim(),
+
+        String(
+          fd.get('reward') || ''
+        )
+
+        .trim(),
+
+
 
       verified:
+
         new Date()
+
           .toISOString()
+
           .slice(0, 10),
 
+
+
       expires:
+
         fd.get('expires')
+
         || null,
 
+
     });
+
 
 
     saveCodes();
 
 
+
     els.codeForm.reset();
 
 
+
     renderGamesTable();
+
     renderCodesTable();
 
+
   }
+
 );
 
 
 
-function removeCode(gameId, index) {
+function removeCode(
+  gameId,
+  index
+) {
+
 
   if (!codesMap[gameId]) {
+
     return;
+
   }
 
 
+
   codesMap[gameId]
-    .splice(index, 1);
+
+    .splice(
+      index,
+      1
+    );
+
 
 
   saveCodes();
 
 
+
   renderGamesTable();
+
   renderCodesTable();
+
 
 }
 
 
 
+/* ---------------- Render codes table ---------------- */
+
+
 function renderCodesTable() {
 
-  els.codesTableBody.innerHTML =
-    '';
+
+  if (!els.codesTableBody) return;
+
+
+
+  els.codesTableBody.innerHTML = '';
+
 
 
   const rows = [];
 
 
+
   Object.entries(codesMap)
-    .forEach(([gameId, codes]) => {
+
+    .forEach(
+
+      ([gameId, codes]) => {
 
 
-      const game =
-        games.find(
-          g => g.id === gameId
+
+        const game =
+
+          games.find(
+
+            g =>
+
+              g.id === gameId
+
+          );
+
+
+
+        codes.forEach(
+
+          (code, index) => {
+
+
+            rows.push({
+
+              gameId,
+
+              gameName:
+
+                game?.name || gameId,
+
+              code,
+
+              index,
+
+            });
+
+
+          }
+
         );
 
 
-      codes.forEach((code, index) => {
+      }
 
-        rows.push({
-
-          gameId,
-
-          gameName:
-            game?.name || gameId,
-
-          code,
-
-          index,
-
-        });
-
-      });
-
-
-    });
+    );
 
 
 
-  els.codesEmpty.style.display =
-    rows.length ? 'none' : 'block';
+  if (els.codesEmpty) {
+
+    els.codesEmpty.style.display =
+
+      rows.length
+
+      ? 'none'
+
+      : 'block';
+
+  }
 
 
 
   rows.forEach(item => {
 
 
+
     const status =
+
       Utils.getCodeStatus(
+
         item.code.expires
+
       );
 
 
+
     const tr =
-      document.createElement('tr');
+
+      document.createElement(
+        'tr'
+      );
+
 
 
     tr.innerHTML = `
 
-      <td>${escapeHTML(item.gameName)}</td>
+      <td>
+        ${escapeHTML(item.gameName)}
+      </td>
+
 
       <td>
+
         <code>
+
           ${escapeHTML(item.code.code)}
+
         </code>
+
       </td>
 
-      <td>
-        ${escapeHTML(item.code.reward)}
-      </td>
 
       <td>
+
+        ${escapeHTML(item.code.reward || '')}
+
+      </td>
+
+
+      <td>
+
         ${
           item.code.expires
-          ? Utils.formatDate(item.code.expires)
+
+          ? Utils.formatDate(
+              item.code.expires
+            )
+
           : 'No expiry'
         }
+
       </td>
 
+
       <td>
-        ${status}
+
+        ${escapeHTML(status)}
+
       </td>
+
 
       <td class="table-actions">
 
-        <button 
+
+        <button
           data-action="remove"
           class="danger">
+
           Remove
+
         </button>
 
+
       </td>
+
 
     `;
 
 
+
     tr
-      .querySelector('[data-action="remove"]')
+
+      .querySelector(
+        '[data-action="remove"]'
+      )
+
       .addEventListener(
+
         'click',
+
         () =>
+
           removeCode(
+
             item.gameId,
+
             item.index
+
           )
+
       );
 
 
-    els.codesTableBody.appendChild(tr);
+
+    els.codesTableBody.appendChild(
+      tr
+    );
+
 
   });
+
 
 }
 
@@ -603,35 +1103,60 @@ function renderCodesTable() {
 
 /* ---------------- Categories ---------------- */
 
+
 function renderCategorySelectOptions() {
 
+
   const categories =
+
     Array.from(
+
       new Set(
+
         games.map(
-          game => game.category
+
+          game =>
+
+            game.category || 'Other'
+
         )
+
       )
+
     )
+
     .sort();
 
 
+
   const dl =
+
     document.getElementById(
       'category-options'
     );
 
 
+
   if (dl) {
 
+
     dl.innerHTML =
+
       categories
-        .map(category =>
+
+        .map(
+
+          category =>
+
           `<option value="${escapeHTML(category)}">`
+
         )
+
         .join('');
 
+
   }
+
 
 }
 
@@ -639,73 +1164,127 @@ function renderCategorySelectOptions() {
 
 function renderCategoriesTable() {
 
+
+  if (!els.categoriesTableBody) return;
+
+
+
   const counts =
+
     new Map();
+
 
 
   games.forEach(game => {
 
+
+    const category =
+
+      game.category || 'Other';
+
+
+
     counts.set(
-      game.category,
-      (counts.get(game.category) || 0) + 1
+
+      category,
+
+      (counts.get(category) || 0) + 1
+
     );
+
 
   });
 
 
 
-  els.categoriesTableBody.innerHTML =
-    '';
+  els.categoriesTableBody.innerHTML = '';
 
 
 
-  Array.from(counts.entries())
+  Array.from(
+    counts.entries()
+  )
 
-    .sort(
-      (a, b) =>
-        b[1] - a[1]
-    )
+  .sort(
 
-    .forEach(([name, count]) => {
+    (a, b) =>
+
+      b[1] - a[1]
+
+  )
+
+  .forEach(
+
+    ([name, count]) => {
+
 
 
       const tr =
-        document.createElement('tr');
+
+        document.createElement(
+          'tr'
+        );
+
 
 
       tr.innerHTML = `
+
 
         <td>
           ${escapeHTML(name)}
         </td>
 
+
         <td>
           ${count}
         </td>
 
+
         <td class="table-actions">
 
+
           <button data-action="rename">
+
             Rename
+
           </button>
 
+
         </td>
+
 
       `;
 
 
+
       tr
-        .querySelector('[data-action="rename"]')
+
+        .querySelector(
+          '[data-action="rename"]'
+        )
+
         .addEventListener(
+
           'click',
-          () => renameCategory(name)
+
+          () =>
+            renameCategory(
+              name
+            )
+
         );
 
 
-      els.categoriesTableBody.appendChild(tr);
+
+      els.categoriesTableBody.appendChild(
+        tr
+      );
 
 
-    });
+    }
+
+  );
+
 
 }
 
@@ -713,40 +1292,65 @@ function renderCategoriesTable() {
 
 function renameCategory(oldName) {
 
+
   const newName =
+
     prompt(
+
       `Rename category "${oldName}" to:`,
+
       oldName
+
     );
 
 
+
   if (
+
     !newName ||
-    newName.trim() === '' ||
+
+    !newName.trim() ||
+
     newName === oldName
+
   ) {
+
     return;
+
   }
+
 
 
   games.forEach(game => {
 
-    if (game.category === oldName) {
+
+    if (
+      game.category === oldName
+    ) {
+
 
       game.category =
+
         newName.trim();
+
 
     }
 
+
   });
+
 
 
   saveGames();
 
 
+
   renderGamesTable();
+
   renderCategorySelectOptions();
+
   renderCategoriesTable();
+
 
 }
 
@@ -754,10 +1358,19 @@ function renameCategory(oldName) {
 
 /* ---------------- Start ---------------- */
 
+
 init()
-  .catch(err =>
-    console.error(
-      'Error starting admin panel:',
-      err
-    )
+
+  .catch(
+
+    err =>
+
+      console.error(
+
+        'Error starting admin panel:',
+
+        err
+
+      )
+
   );
