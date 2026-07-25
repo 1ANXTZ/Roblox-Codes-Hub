@@ -1,17 +1,13 @@
-# Sistema
 .DS_Store
 Thumbs.db
 
-# Editor
 .vscode/
 .idea/
 
-# Logs
-*.log
-
-# Dependências 
 node_modules/
 
-# Variáveis de ambiente
 .env
-.env.local
+.env.*
+
+dist/
+build/
