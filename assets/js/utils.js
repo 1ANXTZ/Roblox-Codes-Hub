@@ -6,9 +6,6 @@
 export const Utils = {
 
 
-  /**
-   * Delays execution for real-time search inputs.
-   */
   debounce(fn, delay = 150) {
 
     let timer = null;
@@ -27,10 +24,8 @@ export const Utils = {
   },
 
 
-  /**
-   * Converts a string into a slug for friendly URLs.
-   */
-  slugify(str) {
+
+  slugify(str = '') {
 
     return str
       .toLowerCase()
@@ -42,31 +37,58 @@ export const Utils = {
   },
 
 
-  /**
-   * Calculates a code's status based on its expiration date.
-   */
+
   getCodeStatus(expiresISO) {
 
     if (!expiresISO) return 'active';
 
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const expires =
+      new Date(
+        `${expiresISO}T00:00:00`
+      );
 
 
-    const expires = new Date(
-      expiresISO + 'T00:00:00'
+    if (Number.isNaN(expires.getTime())) {
+
+      return 'active';
+
+    }
+
+
+
+    const today =
+      new Date();
+
+
+    today.setHours(
+      0,
+      0,
+      0,
+      0
     );
 
 
-    const diffDays = Math.ceil(
-      (expires - today) / 86400000
-    );
+
+    const diffDays =
+      Math.ceil(
+        (expires - today) / 86400000
+      );
 
 
-    if (diffDays < 0) return 'expired';
 
-    if (diffDays <= 3) return 'expiring';
+    if (diffDays < 0) {
+
+      return 'expired';
+
+    }
+
+
+    if (diffDays <= 3) {
+
+      return 'expiring';
+
+    }
 
 
     return 'active';
@@ -74,17 +96,23 @@ export const Utils = {
   },
 
 
-  /**
-   * Formats an ISO date (YYYY-MM-DD).
-   */
+
   formatDate(iso) {
 
     if (!iso) return 'No expiry';
 
 
-    const d = new Date(
-      iso + 'T00:00:00'
-    );
+    const d =
+      new Date(
+        `${iso}T00:00:00`
+      );
+
+
+    if (Number.isNaN(d.getTime())) {
+
+      return 'Invalid date';
+
+    }
 
 
     return d.toLocaleDateString(
@@ -99,31 +127,58 @@ export const Utils = {
   },
 
 
-  /**
-   * Returns relative text like "2 days ago".
-   */
+
   relativeFromToday(iso) {
 
     if (!iso) return '';
 
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const d =
+      new Date(
+        `${iso}T00:00:00`
+      );
 
 
-    const d = new Date(
-      iso + 'T00:00:00'
+    if (Number.isNaN(d.getTime())) {
+
+      return '';
+
+    }
+
+
+
+    const today =
+      new Date();
+
+
+    today.setHours(
+      0,
+      0,
+      0,
+      0
     );
 
 
-    const diff = Math.round(
-      (today - d) / 86400000
-    );
+
+    const diff =
+      Math.round(
+        (today - d) / 86400000
+      );
 
 
-    if (diff <= 0) return 'today';
 
-    if (diff === 1) return '1 day ago';
+    if (diff <= 0) {
+
+      return 'today';
+
+    }
+
+
+    if (diff === 1) {
+
+      return '1 day ago';
+
+    }
 
 
     return `${diff} days ago`;
@@ -131,33 +186,44 @@ export const Utils = {
   },
 
 
-  /**
-   * Generates initials from the game name.
-   */
-  initials(name) {
 
-    return name
-      .split(' ')
+  initials(name = '') {
+
+    const words =
+      name
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+
+
+
+    return words
       .filter(
-        w => w.length > 2 || w === w.toUpperCase()
+        w =>
+          w.length > 2 ||
+          w === w.toUpperCase()
       )
       .slice(0, 2)
-      .map(w => w[0])
+      .map(
+        w => w[0]
+      )
       .join('')
       .toUpperCase();
 
   },
 
 
-  /**
-   * Generates deterministic gradient.
-   */
-  gradientFor(seedStr) {
+
+  gradientFor(seedStr = '') {
 
     let hash = 0;
 
 
-    for (let i = 0; i < seedStr.length; i++) {
+    for (
+      let i = 0;
+      i < seedStr.length;
+      i++
+    ) {
 
       hash =
         seedStr.charCodeAt(i) +
@@ -166,23 +232,48 @@ export const Utils = {
     }
 
 
-    const h1 = Math.abs(hash) % 360;
-    const h2 = (h1 + 45) % 360;
+
+    const h1 =
+      Math.abs(hash) % 360;
 
 
-    return `linear-gradient(135deg, hsl(${h1} 70% 32%), hsl(${h2} 75% 22%))`;
+    const h2 =
+      (h1 + 45) % 360;
+
+
+
+    return `
+      linear-gradient(
+        135deg,
+        hsl(${h1} 70% 32%),
+        hsl(${h2} 75% 22%)
+      )
+    `;
 
   },
 
 
-  qs(sel, ctx = document) {
-    return ctx.querySelector(sel);
+
+  qs(sel, ctx = null) {
+
+    return ctx?.querySelector(sel) || null;
+
   },
 
 
-  qsa(sel, ctx = document) {
-    return Array.from(ctx.querySelectorAll(sel));
+
+  qsa(sel, ctx = null) {
+
+    return ctx
+
+      ? Array.from(
+          ctx.querySelectorAll(sel)
+        )
+
+      : [];
+
   },
+
 
 
   getURLParam(name) {
@@ -192,5 +283,6 @@ export const Utils = {
     ).get(name);
 
   },
+
 
 };
