@@ -22,6 +22,25 @@ const STATUS_LABEL = {
 
 
 
+function escapeHTML(value = '') {
+
+  return String(value)
+
+    .replace(/&/g, '&amp;')
+
+    .replace(/</g, '&lt;')
+
+    .replace(/>/g, '&gt;')
+
+    .replace(/"/g, '&quot;')
+
+    .replace(/'/g, '&#039;');
+
+}
+
+
+
+
 export const UI = {
 
 
@@ -30,10 +49,11 @@ export const UI = {
 
   renderCategoryChips(
     container,
-    categories,
+    categories = [],
     activeCategory,
     onSelect
   ) {
+
 
     if (!container) return;
 
@@ -41,12 +61,16 @@ export const UI = {
     container.innerHTML = '';
 
 
+
     const all = [
+
       {
         name: 'All',
         count: null
       },
+
       ...categories
+
     ];
 
 
@@ -71,7 +95,9 @@ export const UI = {
 
       chip.textContent =
         category.count != null
+
           ? `${category.name} (${category.count})`
+
           : category.name;
 
 
@@ -101,20 +127,20 @@ export const UI = {
 
       container.appendChild(chip);
 
+
     });
 
-  },
 
-
-
-  /* ---------------- Game cards ---------------- */
+  },  /* ---------------- Game cards ---------------- */
 
 
   renderGameGrid(
     container,
     emptyStateEl,
-    games,
-    { onToggleFavorite } = {}
+    games = [],
+    {
+      onToggleFavorite
+    } = {}
   ) {
 
 
@@ -126,7 +152,7 @@ export const UI = {
 
 
 
-    if (!games.length) {
+    if (!games || !games.length) {
 
 
       if (emptyStateEl) {
@@ -158,6 +184,10 @@ export const UI = {
     games.forEach(game => {
 
 
+      if (!game) return;
+
+
+
       frag.appendChild(
 
         this.buildGameCard(
@@ -176,13 +206,18 @@ export const UI = {
 
     container.appendChild(frag);
 
+
   },
+
+
 
 
 
   buildGameCard(
     game,
-    { onToggleFavorite } = {}
+    {
+      onToggleFavorite
+    } = {}
   ) {
 
 
@@ -210,38 +245,57 @@ export const UI = {
 
     card.innerHTML = `
 
+
       <a
         href="game.html?id=${encodeURIComponent(game.id)}"
         class="game-card__thumb-link"
         style="text-decoration:none;"
       >
 
+
         <div
           class="game-card__thumb"
-          style="background:${Utils.gradientFor(game.name)}"
+          style="background:${Utils.gradientFor(game.name || '')}"
         >
 
+
           <span aria-hidden="true">
-            ${Utils.initials(game.name)}
+
+            ${escapeHTML(
+              Utils.initials(game.name || 'Game')
+            )}
+
           </span>
 
 
+
           <span class="game-card__badge-count">
-            ${game.activeCount}
+
+            ${game.activeCount ?? 0}
+
             code${game.activeCount === 1 ? '' : 's'}
+
           </span>
 
 
         </div>
 
+
       </a>
 
 
+
+
       <button
+
         class="game-card__fav${isFav ? ' is-fav' : ''}"
+
         aria-pressed="${isFav}"
-        aria-label="Favorite ${game.name}"
+
+        aria-label="Favorite ${escapeHTML(game.name)}"
+
         type="button"
+
       >
 
         ${isFav ? '★' : '☆'}
@@ -249,40 +303,75 @@ export const UI = {
       </button>
 
 
+
+
       <div class="game-card__body">
 
 
+
         <span class="game-card__category">
-          ${game.category || 'Other'}
+
+          ${escapeHTML(
+            game.category || 'Other'
+          )}
+
         </span>
 
 
+
+
         <a
+
           href="game.html?id=${encodeURIComponent(game.id)}"
+
           style="text-decoration:none;"
+
         >
 
+
           <h3 class="game-card__name">
-            ${game.name}
+
+            ${escapeHTML(
+              game.name || 'Unnamed game'
+            )}
+
           </h3>
+
 
         </a>
 
 
+
+
+
         <span class="game-card__meta">
 
+
           Updated ${
+
             game.lastVerified
-              ? Utils.relativeFromToday(game.lastVerified)
+
+              ? Utils.relativeFromToday(
+                  game.lastVerified
+                )
+
               : '—'
+
           }
+
 
         </span>
 
 
+
+
+
         <a
+
           class="game-card__cta"
+
           href="game.html?id=${encodeURIComponent(game.id)}"
+
         >
 
           View codes
@@ -290,64 +379,99 @@ export const UI = {
         </a>
 
 
+
+
       </div>
+
+
 
     `;
 
 
+
+
+
     const favBtn =
+
       card.querySelector(
         '.game-card__fav'
       );
 
 
+
+
+
     favBtn?.addEventListener(
+
       'click',
+
       event => {
+
 
         event.preventDefault();
 
 
+
         const nowFav =
+
           Storage.toggleFavorite(
             game.id
           );
 
 
+
         favBtn.classList.toggle(
+
           'is-fav',
+
           nowFav
+
         );
+
 
 
         favBtn.textContent =
-          nowFav ? '★' : '☆';
+
+          nowFav
+            ? '★'
+            : '☆';
+
 
 
         favBtn.setAttribute(
+
           'aria-pressed',
+
           String(nowFav)
+
         );
 
 
+
         onToggleFavorite?.(
+
           game.id,
+
           nowFav
+
         );
 
 
       }
+
     );
 
 
+
     return card;
+
 
   },  /* ---------------- Code cards ---------------- */
 
 
   renderCodes(
     container,
-    codes,
+    codes = [],
     {
       onCopy
     } = {}
@@ -362,13 +486,15 @@ export const UI = {
 
 
 
-    if (!codes.length) {
+    if (!codes || !codes.length) {
 
 
       container.innerHTML = `
 
         <p class="empty-state">
+
           No codes available.
+
         </p>
 
       `;
@@ -386,6 +512,10 @@ export const UI = {
 
 
     codes.forEach(code => {
+
+
+      if (!code) return;
+
 
 
       frag.appendChild(
@@ -406,7 +536,10 @@ export const UI = {
 
     container.appendChild(frag);
 
+
   },
+
+
 
 
 
@@ -440,108 +573,173 @@ export const UI = {
 
     card.innerHTML = `
 
+
       <div class="code-card__top">
 
+
         <span class="code-card__status status-${status}">
+
           ${STATUS_LABEL[status] || status}
+
         </span>
+
 
       </div>
 
 
+
+
+
       <code class="code-card__value">
-        ${code.code}
+
+        ${escapeHTML(
+          code.code || ''
+        )}
+
       </code>
 
 
+
+
+
       <button
+
         class="code-card__copy"
+
         type="button"
+
       >
 
         Copy
 
       </button>
 
+
+
     `;
 
 
 
+
+
     const copyBtn =
+
       card.querySelector(
         '.code-card__copy'
       );
 
 
 
+
+
     copyBtn?.addEventListener(
+
       'click',
+
       async () => {
+
 
 
         try {
 
 
+
           await navigator.clipboard.writeText(
+
             code.code
+
           );
+
+
 
 
 
           copyBtn.textContent =
+
             'Copied!';
 
 
 
+
+
           UI.showToast(
+
             'Code copied!'
+
           );
+
+
 
 
 
           onCopy?.(
+
             code.code
+
           );
+
+
 
 
 
           setTimeout(
+
             () => {
 
+
               copyBtn.textContent =
+
                 'Copy';
 
+
+
             },
+
             1500
+
           );
+
+
 
 
 
         } catch {
 
 
+
           copyBtn.textContent =
+
             'Error';
 
 
 
+
           UI.showToast(
+
             'Could not copy code',
+
             'error'
+
           );
+
 
 
         }
 
 
+
       }
+
     );
 
 
 
     return card;
 
+
   },
+
+
 
 
 
@@ -550,18 +748,21 @@ export const UI = {
 
   renderStats(
     elements,
-    stats
+    stats = {}
   ) {
 
 
-    if (!stats) return;
+    if (!elements || !stats) return;
 
 
 
     if (elements.games) {
 
+
       elements.games.textContent =
+
         stats.games ?? 0;
+
 
     }
 
@@ -569,8 +770,11 @@ export const UI = {
 
     if (elements.codes) {
 
+
       elements.codes.textContent =
+
         stats.codes ?? 0;
+
 
     }
 
@@ -578,8 +782,11 @@ export const UI = {
 
     if (elements.categories) {
 
+
       elements.categories.textContent =
+
         stats.categories ?? 0;
+
 
     }
 
@@ -647,19 +854,27 @@ export const UI = {
 
 
     this.toastTimer =
+
       setTimeout(
+
         () => {
+
 
           toast.classList.remove(
             'show'
           );
 
+
         },
+
         2500
+
       );
 
 
   },
+
+
 
 
 
@@ -676,44 +891,65 @@ export const UI = {
 
 
     const savedTheme =
+
       Storage.getTheme();
+
+
 
 
 
     if (savedTheme === 'light') {
 
+
       document.documentElement.classList.add(
         'light'
       );
+
 
     }
 
 
 
+
+
     button.addEventListener(
+
       'click',
+
       () => {
 
 
-        const light =
+
+        const isLight =
+
           document.documentElement.classList.toggle(
             'light'
           );
 
 
 
+
+
         Storage.setTheme(
-          light
+
+          isLight
+
             ? 'light'
+
             : 'dark'
+
         );
 
 
+
       }
+
     );
 
 
   },
+
+
 
 
 
@@ -730,24 +966,35 @@ export const UI = {
 
 
     window.addEventListener(
+
       'scroll',
+
       () => {
 
 
         button.classList.toggle(
+
           'is-visible',
+
           window.scrollY > 500
+
         );
 
 
       }
+
     );
 
 
 
+
+
     button.addEventListener(
+
       'click',
+
       () => {
+
 
 
         window.scrollTo({
@@ -759,7 +1006,9 @@ export const UI = {
         });
 
 
+
       }
+
     );
 
 
