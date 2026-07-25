@@ -4,257 +4,438 @@
  * Isolated so future migration to user accounts/API only affects this file.
  */
 
+
 const KEYS = {
-  FAVORITES: 'rch:favorites',
-  THEME: 'rch:theme',
-  USED_CODES: 'rch:used-codes',
+
+  FAVORITES:
+    'rch:favorites',
+
+  THEME:
+    'rch:theme',
+
+  USED_CODES:
+    'rch:used-codes',
+
 };
+
+
+
 
 
 function read(key, fallback) {
 
+
   try {
 
-    const value = localStorage.getItem(key);
+
+    const value =
+      localStorage.getItem(
+        key
+      );
+
+
 
     return value
+
       ? JSON.parse(value)
+
       : fallback;
+
+
 
   } catch {
 
+
     return fallback;
+
 
   }
 
+
 }
+
+
+
 
 
 function write(key, value) {
 
+
   try {
 
+
     localStorage.setItem(
+
       key,
+
       JSON.stringify(value)
+
     );
+
+
 
   } catch {
 
+
     // Ignore storage errors safely.
+
 
   }
 
+
 }
+
+
+
 
 
 export const Storage = {
 
 
+
   getFavorites() {
 
-    const favorites = read(
-      KEYS.FAVORITES,
-      []
-    );
+
+    const favorites =
+      read(
+        KEYS.FAVORITES,
+        []
+      );
+
 
 
     return Array.isArray(favorites)
-      ? favorites
+
+      ? [...new Set(favorites)]
+
       : [];
+
 
   },
 
 
+
+
+
+
   isFavorite(gameId) {
+
 
     return this
       .getFavorites()
       .includes(gameId);
 
+
   },
+
+
+
+
 
 
   toggleFavorite(gameId) {
 
-    const favorites = this.getFavorites();
+
+    const favorites =
+      this.getFavorites();
 
 
-    const index = favorites.indexOf(gameId);
+
+    const index =
+      favorites.indexOf(
+        gameId
+      );
+
 
 
     if (index >= 0) {
 
-      favorites.splice(index, 1);
+
+      favorites.splice(
+        index,
+        1
+      );
+
 
     } else {
 
-      favorites.push(gameId);
+
+      favorites.push(
+        gameId
+      );
+
 
     }
 
 
+
+
+
     write(
+
       KEYS.FAVORITES,
+
       favorites
+
     );
 
 
-    return favorites.includes(gameId);
+
+    return favorites.includes(
+      gameId
+    );
+
 
   },
+
+
+
+
 
 
   getTheme() {
 
+
     try {
 
-      return localStorage.getItem(KEYS.THEME)
-        || 'dark';
+
+      return localStorage.getItem(
+        KEYS.THEME
+      ) || 'dark';
+
+
 
     } catch {
 
+
       return 'dark';
+
 
     }
 
+
   },
+
+
+
+
 
 
   setTheme(theme) {
 
+
     try {
 
+
       localStorage.setItem(
+
         KEYS.THEME,
+
         theme
+
       );
+
+
 
     } catch {
 
+
       // Ignore storage errors.
+
 
     }
 
+
   },
 
 
-  /**
-   * Returns used codes map.
-   *
-   * Format:
-   * {
-   *   "blox-fruits": [
-   *      "CODE1",
-   *      "CODE2"
-   *   ]
-   * }
-   */
+
+
+
+
+
   getUsedMap() {
 
-    const map = read(
-      KEYS.USED_CODES,
-      {}
-    );
+
+    const map =
+      read(
+        KEYS.USED_CODES,
+        {}
+      );
+
 
 
     return map &&
+
       typeof map === 'object' &&
+
       !Array.isArray(map)
+
+
 
       ? map
 
+
+
       : {};
 
+
+
   },
+
+
+
+
+
 
 
   isCodeUsed(gameId, code) {
 
-    const map = this.getUsedMap();
+
+    const map =
+      this.getUsedMap();
+
 
 
     return (
+
       map[gameId] || []
+
     ).includes(code);
+
+
 
   },
 
 
-  /**
-   * Directly changes used state.
-   */
+
+
+
+
+
   setCodeUsed(gameId, code, used) {
 
-    const map = this.getUsedMap();
+
+    const map =
+      this.getUsedMap();
 
 
-    map[gameId] = map[gameId] || [];
+
+    map[gameId] =
+      map[gameId] || [];
+
 
 
     const index =
-      map[gameId].indexOf(code);
+      map[gameId].indexOf(
+        code
+      );
+
 
 
     if (used && index < 0) {
 
-      map[gameId].push(code);
+
+      map[gameId].push(
+        code
+      );
+
 
     }
+
 
 
     if (!used && index >= 0) {
 
-      map[gameId].splice(index, 1);
+
+      map[gameId].splice(
+        index,
+        1
+      );
+
 
     }
 
 
+
     write(
+
       KEYS.USED_CODES,
+
       map
+
     );
+
 
 
     return used;
 
+
   },
 
 
-  /**
-   * Toggles used state.
-   */
+
+
+
+
+
   toggleCodeUsed(gameId, code) {
 
-    const map = this.getUsedMap();
+
+    const map =
+      this.getUsedMap();
 
 
-    map[gameId] = map[gameId] || [];
+
+    map[gameId] =
+      map[gameId] || [];
+
 
 
     const index =
-      map[gameId].indexOf(code);
+      map[gameId].indexOf(
+        code
+      );
+
 
 
     if (index >= 0) {
 
-      map[gameId].splice(index, 1);
+
+      map[gameId].splice(
+        index,
+        1
+      );
+
 
     } else {
 
-      map[gameId].push(code);
+
+      map[gameId].push(
+        code
+      );
+
 
     }
 
 
+
     write(
+
       KEYS.USED_CODES,
+
       map
+
     );
 
 
-    return map[gameId].includes(code);
+
+    return map[gameId].includes(
+      code
+    );
+
 
   },
+
 
 };
