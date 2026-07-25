@@ -201,11 +201,7 @@ export const UI = {
     const isFav =
       Storage.isFavorite(
         game.id
-      );
-
-
-
-    card.innerHTML = `
+      );    card.innerHTML = `
 
       <a
         href="game.html?id=${encodeURIComponent(game.id)}"
@@ -335,10 +331,7 @@ export const UI = {
 
 
 
-        onToggleFavorite?.(
-          game.id,
-          nowFav
-        );
+        onToggleFavorite?.();
 
 
       }
@@ -348,7 +341,11 @@ export const UI = {
 
     return card;
 
-  },  /* ---------------- Code cards ---------------- */
+  },
+
+
+
+  /* ---------------- Code cards ---------------- */
 
 
   renderCodes(
@@ -490,6 +487,12 @@ export const UI = {
 
 
 
+          UI.showToast(
+            'Code copied!'
+          );
+
+
+
           setTimeout(
             () => {
 
@@ -499,7 +502,6 @@ export const UI = {
             },
             1500
           );
-
 
 
           onCopy?.(code.code);
@@ -534,35 +536,22 @@ export const UI = {
     stats
   ) {
 
-
     if (!stats) return;
 
 
 
-    if (elements.games) {
-
-      elements.games.textContent =
-        stats.games ?? 0;
-
-    }
+    elements.games &&
+      (elements.games.textContent = stats.games ?? 0);
 
 
 
-    if (elements.codes) {
-
-      elements.codes.textContent =
-        stats.codes ?? 0;
-
-    }
+    elements.codes &&
+      (elements.codes.textContent = stats.codes ?? 0);
 
 
 
-    if (elements.categories) {
-
-      elements.categories.textContent =
-        stats.categories ?? 0;
-
-    }
+    elements.categories &&
+      (elements.categories.textContent = stats.categories ?? 0);
 
 
   },
@@ -602,7 +591,6 @@ export const UI = {
       document.body.appendChild(
         toast
       );
-
 
     }
 
@@ -655,7 +643,6 @@ export const UI = {
     loading = true
   ) {
 
-
     if (!container) return;
 
 
@@ -663,6 +650,112 @@ export const UI = {
     container.classList.toggle(
       'is-loading',
       loading
+    );
+
+  },
+
+
+
+  /* ---------------- Theme ---------------- */
+
+
+  initThemeToggle(
+    button
+  ) {
+
+    if (!button) return;
+
+
+
+    const savedTheme =
+      localStorage.getItem(
+        'theme'
+      );
+
+
+
+    if (savedTheme === 'light') {
+
+      document.documentElement
+        .classList.add('light');
+
+    }
+
+
+
+    button.addEventListener(
+      'click',
+      () => {
+
+
+        const light =
+          document.documentElement
+            .classList.toggle(
+              'light'
+            );
+
+
+
+        localStorage.setItem(
+          'theme',
+          light ? 'light' : 'dark'
+        );
+
+
+      }
+    );
+
+
+  },
+
+
+
+  /* ---------------- Back to top ---------------- */
+
+
+  initBackToTop(
+    button
+  ) {
+
+
+    if (!button) return;
+
+
+
+    window.addEventListener(
+      'scroll',
+      () => {
+
+
+        button.classList.toggle(
+
+          'is-visible',
+
+          window.scrollY > 500
+
+        );
+
+
+      }
+    );
+
+
+
+    button.addEventListener(
+      'click',
+      () => {
+
+
+        window.scrollTo({
+
+          top: 0,
+
+          behavior: 'smooth'
+
+        });
+
+
+      }
     );
 
 
