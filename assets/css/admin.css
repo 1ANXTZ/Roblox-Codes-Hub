@@ -1,0 +1,79 @@
+@import url('tokens.css');
+
+.admin-shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+.admin-sidebar {
+  background: var(--bg-surface); border-right: 1px solid var(--line);
+  padding: var(--sp-5) var(--sp-3); display: flex; flex-direction: column; gap: var(--sp-2);
+}
+.admin-sidebar__logo { font-family: var(--font-display); font-weight: 700; padding: 0 var(--sp-2) var(--sp-5); }
+.admin-sidebar__logo span { color: var(--accent-amber); }
+.admin-nav-btn {
+  text-align: left; padding: 10px 12px; border-radius: var(--radius-sm);
+  font-size: var(--fs-sm); color: var(--text-muted); transition: all var(--transition-fast);
+  display: flex; align-items: center; gap: 10px;
+}
+.admin-nav-btn:hover { background: var(--bg-surface-raised); color: var(--text-primary); }
+.admin-nav-btn.is-active { background: var(--accent-amber-dim); color: var(--accent-amber); font-weight: 600; }
+
+.admin-main { padding: var(--sp-6); }
+.admin-main h1 { font-family: var(--font-display); font-size: var(--fs-xl); margin-bottom: var(--sp-2); }
+.admin-main > p.admin-sub { color: var(--text-muted); margin-bottom: var(--sp-6); }
+
+.admin-panel { display: none; }
+.admin-panel.is-active { display: block; }
+
+.admin-card {
+  background: var(--bg-surface); border: 1px solid var(--line); border-radius: var(--radius-md);
+  padding: var(--sp-5); margin-bottom: var(--sp-5);
+}
+.admin-card h2 { font-family: var(--font-display); font-size: var(--fs-md); margin-bottom: var(--sp-4); }
+
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--sp-4); }
+.form-field { display: flex; flex-direction: column; gap: 6px; }
+.form-field label { font-size: var(--fs-xs); color: var(--text-muted); }
+.form-field input, .form-field select, .form-field textarea {
+  background: var(--bg-inset); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  padding: 10px 12px; color: var(--text-primary); font-size: var(--fs-sm);
+}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus {
+  border-color: var(--accent-cyan); outline: none;
+}
+.form-actions { margin-top: var(--sp-4); display: flex; gap: var(--sp-3); }
+
+.admin-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+.admin-table th { text-align: left; color: var(--text-faint); font-size: var(--fs-2xs); text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+.admin-table td { padding: 10px; border-bottom: 1px solid var(--line); }
+.admin-table tr:hover td { background: var(--bg-surface-raised); }
+.table-actions { display: flex; gap: 8px; }
+.table-actions button { color: var(--text-muted); font-size: var(--fs-xs); }
+.table-actions button:hover { color: var(--accent-amber); }
+.table-actions button.danger:hover { color: var(--status-expired); }
+
+.admin-empty { color: var(--text-faint); font-size: var(--fs-sm); padding: var(--sp-4); text-align: center; }
+
+@media (max-width: 720px) {
+  .admin-shell { grid-template-columns: 1fr; }
+  .admin-sidebar { flex-direction: row; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--line); }
+}
+
+/* ============ ADMIN LOGIN GATE (basic, temporary protection) ============ */
+#admin-gate {
+  position: fixed; inset: 0; z-index: 200;
+  background: var(--bg-void);
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--sp-5);
+}
+.admin-gate__card {
+  background: var(--bg-surface); border: 1px solid var(--line); border-radius: var(--radius-md);
+  padding: var(--sp-6); width: 100%; max-width: 340px;
+  display: flex; flex-direction: column; gap: var(--sp-3);
+}
+.admin-gate__logo { font-family: var(--font-display); font-weight: 700; margin-bottom: var(--sp-2); }
+.admin-gate__logo span { color: var(--accent-amber); }
+.admin-gate__hint { color: var(--text-muted); font-size: var(--fs-sm); margin-bottom: var(--sp-2); }
+.admin-gate__card input {
+  background: var(--bg-inset); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  padding: 10px 12px; color: var(--text-primary); font-size: var(--fs-sm);
+}
+.admin-gate__card input:focus { border-color: var(--accent-cyan); outline: none; }
+.admin-gate__error { color: var(--status-expired); font-size: var(--fs-xs); }
