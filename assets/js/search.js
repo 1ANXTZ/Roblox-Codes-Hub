@@ -2,7 +2,7 @@
  * search.js
  * Real-time search engine: filters by name, category and tags.
  * Pure — receives the full game list and criteria, returns
- * the filtered list. Easy to test in isolation.
+ * the filtered list.
  */
 
 
@@ -10,7 +10,7 @@ export const Search = {
 
 
   filter(
-    games,
+    games = [],
     {
       query = '',
       category = 'All'
@@ -19,13 +19,18 @@ export const Search = {
 
 
     const q =
-      query
+      String(query)
         .trim()
         .toLowerCase();
 
 
 
     return games.filter(game => {
+
+
+      if (!game) {
+        return false;
+      }
 
 
 
@@ -64,13 +69,15 @@ export const Search = {
 
         gameCategory,
 
-        ...(game.tags || [])
+        ...(Array.isArray(game.tags)
+          ? game.tags
+          : [])
 
       ]
 
-        .join(' ')
+      .join(' ')
 
-        .toLowerCase();
+      .toLowerCase();
 
 
 
