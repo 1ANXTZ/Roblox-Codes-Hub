@@ -96,12 +96,14 @@ function clone(data) {
   }
 
 
+
   return JSON.parse(
     JSON.stringify(data)
   );
 
 
 }
+
 
 
 
@@ -147,9 +149,9 @@ export const Api = {
 
 
     let games =
-      json.games || [];
-
-
+      Array.isArray(json.games)
+        ? json.games
+        : [];
 
 
 
@@ -160,50 +162,18 @@ export const Api = {
 
 
 
+    /*
+      If admin override exists,
+      it represents the complete
+      current list.
+    */
+
     if (Array.isArray(override)) {
 
-
-      const map =
-        new Map(
-          games.map(game => [
-            game.id,
-            game
-          ])
-        );
-
-
-
-      override.forEach(game => {
-
-
-        map.set(
-
-          game.id,
-
-          {
-
-            ...map.get(game.id),
-
-            ...game,
-
-          }
-
-        );
-
-
-      });
-
-
-
       games =
-        Array.from(
-          map.values()
-        );
-
+        override;
 
     }
-
-
 
 
 
@@ -217,14 +187,7 @@ export const Api = {
     );
 
 
-  },
-
-
-
-
-
-
-  async fetchCodes() {
+  },  async fetchCodes() {
 
 
 
@@ -263,7 +226,14 @@ export const Api = {
 
 
     let codes =
-      json.codes || {};
+      (
+        json.codes &&
+        typeof json.codes === 'object'
+      )
+
+      ? json.codes
+
+      : {};
 
 
 
@@ -276,6 +246,13 @@ export const Api = {
 
 
 
+
+
+    /*
+      Admin codes override replaces
+      the current code database.
+    */
+
     if (
 
       override &&
@@ -287,13 +264,8 @@ export const Api = {
     ) {
 
 
-      codes = {
-
-        ...codes,
-
-        ...override,
-
-      };
+      codes =
+        override;
 
 
     }
@@ -319,6 +291,7 @@ export const Api = {
 
 
 
+
   async fetchCodesForGame(gameId) {
 
 
@@ -337,6 +310,7 @@ export const Api = {
 
 
 
+
   invalidateCache() {
 
 
@@ -349,14 +323,7 @@ export const Api = {
     };
 
 
-  },
-
-
-
-
-
-
-  saveGamesOverride(games) {
+  },  saveGamesOverride(games) {
 
 
     try {
@@ -366,7 +333,9 @@ export const Api = {
 
         ADMIN_KEYS.GAMES_OVERRIDE,
 
-        JSON.stringify(games)
+        JSON.stringify(
+          games
+        )
 
       );
 
@@ -394,6 +363,7 @@ export const Api = {
 
 
 
+
   saveCodesOverride(codes) {
 
 
@@ -404,7 +374,9 @@ export const Api = {
 
         ADMIN_KEYS.CODES_OVERRIDE,
 
-        JSON.stringify(codes)
+        JSON.stringify(
+          codes
+        )
 
       );
 
@@ -419,6 +391,47 @@ export const Api = {
 
       console.warn(
         'Could not save codes override'
+      );
+
+
+    }
+
+
+  },
+
+
+
+
+
+
+
+  clearAdminOverrides() {
+
+
+    try {
+
+
+      localStorage.removeItem(
+        ADMIN_KEYS.GAMES_OVERRIDE
+      );
+
+
+
+      localStorage.removeItem(
+        ADMIN_KEYS.CODES_OVERRIDE
+      );
+
+
+
+      this.invalidateCache();
+
+
+
+    } catch {
+
+
+      console.warn(
+        'Could not clear admin overrides'
       );
 
 
