@@ -11,6 +11,7 @@ import { Storage } from './storage.js';
 import { Utils } from './utils.js';
 
 
+
 const els = {
 
   breadcrumbName:
@@ -111,7 +112,9 @@ async function init() {
       );
 
 
+
     if (hero) {
+
 
       hero.innerHTML = `
 
@@ -122,17 +125,24 @@ async function init() {
             🔍
           </div>
 
+
           <h3>
             Game not found
           </h3>
 
+
           <p>
             The game you're looking for doesn't exist or was removed.
+
             <a href="index.html"
                style="color:var(--accent-amber)">
+
               Back to home
+
             </a>.
+
           </p>
+
 
         </div>
 
@@ -153,7 +163,11 @@ async function init() {
 
 
   const pageDesc =
-    `Active codes for ${game.name}: redeem rewards before they expire. Updated ${Utils.relativeFromToday(game.lastVerified)}.`;
+    `Active codes for ${game.name}: redeem rewards before they expire. Updated ${
+      game.lastVerified
+        ? Utils.relativeFromToday(game.lastVerified)
+        : 'recently'
+    }.`;
 
 
 
@@ -201,7 +215,7 @@ async function init() {
 
   Utils.qs('#og-url')
     ?.setAttribute(
-      'content',
+      'href',
       pageUrl
     );
 
@@ -226,6 +240,7 @@ async function init() {
   renderGameInfo(game);
 
 
+
   renderCodes(
     game.id,
     codesMap[game.id] || []
@@ -238,13 +253,10 @@ async function init() {
   );
 
 
+
   UI.initBackToTop(
     els.backToTop
-  );
-
-
-
-  els.searchInput?.addEventListener(
+  );  els.searchInput?.addEventListener(
     'keydown',
     event => {
 
@@ -259,7 +271,10 @@ async function init() {
 
 
         window.location.href =
-          `index.html?q=${encodeURIComponent(event.target.value.trim())}`;
+
+          `index.html?q=${encodeURIComponent(
+            event.target.value.trim()
+          )}`;
 
 
       }
@@ -269,119 +284,183 @@ async function init() {
   );
 
 
-}function renderGameInfo(game) {
-
-
-  els.breadcrumbName &&
-    (els.breadcrumbName.textContent = game.name);
+}
 
 
 
-  if (els.thumb) {
-
-    els.thumb.style.background =
-      Utils.gradientFor(game.name);
+/* ---------------- Game info ---------------- */
 
 
-    els.thumb.innerHTML =
-      `<span aria-hidden="true">
-        ${Utils.initials(game.name)}
-      </span>`;
+function renderGameInfo(game) {
+
+
+  if (els.breadcrumbName) {
+
+    els.breadcrumbName.textContent =
+      game.name;
 
   }
 
 
 
-  els.category &&
-    (els.category.textContent = game.category);
+  if (els.thumb) {
+
+
+    els.thumb.style.background =
+
+      Utils.gradientFor(
+        game.name
+      );
 
 
 
-  els.name &&
-    (els.name.textContent = game.name);
+    els.thumb.innerHTML = `
+
+      <span aria-hidden="true">
+
+        ${Utils.initials(game.name)}
+
+      </span>
+
+    `;
+
+
+  }
 
 
 
-  els.desc &&
-    (els.desc.textContent = game.description);
+  if (els.category) {
+
+    els.category.textContent =
+      game.category;
+
+  }
 
 
 
-  els.activeCount &&
-    (els.activeCount.textContent =
-      `${game.activeCount} active code${game.activeCount === 1 ? '' : 's'}`
-    );
+  if (els.name) {
+
+    els.name.textContent =
+      game.name;
+
+  }
 
 
 
-  els.lastVerified &&
-    (els.lastVerified.textContent =
+  if (els.desc) {
+
+    els.desc.textContent =
+      game.description || '';
+
+  }
+
+
+
+  if (els.activeCount) {
+
+
+    els.activeCount.textContent =
+
+      `${game.activeCount} active code${
+        game.activeCount === 1
+          ? ''
+          : 's'
+      }`;
+
+
+  }
+
+
+
+  if (els.lastVerified) {
+
+
+    els.lastVerified.textContent =
+
       `Verified ${
         game.lastVerified
-          ? Utils.relativeFromToday(game.lastVerified)
+          ? Utils.relativeFromToday(
+              game.lastVerified
+            )
           : 'recently'
-      }`
-    );
+      }`;
 
 
+  }
 
-  const isFav =
-    Storage.isFavorite(
-      game.id
-    );
 
 
 
   if (els.favBtn) {
 
 
-    els.favBtn.classList.toggle(
-      'is-fav',
-      isFav
+    const updateFavoriteButton =
+
+      isFav => {
+
+
+        els.favBtn.classList.toggle(
+          'is-fav',
+          isFav
+        );
+
+
+
+        els.favBtn.textContent =
+
+          isFav
+            ? '★ Favorited'
+            : '☆ Favorite';
+
+
+      };
+
+
+
+    updateFavoriteButton(
+
+      Storage.isFavorite(
+        game.id
+      )
+
     );
-
-
-    els.favBtn.textContent =
-      isFav
-        ? '★ Favorited'
-        : '☆ Favorite';
 
 
 
     els.favBtn.addEventListener(
+
       'click',
+
       () => {
 
 
         const nowFav =
+
           Storage.toggleFavorite(
             game.id
           );
 
 
 
-        els.favBtn.classList.toggle(
-          'is-fav',
+        updateFavoriteButton(
           nowFav
         );
-
-
-
-        els.favBtn.textContent =
-          nowFav
-            ? '★ Favorited'
-            : '☆ Favorite';
 
 
 
         UI.showToast(
+
           nowFav
+
             ? 'Added to favorites'
+
             : 'Removed from favorites'
+
         );
 
 
       }
+
     );
 
 
@@ -392,20 +471,32 @@ async function init() {
 
 
   els.shareBtn?.addEventListener(
+
     'click',
+
     async () => {
+
 
 
       const shareData = {
 
+
         title:
+
           `${game.name} — Active codes`,
 
+
+
         text:
+
           `Check out the active codes for ${game.name} on Roblox Codes Hub`,
 
+
+
         url:
+
           window.location.href,
+
 
       };
 
@@ -424,7 +515,9 @@ async function init() {
 
         } catch {
 
-          // User cancelled share
+
+          // cancelled
+
 
         }
 
@@ -441,9 +534,11 @@ async function init() {
           );
 
 
+
           UI.showToast(
             'Link copied!'
           );
+
 
 
         } catch {
@@ -461,7 +556,9 @@ async function init() {
       }
 
 
+
     }
+
   );
 
 
@@ -470,6 +567,8 @@ async function init() {
 
 
 
+/* ---------------- Codes ---------------- */
+
 
 function renderCodes(
   gameId,
@@ -477,7 +576,17 @@ function renderCodes(
 ) {
 
 
+  if (els.revealExpired) {
+
+    els.revealExpired.hidden =
+      true;
+
+  }
+
+
+
   const withStatus =
+
     Codes.withStatus(
       rawCodes
     );
@@ -497,14 +606,19 @@ function renderCodes(
 
 
   const draw =
+
     list => {
 
 
-      if (!els.ticketGrid) return;
+
+      if (!els.ticketGrid) {
+        return;
+      }
 
 
 
       if (!list.length) {
+
 
 
         els.ticketGrid.innerHTML =
@@ -541,15 +655,19 @@ function renderCodes(
 
         {
 
+
           onCopy(code) {
 
 
             UI.showToast(
+
               `Code "${code}" copied!`
+
             );
 
 
           }
+
 
         }
 
@@ -566,68 +684,72 @@ function renderCodes(
 
 
 
-  if (expired.length) {
-
-
-    if (els.revealExpired) {
-
-
-      els.revealExpired.hidden =
-        false;
+  if (expired.length && els.revealExpired) {
 
 
 
-      els.revealExpired.textContent =
-        `Show ${expired.length} expired code${expired.length === 1 ? '' : 's'}`;
+    els.revealExpired.hidden =
+      false;
 
 
 
-      let showing =
-        false;
+    els.revealExpired.textContent =
+
+      `Show ${expired.length} expired code${
+        expired.length === 1
+          ? ''
+          : 's'
+      }`;
 
 
 
-      els.revealExpired.addEventListener(
-        'click',
-        () => {
-
-
-          showing =
-            !showing;
+    let showing = false;
 
 
 
-          draw(
-            showing
-              ? withStatus
-              : visible
-          );
+    els.revealExpired.addEventListener(
+
+      'click',
+
+      () => {
 
 
 
-          els.revealExpired.textContent =
-            showing
-              ? 'Hide expired codes'
-              : `Show ${expired.length} expired code${expired.length === 1 ? '' : 's'}`;
-
-
-        }
-      );
-
-
-    }
+        showing =
+          !showing;
 
 
 
-  } else {
+        draw(
+
+          showing
+
+            ? withStatus
+
+            : visible
+
+        );
 
 
-    if (els.revealExpired) {
 
-      els.revealExpired.hidden =
-        true;
+        els.revealExpired.textContent =
 
-    }
+
+          showing
+
+            ? 'Hide expired codes'
+
+            : `Show ${expired.length} expired code${
+                expired.length === 1
+                  ? ''
+                  : 's'
+              }`;
+
+
+
+      }
+
+    );
 
 
   }
@@ -638,10 +760,10 @@ function renderCodes(
 
 
 
-
 init()
 
   .catch(
+
     error => {
 
 
@@ -650,11 +772,16 @@ init()
       );
 
 
+
       UI.showToast(
+
         'Error loading game data.',
+
         'error'
+
       );
 
 
     }
+
   );
