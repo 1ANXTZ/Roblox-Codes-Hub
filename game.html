@@ -1,1 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">Active codes | Roblox Codes Hub</title>
+  <meta id="meta-description" name="description" content="Active, verified codes, updated automatically.">
+  <!-- TODO before deploy: replace https://your-domain-here.com with your real production domain everywhere it appears (this file, index.html, robots.txt, sitemap.xml). -->
+  <link id="canonical-link" rel="canonical" href="https://your-domain-here.com/game.html">
+  <meta name="theme-color" content="#0B0E14" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F3F1EC" media="(prefers-color-scheme: light)">
 
+  <meta property="og:type" content="website">
+  <meta id="og-title" property="og:title" content="Active codes | Roblox Codes Hub">
+  <meta id="og-description" property="og:description" content="Active, verified codes, updated automatically.">
+  <meta id="og-url" property="og:url" content="https://your-domain-here.com/game.html">
+  <meta property="og:site_name" content="Roblox Codes Hub">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://your-domain-here.com/assets/images/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Roblox Codes Hub — always-active codes for your favorite Roblox games">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta id="twitter-title" name="twitter:title" content="Active codes | Roblox Codes Hub">
+  <meta id="twitter-description" name="twitter:description" content="Active, verified codes, updated automatically.">
+  <meta name="twitter:image" content="https://your-domain-here.com/assets/images/og-image.png">
+  <meta name="twitter:image:alt" content="Roblox Codes Hub — always-active codes for your favorite Roblox games">
+
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="logo" aria-label="Roblox Codes Hub — homepage">
+        <span class="logo__mark" aria-hidden="true">RC</span>
+        <span class="logo__text">Roblox Codes<span>Hub</span></span>
+      </a>
+
+      <div class="search-bar">
+        <svg class="search-bar__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+          <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <label for="search-input" class="visually-hidden">Search another game</label>
+        <input id="search-input" type="search" placeholder="Search another game... (Enter)" autocomplete="off">
+      </div>
+
+      <div class="header-actions">
+        <button id="theme-toggle" class="icon-btn" aria-pressed="false" aria-label="Toggle light/dark theme" title="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3V5M12 19V21M5 12H3M21 12H19M6.3 6.3L4.9 4.9M19.1 19.1L17.7 17.7M17.7 6.3L19.1 4.9M4.9 19.1L6.3 17.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="4.3" stroke="currentColor" stroke-width="1.7"/>
+          </svg>
+        </button>
+        <a href="admin.html" class="icon-btn" title="Admin panel" aria-label="Admin panel">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a> / <span id="breadcrumb-name">Loading…</span>
+      </nav>
+
+      <section class="game-hero">
+        <div class="game-hero__thumb" id="game-thumb" aria-hidden="true"></div>
+        <div class="game-hero__info">
+          <span class="game-card__category" id="game-category"></span>
+          <h1 id="game-name">Loading…</h1>
+          <p class="game-hero__desc" id="game-desc"></p>
+          <div class="game-hero__meta-row">
+            <span id="game-active-count" class="hero__stat-label"></span>
+            <span id="game-last-verified" class="hero__stat-label"></span>
+          </div>
+          <div class="game-hero__actions">
+            <button id="fav-btn" class="btn btn--ghost">☆ Favorite</button>
+            <button id="share-btn" class="btn btn--ghost">↗ Share</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="codes-section">
+        <div class="codes-section__head">
+          <h2>Active codes</h2>
+          <div class="legend">
+            <span><span class="legend__dot" style="background:var(--status-active)"></span>Active</span>
+            <span><span class="legend__dot" style="background:var(--status-expiring)"></span>Expiring</span>
+            <span><span class="legend__dot" style="background:var(--status-expired)"></span>Expired</span>
+          </div>
+        </div>
+
+        <div class="ticket-grid" id="ticket-grid" aria-live="polite"></div>
+        <div class="codes-empty" id="codes-empty">No active codes right now — check back soon, we update frequently.</div>
+        <div class="reveal-expired" id="reveal-expired" hidden></div>
+      </section>
+
+      <section class="howto">
+        <h2>How to redeem codes</h2>
+        <div class="howto__steps">
+          <div class="howto__step">
+            <div class="howto__step-num">Step 1</div>
+            <p>Open the game on Roblox and look for the "Codes" button or menu (usually near the shop or settings).</p>
+          </div>
+          <div class="howto__step">
+            <div class="howto__step-num">Step 2</div>
+            <p>Copy an active code from this page using the "Copy" button next to it. It's automatically marked as used.</p>
+          </div>
+          <div class="howto__step">
+            <div class="howto__step-num">Step 3</div>
+            <p>Paste the code into the game's field and confirm. The rewards land straight in your inventory.</p>
+          </div>
+          <div class="howto__step">
+            <div class="howto__step-num">Step 4</div>
+            <p>Codes are case-sensitive in some games — copy instead of typing them to avoid mistakes.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <span>© 2026 Roblox Codes Hub. Not affiliated with Roblox Corporation.</span>
+      <span><a href="index.html">Back to all games</a></span>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="back-to-top" aria-label="Back to top">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <script type="module" src="js/page-game.js"></script>
+</body>
+</html>
