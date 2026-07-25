@@ -295,17 +295,17 @@ export const UI = {
     `;
 
 
-
     const favBtn =
       card.querySelector(
         '.game-card__fav'
-      );    favBtn?.addEventListener(
+      );
+
+
+    favBtn?.addEventListener(
       'click',
       event => {
 
-
         event.preventDefault();
-
 
 
         const nowFav =
@@ -314,24 +314,20 @@ export const UI = {
           );
 
 
-
         favBtn.classList.toggle(
           'is-fav',
           nowFav
         );
 
 
-
         favBtn.textContent =
           nowFav ? '★' : '☆';
-
 
 
         favBtn.setAttribute(
           'aria-pressed',
           String(nowFav)
         );
-
 
 
         onToggleFavorite?.(
@@ -344,14 +340,9 @@ export const UI = {
     );
 
 
-
     return card;
 
-  },
-
-
-
-  /* ---------------- Code cards ---------------- */
+  },  /* ---------------- Code cards ---------------- */
 
 
   renderCodes(
@@ -593,11 +584,7 @@ export const UI = {
     }
 
 
-  },
-
-
-
-  /* ---------------- Toast ---------------- */
+  },  /* ---------------- Toast ---------------- */
 
 
   showToast(
@@ -689,9 +676,7 @@ export const UI = {
 
 
     const savedTheme =
-      localStorage.getItem(
-        'theme'
-      );
+      Storage.getTheme();
 
 
 
@@ -717,9 +702,10 @@ export const UI = {
 
 
 
-        localStorage.setItem(
-          'theme',
-          light ? 'light' : 'dark'
+        Storage.setTheme(
+          light
+            ? 'light'
+            : 'dark'
         );
 
 
