@@ -1,47 +1,83 @@
 /**
  * codes.js
  * Business rules for codes: status computed by date, counts,
- * and the core product policy: "don't leave expired codes
- * visible by default".
+ * and visibility policy.
  */
 
 import { Utils } from './utils.js';
 
 export const Codes = {
+
   /**
-   * Attaches the computed status (active | expiring | expired) to each code.
+   * Attaches computed status to each code.
    */
   withStatus(codes) {
     return codes
-      .map(c => ({ ...c, status: Utils.getCodeStatus(c.expires) }))
+      .map(code => ({
+        ...code,
+        status: Utils.getCodeStatus(code.expires)
+      }))
       .sort((a, b) => {
-        // Sort: active first, then expiring, expired last.
-        const order = { active: 0, expiring: 1, expired: 2 };
+
+        const order = {
+          active: 0,
+          expiring: 1,
+          expired: 2
+        };
+
         return order[a.status] - order[b.status];
+
       });
   },
 
-  countByStatus(codes, status) {
-    return codes.filter(c => Utils.getCodeStatus(c.expires) === status).length;
-  },
 
   /**
-   * By default, the product policy is to hide expired codes.
-   * This function returns the visible codes and, separately, the hidden
-   * ones, so the UI can offer an optional "show expired" toggle.
+   * Counts codes by computed status.
    */
-  splitVisible(codesWithStatus) {
-    return {
-      visible: codesWithStatus.filter(c => c.status !== 'expired'),
-      expired: codesWithStatus.filter(c => c.status === 'expired'),
-    };
+  countByStatus(codes, status) {
+    return codes.filter(code =>
+      Utils.getCodeStatus(code.expires) === status
+    ).length;
   },
 
-  mostRecentVerification(codes) {
-    if (!codes.length) return null;
-    return codes.reduce((latest, c) => {
-      if (!c.verified) return latest;
-      return !latest || c.verified > latest ? c.verified : latest;
-    }, null);
+
+  /**
+   * Separates visible codes from expired codes.
+   */
+  splitVisible(codesWithStatus) {
+
+    return {
+      visible: codesWithStatus.filter(
+        code => code.status !== 'expired'
+      ),
+
+      expired: codesWithStatus.filter(
+        code => code.status === 'expired'
+      ),
+    };
+
   },
+
+
+  /**
+   * Gets the latest verification date.
+   */
+  mostRecentVerification(codes) {
+
+    if (!codes.length) return null;
+
+    return codes.reduce((latest, code) => {
+
+      if (!code.verified) return latest;
+
+      if (!latest || code.verified > latest) {
+        return code.verified;
+      }
+
+      return latest;
+
+    }, null);
+
+  },
+
 };
