@@ -1,1 +1,43 @@
+# Netlify deploy config for a static multi-page site (no SPA routing needed).
+# Netlify automatically serves /404.html for any unmatched path, so no
+# catch-all redirect is required here.
 
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), camera=(), microphone=()"
+
+# Extra defense-in-depth: tell crawlers not to index the admin panel
+# even if robots.txt is ignored or bypassed.
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+# Static assets can be cached aggressively; HTML/JSON should revalidate
+# so code/game updates show up without a hard cache-bust.
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
