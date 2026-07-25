@@ -1,8 +1,7 @@
 /**
  * codes.js
  * Business rules for codes: status computed by date, counts,
- * and the core product policy: "don't leave expired codes
- * visible by default".
+ * and visibility policy.
  */
 
 import { Utils } from './utils.js';
@@ -12,12 +11,30 @@ export const Codes = {
 
 
   /**
-   * Attaches the computed status (active | expiring | expired)
-   * to each code.
+   * Adds computed status to every code.
    */
-  withStatus(codes) {
+  withStatus(codes = []) {
+
+
+    if (!Array.isArray(codes)) {
+      return [];
+    }
+
+
+    const order = {
+
+      active: 0,
+
+      expiring: 1,
+
+      expired: 2,
+
+    };
+
+
 
     return codes
+
       .map(code => ({
 
         ...code,
@@ -28,51 +45,58 @@ export const Codes = {
           ),
 
       }))
-      .sort((a, b) => {
 
 
-        const order = {
+      .sort((a, b) =>
 
-          active: 0,
+        (order[a.status] ?? 99) -
+        (order[b.status] ?? 99)
 
-          expiring: 1,
+      );
 
-          expired: 2,
-
-        };
-
-
-        return order[a.status] - order[b.status];
-
-
-      });
 
   },
+
+
 
 
 
   /**
    * Counts codes by status.
    */
-  countByStatus(codes, status) {
+  countByStatus(codes = [], status) {
+
+
+    if (!Array.isArray(codes)) {
+      return 0;
+    }
+
+
 
     return codes.filter(code =>
 
       (
         code.status ??
-        Utils.getCodeStatus(code.expires)
+        Utils.getCodeStatus(
+          code.expires
+        )
+
       ) === status
 
     ).length;
+
 
   },
 
 
 
+
+
   /**
-   * Separates visible codes from expired codes.
+   * Splits visible and expired codes.
    */
-  splitVisible(codesWithStatus) {
+  splitVisible(codesWithStatus = []) {
+
 
     return {
 
@@ -94,16 +118,22 @@ export const Codes = {
 
     };
 
+
   },
 
 
 
-  /**
-   * Gets the latest verification date.
-   */
-  mostRecentVerification(codes) {
 
-    if (!codes.length) return null;
+
+  /**
+   * Gets latest verification date.
+   */
+  mostRecentVerification(codes = []) {
+
+
+    if (!codes.length) {
+      return null;
+    }
 
 
 
@@ -112,16 +142,15 @@ export const Codes = {
 
 
         if (!code.verified) {
-
           return latest;
-
         }
 
 
 
         if (
           !latest ||
-          code.verified > latest
+          new Date(code.verified) >
+          new Date(latest)
         ) {
 
           return code.verified;
@@ -134,8 +163,11 @@ export const Codes = {
 
 
       },
+
       null
+
     );
+
 
   },
 
