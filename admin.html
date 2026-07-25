@@ -1,1 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel | Roblox Codes Hub</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0B0E14">
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar__logo">Roblox Codes<span>Hub</span> · Admin</div>
+      <button class="admin-nav-btn is-active" data-panel="panel-games">🎮 Games</button>
+      <button class="admin-nav-btn" data-panel="panel-codes">🎟️ Codes</button>
+      <button class="admin-nav-btn" data-panel="panel-categories">🏷️ Categories</button>
+      <div style="margin-top:auto; padding-top:24px; display:flex; flex-direction:column; gap:8px;">
+        <button id="lock-admin-btn" class="admin-nav-btn" style="display:block; width:100%;">🔒 Lock panel</button>
+        <a href="index.html" class="admin-nav-btn" style="display:block;">← Back to site</a>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+
+      <section class="admin-panel is-active" id="panel-games">
+        <h1>Manage games</h1>
+        <p class="admin-sub">This demo saves changes in your browser (localStorage). When connecting a real API, just swap the <code>Api.saveGamesOverride()</code> calls for HTTP requests.</p>
+
+        <div class="admin-card">
+          <h2 id="game-form-title">Add new game</h2>
+          <form id="game-form">
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="f-name">Game name</label>
+                <input id="f-name" name="name" required placeholder="E.g: Anime Last Stand">
+              </div>
+              <div class="form-field">
+                <label for="f-category">Category</label>
+                <input id="f-category" name="category" list="category-options" placeholder="E.g: Tower Defense" required>
+                <datalist id="category-options"></datalist>
+              </div>
+              <div class="form-field">
+                <label for="f-popularity">Popularity (0-100)</label>
+                <input id="f-popularity" name="popularity" type="number" min="0" max="100" value="50">
+              </div>
+              <div class="form-field" style="grid-column: 1 / -1;">
+                <label for="f-desc">Description</label>
+                <textarea id="f-desc" name="description" rows="2" placeholder="A short blurb about the game"></textarea>
+              </div>
+              <div class="form-field" style="grid-column: 1 / -1;">
+                <label for="f-tags">Tags (comma separated)</label>
+                <input id="f-tags" name="tags" placeholder="anime, tower-defense, gacha">
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn--primary">Save game</button>
+              <button type="button" id="cancel-edit-btn" class="btn btn--ghost" hidden>Cancel edit</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h2>Registered games</h2>
+          <table class="admin-table" id="games-table">
+            <thead>
+              <tr><th>Name</th><th>Category</th><th>Codes</th><th>Popularity</th><th>Actions</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <p class="admin-empty" id="games-empty" style="display:none;">No games registered yet.</p>
+        </div>
+      </section>
+
+      <section class="admin-panel" id="panel-codes">
+        <h1>Manage codes</h1>
+        <p class="admin-sub">Codes with an expiration date in the past disappear from the site automatically — no need to remove them manually, but you can do so here if you want.</p>
+
+        <div class="admin-card">
+          <h2>Add code</h2>
+          <form id="code-form">
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="c-game">Game</label>
+                <select id="c-game" name="gameId"></select>
+              </div>
+              <div class="form-field">
+                <label for="c-code">Code</label>
+                <input id="c-code" name="code" required placeholder="E.g: THANKS2026">
+              </div>
+              <div class="form-field">
+                <label for="c-reward">Reward</label>
+                <input id="c-reward" name="reward" required placeholder="E.g: 500 Gems">
+              </div>
+              <div class="form-field">
+                <label for="c-expires">Expires on (optional)</label>
+                <input id="c-expires" name="expires" type="date">
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn--primary">Add code</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h2>Registered codes</h2>
+          <table class="admin-table" id="codes-table">
+            <thead>
+              <tr><th>Game</th><th>Code</th><th>Reward</th><th>Expires on</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <p class="admin-empty" id="codes-empty-admin" style="display:none;">No codes registered yet.</p>
+        </div>
+      </section>
+
+      <section class="admin-panel" id="panel-categories">
+        <h1>Manage categories</h1>
+        <p class="admin-sub">Categories are derived directly from the registered games. Rename a category to update it across all linked games at once.</p>
+
+        <div class="admin-card">
+          <table class="admin-table" id="categories-table">
+            <thead><tr><th>Category</th><th>Games</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="js/admin-auth.js"></script>
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
