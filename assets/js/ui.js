@@ -27,6 +27,7 @@ export const UI = {
 
   /* ---------------- Categories ---------------- */
 
+
   renderCategoryChips(
     container,
     categories,
@@ -57,6 +58,7 @@ export const UI = {
         document.createElement('button');
 
 
+
       chip.className =
         'chip' +
         (
@@ -64,6 +66,7 @@ export const UI = {
             ? ' is-active'
             : ''
         );
+
 
 
       chip.textContent =
@@ -77,6 +80,7 @@ export const UI = {
         'role',
         'tab'
       );
+
 
 
       chip.setAttribute(
@@ -115,6 +119,7 @@ export const UI = {
 
 
     if (!container) return;
+
 
 
     container.innerHTML = '';
@@ -203,7 +208,7 @@ export const UI = {
 
 
 
-    card.innerHTML = `    card.innerHTML = `
+    card.innerHTML = `
 
       <a
         href="game.html?id=${encodeURIComponent(game.id)}"
@@ -232,17 +237,16 @@ export const UI = {
       </a>
 
 
-
       <button
         class="game-card__fav${isFav ? ' is-fav' : ''}"
         aria-pressed="${isFav}"
         aria-label="Favorite ${game.name}"
+        type="button"
       >
 
         ${isFav ? '★' : '☆'}
 
       </button>
-
 
 
       <div class="game-card__body">
@@ -265,7 +269,6 @@ export const UI = {
         </a>
 
 
-
         <span class="game-card__meta">
 
           Updated ${
@@ -275,7 +278,6 @@ export const UI = {
           }
 
         </span>
-
 
 
         <a
@@ -297,11 +299,7 @@ export const UI = {
     const favBtn =
       card.querySelector(
         '.game-card__fav'
-      );
-
-
-
-    favBtn?.addEventListener(
+      );    favBtn?.addEventListener(
       'click',
       event => {
 
@@ -379,9 +377,7 @@ export const UI = {
       container.innerHTML = `
 
         <p class="empty-state">
-
           No codes available.
-
         </p>
 
       `;
@@ -462,11 +458,9 @@ export const UI = {
       </div>
 
 
-
       <code class="code-card__value">
         ${code.code}
       </code>
-
 
 
       <button
@@ -539,6 +533,13 @@ export const UI = {
             'Error';
 
 
+
+          UI.showToast(
+            'Could not copy code',
+            'error'
+          );
+
+
         }
 
 
@@ -550,3 +551,233 @@ export const UI = {
     return card;
 
   },
+
+
+
+  /* ---------------- Stats ---------------- */
+
+
+  renderStats(
+    elements,
+    stats
+  ) {
+
+
+    if (!stats) return;
+
+
+
+    if (elements.games) {
+
+      elements.games.textContent =
+        stats.games ?? 0;
+
+    }
+
+
+
+    if (elements.codes) {
+
+      elements.codes.textContent =
+        stats.codes ?? 0;
+
+    }
+
+
+
+    if (elements.categories) {
+
+      elements.categories.textContent =
+        stats.categories ?? 0;
+
+    }
+
+
+  },
+
+
+
+  /* ---------------- Toast ---------------- */
+
+
+  showToast(
+    message,
+    type = 'success'
+  ) {
+
+
+    let toast =
+      document.querySelector(
+        '.toast'
+      );
+
+
+
+    if (!toast) {
+
+
+      toast =
+        document.createElement(
+          'div'
+        );
+
+
+
+      toast.className =
+        'toast';
+
+
+
+      document.body.appendChild(
+        toast
+      );
+
+
+    }
+
+
+
+    toast.textContent =
+      message;
+
+
+
+    toast.dataset.type =
+      type;
+
+
+
+    toast.classList.add(
+      'show'
+    );
+
+
+
+    clearTimeout(
+      this.toastTimer
+    );
+
+
+
+    this.toastTimer =
+      setTimeout(
+        () => {
+
+          toast.classList.remove(
+            'show'
+          );
+
+        },
+        2500
+      );
+
+
+  },
+
+
+
+  /* ---------------- Theme ---------------- */
+
+
+  initThemeToggle(
+    button
+  ) {
+
+
+    if (!button) return;
+
+
+
+    const savedTheme =
+      localStorage.getItem(
+        'theme'
+      );
+
+
+
+    if (savedTheme === 'light') {
+
+      document.documentElement.classList.add(
+        'light'
+      );
+
+    }
+
+
+
+    button.addEventListener(
+      'click',
+      () => {
+
+
+        const light =
+          document.documentElement.classList.toggle(
+            'light'
+          );
+
+
+
+        localStorage.setItem(
+          'theme',
+          light ? 'light' : 'dark'
+        );
+
+
+      }
+    );
+
+
+  },
+
+
+
+  /* ---------------- Back to top ---------------- */
+
+
+  initBackToTop(
+    button
+  ) {
+
+
+    if (!button) return;
+
+
+
+    window.addEventListener(
+      'scroll',
+      () => {
+
+
+        button.classList.toggle(
+          'is-visible',
+          window.scrollY > 500
+        );
+
+
+      }
+    );
+
+
+
+    button.addEventListener(
+      'click',
+      () => {
+
+
+        window.scrollTo({
+
+          top: 0,
+
+          behavior: 'smooth'
+
+        });
+
+
+      }
+    );
+
+
+  }
+
+
+};
