@@ -7,50 +7,115 @@
 
 import { Codes } from './codes.js';
 
+
 export const Games = {
+
 
   /**
    * Enriches each game with computed data (active codes, last verified).
    */
   withComputedFields(games, codesMap) {
+
     return games.map(game => {
-      const codes = codesMap[game.id] || [];
+
+
+      const codes =
+        codesMap[game.id] || [];
+
+
 
       const activeCount =
-        Codes.countByStatus(codes, 'active') +
-        Codes.countByStatus(codes, 'expiring');
 
-      const lastVerified = Codes.mostRecentVerification(codes);
+        Codes.countByStatus(
+          codes,
+          'active'
+        )
+
+        +
+
+        Codes.countByStatus(
+          codes,
+          'expiring'
+        );
+
+
+
+      const lastVerified =
+        Codes.mostRecentVerification(
+          codes
+        );
+
+
 
       return {
+
         ...game,
+
         activeCount,
+
         lastVerified,
+
       };
+
+
     });
+
   },
+
 
 
   /**
    * Extracts the list of categories present in the games, with counts.
    */
   extractCategories(games) {
-    const counts = new Map();
+
+
+    const counts =
+      new Map();
+
+
 
     games.forEach(game => {
+
+
+      const category =
+        game.category || 'Other';
+
+
+
       counts.set(
-        game.category,
-        (counts.get(game.category) || 0) + 1
+
+        category,
+
+        (counts.get(category) || 0) + 1
+
       );
+
+
     });
 
-    return Array.from(counts.entries())
+
+
+    return Array.from(
+      counts.entries()
+    )
+
       .map(([name, count]) => ({
+
         name,
+
         count,
+
       }))
-      .sort((a, b) => b.count - a.count);
+
+      .sort(
+        (a, b) =>
+          b.count - a.count
+      );
+
+
   },
+
 
 
   /**
@@ -58,44 +123,90 @@ export const Games = {
    */
   sort(games, mode) {
 
-    const list = [...games];
+
+    const list =
+      [...games];
+
+
 
     switch (mode) {
 
+
       case 'popular':
+
         return list.sort(
-          (a, b) => b.popularity - a.popularity
+
+          (a, b) =>
+
+            (b.popularity ?? 0) -
+
+            (a.popularity ?? 0)
+
         );
+
 
 
       case 'recent':
+
         return list.sort(
+
           (a, b) =>
-            new Date(b.lastVerified || 0) -
-            new Date(a.lastVerified || 0)
+
+            new Date(
+              b.lastVerified || 0
+            )
+
+            -
+
+            new Date(
+              a.lastVerified || 0
+            )
+
         );
+
 
 
       case 'az':
+
         return list.sort(
+
           (a, b) =>
-            a.name.localeCompare(b.name, 'en-US')
+
+            a.name.localeCompare(
+              b.name,
+              'en-US'
+            )
+
         );
 
 
+
       default:
+
         return list;
+
+
     }
+
+
   },
+
 
 
   /**
    * Finds a game by ID.
    */
   findById(games, id) {
+
     return games.find(
-      game => game.id === id
+
+      game =>
+
+        game.id === id
+
     );
+
   },
+
 
 };
