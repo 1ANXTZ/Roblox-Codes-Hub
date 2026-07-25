@@ -1,0 +1,105 @@
+/* =========================================================
+   ROBLOX CODES HUB — DESIGN TOKENS
+   Concept: "redemption ticket" — every code is a physical
+   coupon with perforated edges, like an arcade ticket.
+   Palette inspired by arcade cabinets + neon, not the
+   usual Discord purple or Roblox light blue.
+   ========================================================= */
+
+:root {
+  /* --- Color: "arcade cabinet" base --- */
+  --bg-void: #0B0E14;        /* main background, near-black blue */
+  --bg-surface: #12161F;     /* cards and surfaces */
+  --bg-surface-raised: #1A1F2B; /* hover / raised */
+  --bg-inset: #080A0F;       /* input fields, recessed areas */
+
+  --line: #232838;           /* subtle borders */
+  --line-strong: #33394D;
+
+  --text-primary: #EDEFF5;
+  --text-muted: #8B92A8;
+  --text-faint: #565D73;
+
+  /* Main accent: arcade amber (ticket redemption) */
+  --accent-amber: #FFB020;
+  --accent-amber-dim: #7A5716;
+
+  /* Secondary accent: "high score" cyan */
+  --accent-cyan: #33E6C9;
+  --accent-cyan-dim: #145E52;
+
+  /* Code status */
+  --status-active: #33E6A0;
+  --status-active-bg: rgba(51, 230, 160, 0.12);
+  --status-expiring: #FFC93D;
+  --status-expiring-bg: rgba(255, 201, 61, 0.12);
+  --status-expired: #FF5A6E;
+  --status-expired-bg: rgba(255, 90, 110, 0.12);
+
+  /* --- Typography --- */
+  /* Display: blocky/geometric, nods to Roblox's "blocks" without being on-the-nose */
+  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  /* Body: readable, neutral */
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  /* Utility/code: monospace — makes codes look like real redeemable codes */
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  --fs-2xs: 0.6875rem;
+  --fs-xs: 0.8125rem;
+  --fs-sm: 0.9375rem;
+  --fs-base: 1rem;
+  --fs-md: 1.125rem;
+  --fs-lg: 1.5rem;
+  --fs-xl: 2rem;
+  --fs-2xl: 2.75rem;
+  --fs-3xl: 3.75rem;
+
+  /* --- Spacing --- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  --sp-9: 96px;
+
+  /* --- Radii and shadows --- */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-card: 0 4px 20px rgba(0,0,0,0.35);
+  --shadow-glow-amber: 0 0 0 1px rgba(255,176,32,0.4), 0 0 24px rgba(255,176,32,0.15);
+  --shadow-glow-cyan: 0 0 0 1px rgba(51,230,201,0.4), 0 0 24px rgba(51,230,201,0.15);
+
+  --header-h: 72px;
+  --max-width: 1280px;
+  --transition-fast: 150ms ease;
+  --transition-med: 260ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* Light theme (optional, toggleable) */
+:root[data-theme="light"] {
+  --bg-void: #F3F1EC;
+  --bg-surface: #FFFFFF;
+  --bg-surface-raised: #F7F5F0;
+  --bg-inset: #ECEAE3;
+
+  --line: #E1DED4;
+  --line-strong: #CFCBBE;
+
+  --text-primary: #16181F;
+  --text-muted: #5B5F6E;
+  --text-faint: #8B8F9E;
+
+  --accent-amber-dim: #FFE8B8;
+  --accent-cyan-dim: #C8F5EE;
+
+  --status-active-bg: rgba(20, 150, 100, 0.12);
+  --status-expiring-bg: rgba(180, 130, 10, 0.14);
+  --status-expired-bg: rgba(200, 40, 60, 0.1);
+  --status-active: #14965F;
+  --status-expiring: #B4820A;
+  --status-expired: #C8283C;
+}
