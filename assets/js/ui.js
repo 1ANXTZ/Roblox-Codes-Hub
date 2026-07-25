@@ -61,15 +61,15 @@ export const UI = {
         'chip' +
         (
           category.name === activeCategory
-          ? ' is-active'
-          : ''
+            ? ' is-active'
+            : ''
         );
 
 
       chip.textContent =
         category.count != null
-        ? `${category.name} (${category.count})`
-        : category.name;
+          ? `${category.name} (${category.count})`
+          : category.name;
 
 
 
@@ -126,8 +126,7 @@ export const UI = {
 
       if (emptyStateEl) {
 
-        emptyStateEl.hidden =
-          false;
+        emptyStateEl.hidden = false;
 
       }
 
@@ -140,8 +139,7 @@ export const UI = {
 
     if (emptyStateEl) {
 
-      emptyStateEl.hidden =
-        true;
+      emptyStateEl.hidden = true;
 
     }
 
@@ -201,7 +199,11 @@ export const UI = {
     const isFav =
       Storage.isFavorite(
         game.id
-      );    card.innerHTML = `
+      );
+
+
+
+    card.innerHTML = `    card.innerHTML = `
 
       <a
         href="game.html?id=${encodeURIComponent(game.id)}"
@@ -247,7 +249,7 @@ export const UI = {
 
 
         <span class="game-card__category">
-          ${game.category}
+          ${game.category || 'Other'}
         </span>
 
 
@@ -265,11 +267,13 @@ export const UI = {
 
 
         <span class="game-card__meta">
+
           Updated ${
             game.lastVerified
-            ? Utils.relativeFromToday(game.lastVerified)
-            : '—'
+              ? Utils.relativeFromToday(game.lastVerified)
+              : '—'
           }
+
         </span>
 
 
@@ -305,6 +309,7 @@ export const UI = {
         event.preventDefault();
 
 
+
         const nowFav =
           Storage.toggleFavorite(
             game.id
@@ -331,7 +336,10 @@ export const UI = {
 
 
 
-        onToggleFavorite?.();
+        onToggleFavorite?.(
+          game.id,
+          nowFav
+        );
 
 
       }
@@ -356,7 +364,9 @@ export const UI = {
     } = {}
   ) {
 
+
     if (!container) return;
+
 
 
     container.innerHTML = '';
@@ -365,11 +375,17 @@ export const UI = {
 
     if (!codes.length) {
 
+
       container.innerHTML = `
+
         <p class="empty-state">
+
           No codes available.
+
         </p>
+
       `;
+
 
       return;
 
@@ -384,14 +400,18 @@ export const UI = {
 
     codes.forEach(code => {
 
+
       frag.appendChild(
+
         this.buildCodeCard(
           code,
           {
             onCopy
           }
         )
+
       );
+
 
     });
 
@@ -413,6 +433,7 @@ export const UI = {
 
     const card =
       document.createElement('article');
+
 
 
     card.className =
@@ -457,7 +478,6 @@ export const UI = {
 
       </button>
 
-
     `;
 
 
@@ -482,6 +502,7 @@ export const UI = {
           );
 
 
+
           copyBtn.textContent =
             'Copied!';
 
@@ -489,6 +510,12 @@ export const UI = {
 
           UI.showToast(
             'Code copied!'
+          );
+
+
+
+          onCopy?.(
+            code.code
           );
 
 
@@ -503,8 +530,6 @@ export const UI = {
             1500
           );
 
-
-          onCopy?.(code.code);
 
 
         } catch {
@@ -525,241 +550,3 @@ export const UI = {
     return card;
 
   },
-
-
-
-  /* ---------------- Stats ---------------- */
-
-
-  renderStats(
-    elements,
-    stats
-  ) {
-
-    if (!stats) return;
-
-
-
-    elements.games &&
-      (elements.games.textContent = stats.games ?? 0);
-
-
-
-    elements.codes &&
-      (elements.codes.textContent = stats.codes ?? 0);
-
-
-
-    elements.categories &&
-      (elements.categories.textContent = stats.categories ?? 0);
-
-
-  },
-
-
-
-  /* ---------------- Toast ---------------- */
-
-
-  showToast(
-    message,
-    type = 'success'
-  ) {
-
-
-    let toast =
-      document.querySelector(
-        '.toast'
-      );
-
-
-
-    if (!toast) {
-
-
-      toast =
-        document.createElement(
-          'div'
-        );
-
-
-      toast.className =
-        'toast';
-
-
-
-      document.body.appendChild(
-        toast
-      );
-
-    }
-
-
-
-    toast.textContent =
-      message;
-
-
-
-    toast.dataset.type =
-      type;
-
-
-
-    toast.classList.add(
-      'show'
-    );
-
-
-
-    clearTimeout(
-      this.toastTimer
-    );
-
-
-
-    this.toastTimer =
-      setTimeout(
-        () => {
-
-          toast.classList.remove(
-            'show'
-          );
-
-        },
-        2500
-      );
-
-
-  },
-
-
-
-  /* ---------------- Loading ---------------- */
-
-
-  setLoading(
-    container,
-    loading = true
-  ) {
-
-    if (!container) return;
-
-
-
-    container.classList.toggle(
-      'is-loading',
-      loading
-    );
-
-  },
-
-
-
-  /* ---------------- Theme ---------------- */
-
-
-  initThemeToggle(
-    button
-  ) {
-
-    if (!button) return;
-
-
-
-    const savedTheme =
-      localStorage.getItem(
-        'theme'
-      );
-
-
-
-    if (savedTheme === 'light') {
-
-      document.documentElement
-        .classList.add('light');
-
-    }
-
-
-
-    button.addEventListener(
-      'click',
-      () => {
-
-
-        const light =
-          document.documentElement
-            .classList.toggle(
-              'light'
-            );
-
-
-
-        localStorage.setItem(
-          'theme',
-          light ? 'light' : 'dark'
-        );
-
-
-      }
-    );
-
-
-  },
-
-
-
-  /* ---------------- Back to top ---------------- */
-
-
-  initBackToTop(
-    button
-  ) {
-
-
-    if (!button) return;
-
-
-
-    window.addEventListener(
-      'scroll',
-      () => {
-
-
-        button.classList.toggle(
-
-          'is-visible',
-
-          window.scrollY > 500
-
-        );
-
-
-      }
-    );
-
-
-
-    button.addEventListener(
-      'click',
-      () => {
-
-
-        window.scrollTo({
-
-          top: 0,
-
-          behavior: 'smooth'
-
-        });
-
-
-      }
-    );
-
-
-  }
-
-
-};
