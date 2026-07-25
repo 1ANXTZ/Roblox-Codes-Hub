@@ -13,7 +13,6 @@ import { Games } from './games.js';
 import { Search } from './search.js';
 import { UI } from './ui.js';
 import { Utils } from './utils.js';
-import { Storage } from './storage.js';
 
 
 const state = {
@@ -72,23 +71,31 @@ const els = {
 
 
 
+
 function applyFiltersAndRender() {
+
 
   let list =
     Search.filter(
       state.allGames,
       {
         query: state.query,
+
         category: state.category,
+
       }
     );
+
 
 
   list =
     Games.sort(
       list,
+
       state.sort
+
     );
+
 
 
   UI.renderGameGrid(
@@ -101,18 +108,9 @@ function applyFiltersAndRender() {
 
     {
 
-      onToggleFavorite(gameId) {
-
-        Storage.toggleFavorite(gameId);
+      onToggleFavorite() {
 
         applyFiltersAndRender();
-
-      },
-
-
-      isFavorite(gameId) {
-
-        return Storage.isFavorite(gameId);
 
       }
 
@@ -129,6 +127,7 @@ function applyFiltersAndRender() {
 
   }
 
+
 }
 
 
@@ -136,6 +135,13 @@ function applyFiltersAndRender() {
 
 
 async function init() {
+
+
+  UI.setLoading(
+    els.grid,
+    true
+  );
+
 
 
   const [
@@ -156,23 +162,32 @@ async function init() {
 
   state.allGames =
     Games.withComputedFields(
+
       games,
+
       codesMap
+
     );
 
 
 
   const categories =
     Games.extractCategories(
+
       state.allGames
+
     );
+
+
 
 
 
   function onCategorySelect(category) {
 
+
     state.category =
       category;
+
 
 
     UI.renderCategoryChips(
@@ -188,9 +203,13 @@ async function init() {
     );
 
 
+
     applyFiltersAndRender();
 
+
   }
+
+
 
 
 
@@ -208,6 +227,8 @@ async function init() {
 
 
 
+
+
   const totalCodes =
 
     state.allGames.reduce(
@@ -222,33 +243,40 @@ async function init() {
 
 
 
-  if (els.statGames) {
+
+
+  els.statGames && (
 
     els.statGames.textContent =
-      state.allGames.length;
+      state.allGames.length
 
-  }
+  );
 
 
-  if (els.statCodes) {
+
+  els.statCodes && (
 
     els.statCodes.textContent =
-      totalCodes;
+      totalCodes
 
-  }
+  );
 
 
-  if (els.statCategories) {
+
+  els.statCategories && (
 
     els.statCategories.textContent =
-      categories.length;
+      categories.length
 
-  }
+  );
+
+
 
 
 
   const initialQuery =
     Utils.getURLParam('q');
+
 
 
   if (
@@ -258,12 +286,15 @@ async function init() {
 
   ) {
 
+
     state.query =
       initialQuery;
 
 
+
     els.searchInput.value =
       initialQuery;
+
 
 
     els.searchClear
@@ -274,21 +305,36 @@ async function init() {
 
 
 
+
+
   applyFiltersAndRender();
 
 
 
-  if (els.searchInput) {
+  UI.setLoading(
+    els.grid,
+    false
+  );
 
-    els.searchInput.addEventListener(
 
-      'input',
 
-      Utils.debounce((event) => {
+
+
+  /* ---------------- Search ---------------- */
+
+
+  els.searchInput?.addEventListener(
+
+    'input',
+
+    Utils.debounce(
+
+      event => {
 
 
         state.query =
           event.target.value.trim();
+
 
 
         els.searchClear
@@ -302,20 +348,31 @@ async function init() {
           );
 
 
+
         applyFiltersAndRender();
 
 
-      }, 180)
+      },
 
-    );
+      180
 
-  }/* ---------------- Search clear ---------------- */
+    )
 
-if (els.searchClear) {
+  );
 
-  els.searchClear.addEventListener(
+
+
+
+
+  /* ---------------- Search clear ---------------- */
+
+
+  els.searchClear?.addEventListener(
+
     'click',
+
     () => {
+
 
       if (els.searchInput) {
 
@@ -324,7 +381,9 @@ if (els.searchClear) {
       }
 
 
+
       state.query = '';
+
 
 
       els.searchClear
@@ -332,74 +391,114 @@ if (els.searchClear) {
         .remove('is-visible');
 
 
+
       applyFiltersAndRender();
+
 
 
       els.searchInput?.focus();
 
+
     }
+
   );
 
-}
 
 
 
-/* ---------------- Sort ---------------- */
 
-if (els.sortSelect) {
+  /* ---------------- Sort ---------------- */
 
-  els.sortSelect.addEventListener(
+
+  els.sortSelect?.addEventListener(
+
     'change',
+
     event => {
+
 
       state.sort =
         event.target.value;
 
 
+
       applyFiltersAndRender();
 
+
     }
+
   );
 
+
+
+
+
+  /* ---------------- Theme ---------------- */
+
+
+  if (els.themeToggle) {
+
+
+    UI.initThemeToggle(
+
+      els.themeToggle
+
+    );
+
+
+  }
+
+
+
+
+
+  /* ---------------- Back to top ---------------- */
+
+
+  if (els.backToTop) {
+
+
+    UI.initBackToTop(
+
+      els.backToTop
+
+    );
+
+
+  }
+
+
+
 }
 
 
-
-/* ---------------- Theme ---------------- */
-
-if (els.themeToggle) {
-
-  UI.initThemeToggle(
-    els.themeToggle
-  );
-
-}
-
-
-
-/* ---------------- Back to top ---------------- */
-
-if (els.backToTop) {
-
-  UI.initBackToTop(
-    els.backToTop
-  );
-
-}
-
-
-}
 
 
 
 /* ---------------- Error handler ---------------- */
 
+
 function showLoadError(error) {
 
+
   console.error(
+
     'Error loading games:',
+
     error
+
   );
+
+
+
+  UI.setLoading(
+
+    els.grid,
+
+    false
+
+  );
+
 
 
   if (els.grid) {
@@ -412,16 +511,20 @@ function showLoadError(error) {
 
   if (els.emptyState) {
 
+
     els.emptyState.hidden =
       false;
+
 
 
     const title =
       els.emptyState.querySelector('h3');
 
 
+
     const text =
       els.emptyState.querySelector('p');
+
 
 
     if (title) {
@@ -432,6 +535,7 @@ function showLoadError(error) {
     }
 
 
+
     if (text) {
 
       text.textContent =
@@ -439,13 +543,19 @@ function showLoadError(error) {
 
     }
 
+
   }
+
 
 }
 
 
 
+
+
 /* ---------------- Start ---------------- */
 
+
 init()
+
   .catch(showLoadError);
