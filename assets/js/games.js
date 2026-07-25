@@ -16,13 +16,9 @@ export const Games = {
     return games.map(game => {
       const codes = codesMap[game.id] || [];
 
-      const activeCount = codes.filter(code => {
-        if (code.status === 'active') return true;
-
-        if (!code.expires) return true;
-
-        return new Date(code.expires) >= new Date();
-      }).length;
+      const activeCount =
+        Codes.countByStatus(codes, 'active') +
+        Codes.countByStatus(codes, 'expiring');
 
       const lastVerified = Codes.mostRecentVerification(codes);
 
@@ -51,16 +47,17 @@ export const Games = {
     return Array.from(counts.entries())
       .map(([name, count]) => ({
         name,
-        count
+        count,
       }))
       .sort((a, b) => b.count - a.count);
   },
 
 
   /**
-   * Sort games.
+   * Sorts games by different modes.
    */
   sort(games, mode) {
+
     const list = [...games];
 
     switch (mode) {
@@ -70,6 +67,7 @@ export const Games = {
           (a, b) => b.popularity - a.popularity
         );
 
+
       case 'recent':
         return list.sort(
           (a, b) =>
@@ -77,11 +75,13 @@ export const Games = {
             new Date(a.lastVerified || 0)
         );
 
+
       case 'az':
         return list.sort(
           (a, b) =>
             a.name.localeCompare(b.name, 'en-US')
         );
+
 
       default:
         return list;
@@ -90,7 +90,7 @@ export const Games = {
 
 
   /**
-   * Find game by ID.
+   * Finds a game by ID.
    */
   findById(games, id) {
     return games.find(
