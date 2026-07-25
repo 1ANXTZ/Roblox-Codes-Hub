@@ -7,6 +7,7 @@
 
 import { Utils } from './utils.js';
 
+
 export const Codes = {
 
 
@@ -18,22 +19,36 @@ export const Codes = {
 
     return codes
       .map(code => ({
+
         ...code,
-        status: Utils.getCodeStatus(code.expires),
+
+        status:
+          Utils.getCodeStatus(
+            code.expires
+          ),
+
       }))
       .sort((a, b) => {
 
+
         const order = {
+
           active: 0,
+
           expiring: 1,
+
           expired: 2,
+
         };
 
+
         return order[a.status] - order[b.status];
+
 
       });
 
   },
+
 
 
   /**
@@ -42,10 +57,16 @@ export const Codes = {
   countByStatus(codes, status) {
 
     return codes.filter(code =>
-      Utils.getCodeStatus(code.expires) === status
+
+      (
+        code.status ??
+        Utils.getCodeStatus(code.expires)
+      ) === status
+
     ).length;
 
   },
+
 
 
   /**
@@ -54,16 +75,27 @@ export const Codes = {
   splitVisible(codesWithStatus) {
 
     return {
-      visible: codesWithStatus.filter(
-        code => code.status !== 'expired'
-      ),
 
-      expired: codesWithStatus.filter(
-        code => code.status === 'expired'
-      ),
+      visible:
+
+        codesWithStatus.filter(
+          code =>
+            code.status !== 'expired'
+        ),
+
+
+
+      expired:
+
+        codesWithStatus.filter(
+          code =>
+            code.status === 'expired'
+        ),
+
     };
 
   },
+
 
 
   /**
@@ -74,20 +106,38 @@ export const Codes = {
     if (!codes.length) return null;
 
 
-    return codes.reduce((latest, code) => {
 
-      if (!code.verified) return latest;
-
-
-      if (!latest || code.verified > latest) {
-        return code.verified;
-      }
+    return codes.reduce(
+      (latest, code) => {
 
 
-      return latest;
+        if (!code.verified) {
 
-    }, null);
+          return latest;
+
+        }
+
+
+
+        if (
+          !latest ||
+          code.verified > latest
+        ) {
+
+          return code.verified;
+
+        }
+
+
+
+        return latest;
+
+
+      },
+      null
+    );
 
   },
+
 
 };
