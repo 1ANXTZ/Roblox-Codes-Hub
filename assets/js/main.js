@@ -34,35 +34,46 @@ const els = {
   grid:
     document.getElementById('game-grid'),
 
+
   emptyState:
     document.getElementById('empty-state'),
+
 
   categoryRail:
     document.getElementById('category-rail'),
 
+
   searchInput:
     document.getElementById('search-input'),
+
 
   searchClear:
     document.getElementById('search-clear'),
 
+
   sortSelect:
     document.getElementById('sort-select'),
+
 
   resultCount:
     document.getElementById('result-count'),
 
+
   themeToggle:
     document.getElementById('theme-toggle'),
+
 
   backToTop:
     document.getElementById('back-to-top'),
 
+
   statGames:
     document.getElementById('stat-games'),
 
+
   statCodes:
     document.getElementById('stat-codes'),
+
 
   statCategories:
     document.getElementById('stat-categories'),
@@ -122,14 +133,13 @@ function applyFiltersAndRender() {
 
   if (els.resultCount) {
 
-    els.resultCount.innerHTML =
-      `<strong>${list.length}</strong> game${list.length === 1 ? '' : 's'} found`;
+    els.resultCount.textContent =
+      `${list.length} game${list.length === 1 ? '' : 's'} found`;
 
   }
 
 
 }
-
 
 
 
@@ -144,53 +154,71 @@ async function init() {
 
 
 
-  const [
-
-    games,
-
-    codesMap
-
-  ] = await Promise.all([
-
-    Api.fetchGames(),
-
-    Api.fetchCodes()
-
-  ]);
+  try {
 
 
-
-  state.allGames =
-    Games.withComputedFields(
+    const [
 
       games,
 
       codesMap
 
-    );
+    ] = await Promise.all([
+
+      Api.fetchGames(),
+
+      Api.fetchCodes()
+
+    ]);
 
 
 
-  const categories =
-    Games.extractCategories(
+    state.allGames =
+      Games.withComputedFields(
 
-      state.allGames
+        games,
 
-    );
+        codesMap
 
-
-
-
-
-  function onCategorySelect(category) {
-
-
-    state.category =
-      category;
+      );
 
 
 
-    UI.renderCategoryChips(
+    const categories =
+      Games.extractCategories(
+
+        state.allGames
+
+      );
+
+
+
+    function onCategorySelect(category) {
+
+
+      state.category =
+        category;
+
+
+
+      UI.renderCategoryChips(
+
+        els.categoryRail,
+
+        categories,
+
+        state.category,
+
+        onCategorySelect
+
+      );
+
+
+
+      applyFiltersAndRender();
+
+
+    }    UI.renderCategoryChips(
 
       els.categoryRail,
 
@@ -204,40 +232,128 @@ async function init() {
 
 
 
+
+    const totalCodes =
+
+      state.allGames.reduce(
+
+        (sum, game) =>
+
+          sum + game.activeCount,
+
+        0
+
+      );
+
+
+
+
+    if (els.statGames) {
+
+      els.statGames.textContent =
+        state.allGames.length;
+
+    }
+
+
+
+    if (els.statCodes) {
+
+      els.statCodes.textContent =
+        totalCodes;
+
+    }
+
+
+
+    if (els.statCategories) {
+
+      els.statCategories.textContent =
+        categories.length;
+
+    }
+
+
+
+
+    const initialQuery =
+      Utils.getURLParam('q');
+
+
+
+    if (initialQuery && els.searchInput) {
+
+
+      state.query =
+        initialQuery;
+
+
+
+      els.searchInput.value =
+        initialQuery;
+
+
+
+      els.searchClear
+        ?.classList
+        .add('is-visible');
+
+
+    }
+
+
+
+
     applyFiltersAndRender();
 
 
-  }
+
+
+    UI.setLoading(
+      els.grid,
+      false
+    );
 
 
 
 
-
-  UI.renderCategoryChips(
-
-    els.categoryRail,
-
-    categories,
-
-    state.category,
-
-    onCategorySelect
-
-  );
+    /* ---------------- Search ---------------- */
 
 
+    els.searchInput?.addEventListener(
+
+      'input',
+
+      Utils.debounce(
+
+        event => {
+
+
+          state.query =
+            event.target.value.trim();
 
 
 
-  const totalCodes =
+          els.searchClear
+            ?.classList
+            .toggle(
 
-    state.allGames.reduce(
+              'is-visible',
 
-      (sum, game) =>
+              Boolean(state.query)
 
-        sum + game.activeCount,
+            );
 
-      0
+
+
+          applyFiltersAndRender();
+
+
+        },
+
+        180
+
+      )
 
     );
 
@@ -245,223 +361,101 @@ async function init() {
 
 
 
-  els.statGames && (
-
-    els.statGames.textContent =
-      state.allGames.length
-
-  );
+    /* ---------------- Search clear ---------------- */
 
 
+    els.searchClear?.addEventListener(
 
-  els.statCodes && (
+      'click',
 
-    els.statCodes.textContent =
-      totalCodes
-
-  );
+      () => {
 
 
+        if (els.searchInput) {
 
-  els.statCategories && (
+          els.searchInput.value = '';
 
-    els.statCategories.textContent =
-      categories.length
-
-  );
+        }
 
 
 
-
-
-  const initialQuery =
-    Utils.getURLParam('q');
-
-
-
-  if (
-
-    initialQuery &&
-    els.searchInput
-
-  ) {
-
-
-    state.query =
-      initialQuery;
-
-
-
-    els.searchInput.value =
-      initialQuery;
-
-
-
-    els.searchClear
-      ?.classList
-      .add('is-visible');
-
-  }
-
-
-
-
-
-  applyFiltersAndRender();
-
-
-
-  UI.setLoading(
-    els.grid,
-    false
-  );
-
-
-
-
-
-  /* ---------------- Search ---------------- */
-
-
-  els.searchInput?.addEventListener(
-
-    'input',
-
-    Utils.debounce(
-
-      event => {
-
-
-        state.query =
-          event.target.value.trim();
+        state.query = '';
 
 
 
         els.searchClear
-          ?.classList
-          .toggle(
-
-            'is-visible',
-
-            !!state.query
-
-          );
+          .classList
+          .remove('is-visible');
 
 
 
         applyFiltersAndRender();
 
 
-      },
 
-      180
+        els.searchInput?.focus();
 
-    )
-
-  );
-
-
-
-
-
-  /* ---------------- Search clear ---------------- */
-
-
-  els.searchClear?.addEventListener(
-
-    'click',
-
-    () => {
-
-
-      if (els.searchInput) {
-
-        els.searchInput.value = '';
 
       }
-
-
-
-      state.query = '';
-
-
-
-      els.searchClear
-        .classList
-        .remove('is-visible');
-
-
-
-      applyFiltersAndRender();
-
-
-
-      els.searchInput?.focus();
-
-
-    }
-
-  );
-
-
-
-
-
-  /* ---------------- Sort ---------------- */
-
-
-  els.sortSelect?.addEventListener(
-
-    'change',
-
-    event => {
-
-
-      state.sort =
-        event.target.value;
-
-
-
-      applyFiltersAndRender();
-
-
-    }
-
-  );
-
-
-
-
-
-  /* ---------------- Theme ---------------- */
-
-
-  if (els.themeToggle) {
-
-
-    UI.initThemeToggle(
-
-      els.themeToggle
 
     );
 
 
-  }
+
+
+
+    /* ---------------- Sort ---------------- */
+
+
+    els.sortSelect?.addEventListener(
+
+      'change',
+
+      event => {
+
+
+        state.sort =
+          event.target.value;
+
+
+
+        applyFiltersAndRender();
+
+
+      }
+
+    );
 
 
 
 
 
-  /* ---------------- Back to top ---------------- */
+    /* ---------------- Theme ---------------- */
 
 
-  if (els.backToTop) {
+    UI.initThemeToggle(
+      els.themeToggle
+    );
+
+
+
+
+
+    /* ---------------- Back to top ---------------- */
 
 
     UI.initBackToTop(
-
       els.backToTop
+    );
 
+
+
+  } finally {
+
+
+    UI.setLoading(
+      els.grid,
+      false
     );
 
 
@@ -470,6 +464,7 @@ async function init() {
 
 
 }
+
 
 
 
