@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page not found | Roblox Codes Hub</title>
+  <meta name="description" content="This page doesn't exist. Head back to Roblox Codes Hub to find active codes for your favorite games.">
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#0B0E14" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F3F1EC" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .notfound {
+      min-height: calc(100vh - var(--header-h));
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: var(--sp-6) var(--sp-5);
+    }
+    .notfound__code {
+      font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent-cyan); margin-bottom: var(--sp-3);
+    }
+    .notfound__ticket {
+      background: var(--bg-surface); border: 1px solid var(--line); border-radius: var(--radius-md);
+      padding: var(--sp-6) var(--sp-7); max-width: 420px;
+    }
+    .notfound__title {
+      font-family: var(--font-display); font-weight: 700; font-size: var(--fs-2xl);
+      margin-bottom: var(--sp-3);
+    }
+    .notfound__title span { color: var(--accent-amber); }
+    .notfound__desc { color: var(--text-muted); margin-bottom: var(--sp-5); }
+    .notfound__perforation {
+      position: relative; height: 0; border-top: 2px dashed var(--line-strong);
+      margin: var(--sp-5) calc(-1 * var(--sp-7)) var(--sp-5);
+    }
+    .notfound__perforation::before, .notfound__perforation::after {
+      content: ''; position: absolute; top: -8px; width: 16px; height: 16px;
+      border-radius: 50%; background: var(--bg-void);
+    }
+    .notfound__perforation::before { left: -8px; }
+    .notfound__perforation::after { right: -8px; }
+    .notfound__actions { display: flex; gap: var(--sp-3); justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="logo" aria-label="Roblox Codes Hub — homepage">
+        <span class="logo__mark" aria-hidden="true">RC</span>
+        <span class="logo__text">Roblox Codes<span>Hub</span></span>
+      </a>
+    </div>
+  </header>
+
+  <main class="notfound">
+    <div class="notfound__ticket">
+      <span class="notfound__code">Error 404 · Expired link</span>
+      <h1 class="notfound__title">This code <span>expired</span></h1>
+      <p class="notfound__desc">The page you're looking for doesn't exist anymore — kind of like a code past its redeem date.</p>
+      <div class="notfound__perforation"></div>
+      <div class="notfound__actions">
+        <a href="index.html" class="btn btn--primary">Back to home</a>
+        <a href="index.html#game-grid" class="btn btn--ghost">Browse games</a>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>
