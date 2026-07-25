@@ -1,0 +1,177 @@
+{
+  "codes": {
+    "blox-fruits": [
+      { "code": "BFPATCH", "reward": "1,000 Coins", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "BFCODE", "reward": "2x XP for 30 min", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "BFTHANKS", "reward": "2x XP for 30 min", "verified": "2026-07-21", "expires": "2026-09-20" }
+    ],
+    "blue-lock-rivals": [
+      { "code": "BLRCODE", "reward": "Stat refund", "verified": "2026-07-21", "expires": "2026-09-20" },
+      { "code": "BLRLUCKY45", "reward": "Exclusive skin", "verified": "2026-07-20", "expires": null },
+      { "code": "BLRLIKES99", "reward": "Luck Boost x2", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "BLRTHANKS", "reward": "Fruit boost x1.5", "verified": "2026-07-21", "expires": "2026-07-24" }
+    ],
+    "anime-rangers-x": [
+      { "code": "ARXFOLLOWERS17", "reward": "1,000 Coins", "verified": "2026-07-21", "expires": "2026-09-20" },
+      { "code": "ARXFOLLOWERS39", "reward": "3x Free spins", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "ARXTHANKS", "reward": "Exclusive title", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "ARXTHANKS", "reward": "Mystery box", "verified": "2026-07-21", "expires": "2026-07-24" }
+    ],
+    "anime-vanguards": [
+      { "code": "AVFREEBIE28", "reward": "1,000 Coins", "verified": "2026-07-20", "expires": null },
+      { "code": "AVDROP", "reward": "Small permanent XP boost", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "AVSUBS61", "reward": "Guaranteed rare pet", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "AVFOLLOWERS30", "reward": "500 Gems", "verified": "2026-07-21", "expires": "2026-07-24" }
+    ],
+    "anime-last-stand": [
+      { "code": "ALSTHANKS29", "reward": "3x Free spins", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "ALSEVENT52", "reward": "Exclusive skin", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "ALSNEWMAP", "reward": "Guaranteed rare pet", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "ALSCODE56", "reward": "Fruit boost x1.5", "verified": "2026-07-20", "expires": null }
+    ],
+    "grow-a-garden": [
+      { "code": "GAGSORRY", "reward": "Exclusive emote", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "GAGDROP10", "reward": "Mystery box", "verified": "2026-07-20", "expires": null },
+      { "code": "GAGDROP61", "reward": "2x XP for 30 min", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "GAGSORRY89", "reward": "5,000 Coins", "verified": "2026-07-21", "expires": "2026-09-05" }
+    ],
+    "pet-simulator-99": [
+      { "code": "PS9SEASON2", "reward": "Stat refund", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "PS9COMEBACK15", "reward": "3x Free spins", "verified": "2026-07-20", "expires": null },
+      { "code": "PS9MILESTONE", "reward": "2x XP for 30 min", "verified": "2026-07-21", "expires": "2026-07-19" }
+    ],
+    "fisch": [
+      { "code": "FHYPE", "reward": "Small permanent XP boost", "verified": "2026-07-20", "expires": null },
+      { "code": "FCODE", "reward": "Rare chest key", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "FTHANKS", "reward": "Exclusive skin", "verified": "2026-07-21", "expires": "2026-09-20" },
+      { "code": "FEVENT", "reward": "Guaranteed rare pet", "verified": "2026-07-21", "expires": "2026-07-24" }
+    ],
+    "dead-rails": [
+      { "code": "DRFREEBIE58", "reward": "Luck Boost x2", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "DRPATCH", "reward": "5,000 Coins", "verified": "2026-07-21", "expires": "2026-09-20" },
+      { "code": "DRRELEASE", "reward": "Small permanent XP boost", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "DRRELEASE", "reward": "Small permanent XP boost", "verified": "2026-07-20", "expires": null },
+      { "code": "DRTHANKS6", "reward": "1,000 Coins", "verified": "2026-07-21", "expires": "2026-07-19" }
+    ],
+    "volleyball-legends": [
+      { "code": "VLCODE75", "reward": "Small permanent XP boost", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "VLEVENT", "reward": "Luck Boost x2", "verified": "2026-07-20", "expires": null },
+      { "code": "VLSORRY86", "reward": "Fruit boost x1.5", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "VLLUCKY54", "reward": "500 Gems", "verified": "2026-07-21", "expires": "2026-09-20" }
+    ],
+    "king-legacy": [
+      { "code": "KLWELCOME", "reward": "3x Free spins", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "KLLIKES70", "reward": "Exclusive skin", "verified": "2026-07-20", "expires": null },
+      { "code": "KLLUCKY25", "reward": "10 Premium Gems", "verified": "2026-07-21", "expires": "2026-09-05" }
+    ],
+    "shindo-life": [
+      { "code": "SLUPDATE", "reward": "1,000 Coins", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "SLPATCH23", "reward": "Rare chest key", "verified": "2026-07-20", "expires": null },
+      { "code": "SLEVENT29", "reward": "500 Gems", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "SLSUBS", "reward": "Mystery box", "verified": "2026-07-21", "expires": "2026-09-20" }
+    ],
+    "blade-ball": [
+      { "code": "BBMILESTONE26", "reward": "3x Free spins", "verified": "2026-07-20", "expires": null },
+      { "code": "BBUPDATE", "reward": "5,000 Coins", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "BBUPDATE8", "reward": "Stat refund", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "BBUPDATE", "reward": "Stat refund", "verified": "2026-07-21", "expires": "2026-09-20" }
+    ],
+    "basketball-zero": [
+      { "code": "BZPATCH", "reward": "Small permanent XP boost", "verified": "2026-07-21", "expires": "2026-09-20" },
+      { "code": "BZCODE", "reward": "1,000 Coins", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "BZLUCKY86", "reward": "Guaranteed rare pet", "verified": "2026-07-21", "expires": "2026-09-05" }
+    ],
+    "ninja-time": [
+      { "code": "NTMILESTONE87", "reward": "10 Premium Gems", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "NTWELCOME", "reward": "2x XP for 30 min", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "NTSEASON", "reward": "1,000 Coins", "verified": "2026-07-20", "expires": null },
+      { "code": "NTFOLLOWERS29", "reward": "Exclusive skin", "verified": "2026-07-21", "expires": "2026-09-20" }
+    ],
+    "type-soul": [
+      { "code": "TSSUBS58", "reward": "2x XP for 30 min", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "TSFOLLOWERS", "reward": "Exclusive skin", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "TSNEWMAP", "reward": "Exclusive skin", "verified": "2026-07-20", "expires": null },
+      { "code": "TSNEWMAP", "reward": "5,000 Coins", "verified": "2026-07-21", "expires": "2026-09-05" }
+    ],
+    "dress-to-impress": [
+      { "code": "DTITHANKS83", "reward": "Guaranteed rare pet", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "DTIUPDATE2", "reward": "Exclusive skin", "verified": "2026-07-20", "expires": null },
+      { "code": "DTINEWMAP22", "reward": "Exclusive emote", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "DTIFOLLOWERS", "reward": "1,000 Coins", "verified": "2026-07-21", "expires": "2026-07-19" }
+    ],
+    "all-star-tower-defense": [
+      { "code": "ASTDLUCKY", "reward": "Exclusive title", "verified": "2026-07-21", "expires": "2026-09-20" },
+      { "code": "ASTDFREEBIE7", "reward": "3x Free spins", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "ASTDPATCH", "reward": "Fruit boost x1.5", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "ASTDFOLLOWERS", "reward": "Small permanent XP boost", "verified": "2026-07-20", "expires": null }
+    ],
+    "anime-defenders": [
+      { "code": "ADWELCOME", "reward": "Guaranteed rare pet", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "ADSUBS", "reward": "Mystery box", "verified": "2026-07-20", "expires": null },
+      { "code": "ADUPDATE", "reward": "3x Free spins", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "ADSEASON46", "reward": "Small permanent XP boost", "verified": "2026-07-21", "expires": "2026-09-05" }
+    ],
+    "fruit-battlegrounds": [
+      { "code": "FBNEWMAP10", "reward": "Fruit boost x1.5", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "FBCOMEBACK53", "reward": "2x XP for 30 min", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "FBSORRY", "reward": "Guaranteed rare pet", "verified": "2026-07-20", "expires": null },
+      { "code": "FBUPDATE15", "reward": "Fruit boost x1.5", "verified": "2026-07-21", "expires": "2026-09-05" }
+    ],
+    "ghoul-re": [
+      { "code": "GRNEWMAP7", "reward": "2x XP for 30 min", "verified": "2026-07-20", "expires": null },
+      { "code": "GRCOMEBACK", "reward": "Fruit boost x1.5", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "GRLUCKY10", "reward": "5,000 Coins", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "GRSORRY94", "reward": "Exclusive title", "verified": "2026-07-21", "expires": "2026-09-20" }
+    ],
+    "project-egoist": [
+      { "code": "PELIKES55", "reward": "Stat refund", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "PEDROP74", "reward": "Mystery box", "verified": "2026-07-20", "expires": null },
+      { "code": "PEFOLLOWERS2", "reward": "Exclusive title", "verified": "2026-07-21", "expires": "2026-09-20" },
+      { "code": "PELIKES57", "reward": "10 Premium Gems", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "PESEASON", "reward": "Rare chest key", "verified": "2026-07-21", "expires": "2026-07-19" }
+    ],
+    "demon-slayer-rpg-2": [
+      { "code": "DSR2THANKS", "reward": "Exclusive title", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "DSR2PATCH", "reward": "2x XP for 30 min", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "DSR2UPDATE33", "reward": "1,000 Coins", "verified": "2026-07-20", "expires": null },
+      { "code": "DSR2SEASON", "reward": "Mystery box", "verified": "2026-07-21", "expires": "2026-07-24" }
+    ],
+    "jujutsu-shenanigans": [
+      { "code": "JSLUCKY", "reward": "10 Premium Gems", "verified": "2026-07-20", "expires": null },
+      { "code": "JSUPDATE", "reward": "Luck Boost x2", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "JSSEASON19", "reward": "5,000 Coins", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "JSSEASON80", "reward": "10 Premium Gems", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "JSSUBS97", "reward": "10 Premium Gems", "verified": "2026-07-21", "expires": "2026-09-20" }
+    ],
+    "obby-tower-of-hell": [
+      { "code": "OTOHPATCH37", "reward": "1,000 Coins", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "OTOHHYPE32", "reward": "5,000 Coins", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "OTOHWELCOME", "reward": "Exclusive skin", "verified": "2026-07-20", "expires": null },
+      { "code": "OTOHMILESTONE31", "reward": "Exclusive skin", "verified": "2026-07-21", "expires": "2026-09-20" }
+    ],
+    "car-dealership-tycoon": [
+      { "code": "CDTFOLLOWERS61", "reward": "500 Gems", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "CDTLIKES55", "reward": "2x XP for 30 min", "verified": "2026-07-20", "expires": null },
+      { "code": "CDTCODE50", "reward": "2x XP for 30 min", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "CDTFREEBIE40", "reward": "Exclusive emote", "verified": "2026-07-21", "expires": "2026-09-05" }
+    ],
+    "speed-racing-legends": [
+      { "code": "SRLEVENT5", "reward": "5,000 Coins", "verified": "2026-07-20", "expires": null },
+      { "code": "SRLBOOST", "reward": "10 Premium Gems", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "SRLMILESTONE", "reward": "Mystery box", "verified": "2026-07-21", "expires": "2026-09-20" },
+      { "code": "SRLCODE", "reward": "1,000 Coins", "verified": "2026-07-21", "expires": "2026-09-05" }
+    ],
+    "world-domination-strategy": [
+      { "code": "WDSBOOST", "reward": "10 Premium Gems", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "WDSWELCOME45", "reward": "Guaranteed rare pet", "verified": "2026-07-20", "expires": null },
+      { "code": "WDSLUCKY", "reward": "Rare chest key", "verified": "2026-07-21", "expires": "2026-07-19" },
+      { "code": "WDSRELEASE", "reward": "Fruit boost x1.5", "verified": "2026-07-21", "expires": "2026-09-05" },
+      { "code": "WDSPATCH", "reward": "500 Gems", "verified": "2026-07-21", "expires": "2026-09-20" }
+    ],
+    "military-tycoon": [
+      { "code": "MTDROP", "reward": "Exclusive skin", "verified": "2026-07-21", "expires": "2026-07-24" },
+      { "code": "MTEVENT", "reward": "3x Free spins", "verified": "2026-07-21", "expires": "2026-09-20" },
+      { "code": "MTSEASON91", "reward": "Fruit boost x1.5", "verified": "2026-07-21", "expires": "2026-07-19" }
+    ]
+  }
+}
