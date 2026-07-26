@@ -2,22 +2,11 @@
  * api.js
  * The ONLY point of contact with the data source.
  *
- * Today: reads /data/games.json and /data/codes.json (static files).
- * Tomorrow: swap the fetch implementation for real API calls
- * without touching the rest of the frontend.
- *
- * Also layers on top the data saved by the admin panel
- * (localStorage), simulating persistence until a backend exists.
+ * Reads static JSON files and applies local admin overrides.
  */
 
-
-const DATA_URL_GAMES =
-  'data/games.json';
-
-
-const DATA_URL_CODES =
-  'data/codes.json';
-
+const DATA_URL_GAMES = 'data/games.json';
+const DATA_URL_CODES = 'data/codes.json';
 
 
 const ADMIN_KEYS = {
@@ -29,7 +18,6 @@ const ADMIN_KEYS = {
     'rch:admin:codes',
 
 };
-
 
 
 let _cache = {
@@ -46,41 +34,28 @@ let _cache = {
 
 function readAdminOverride(key) {
 
-
   try {
 
+    const raw =
+      localStorage.getItem(key);
 
-    if (!window.localStorage) {
 
+    if (!raw) {
       return null;
-
     }
 
 
-
-    const raw =
-      localStorage.getItem(
-        key
-      );
-
-
-
-    return raw
-      ? JSON.parse(raw)
-      : null;
-
+    return JSON.parse(raw);
 
 
   } catch {
 
-
     return null;
-
 
   }
 
-
 }
+
 
 
 
@@ -88,19 +63,23 @@ function readAdminOverride(key) {
 
 function clone(data) {
 
-
-  if (data === undefined) {
-
-    return undefined;
-
+  if (data === null || data === undefined) {
+    return data;
   }
 
 
+  try {
 
-  return JSON.parse(
-    JSON.stringify(data)
-  );
+    return JSON.parse(
+      JSON.stringify(data)
+    );
 
+
+  } catch {
+
+    return data;
+
+  }
 
 }
 
@@ -109,8 +88,8 @@ function clone(data) {
 
 
 
-export const Api = {
 
+export const Api = {
 
 
   async fetchGames() {
@@ -126,14 +105,17 @@ export const Api = {
 
 
 
-    const res =
+    const response =
       await fetch(
-        DATA_URL_GAMES
+        DATA_URL_GAMES,
+        {
+          cache: 'no-store'
+        }
       );
 
 
 
-    if (!res.ok) {
+    if (!response.ok) {
 
       throw new Error(
         'Could not load games.json'
@@ -144,7 +126,7 @@ export const Api = {
 
 
     const json =
-      await res.json();
+      await response.json();
 
 
 
@@ -155,6 +137,7 @@ export const Api = {
 
 
 
+
     const override =
       readAdminOverride(
         ADMIN_KEYS.GAMES_OVERRIDE
@@ -162,18 +145,13 @@ export const Api = {
 
 
 
-    /*
-      If admin override exists,
-      it represents the complete
-      current list.
-    */
-
     if (Array.isArray(override)) {
 
       games =
         override;
 
     }
+
 
 
 
@@ -187,8 +165,16 @@ export const Api = {
     );
 
 
-  },  async fetchCodes() {
+  },
 
+
+
+
+
+
+
+
+  async fetchCodes() {
 
 
     if (_cache.codes) {
@@ -201,16 +187,17 @@ export const Api = {
 
 
 
-
-
-    const res =
+    const response =
       await fetch(
-        DATA_URL_CODES
+        DATA_URL_CODES,
+        {
+          cache: 'no-store'
+        }
       );
 
 
 
-    if (!res.ok) {
+    if (!response.ok) {
 
       throw new Error(
         'Could not load codes.json'
@@ -221,19 +208,19 @@ export const Api = {
 
 
     const json =
-      await res.json();
+      await response.json();
+
 
 
 
     let codes =
-      (
-        json.codes &&
-        typeof json.codes === 'object'
-      )
+      json.codes &&
+      typeof json.codes === 'object' &&
+      !Array.isArray(json.codes)
 
-      ? json.codes
+        ? json.codes
 
-      : {};
+        : {};
 
 
 
@@ -246,13 +233,6 @@ export const Api = {
 
 
 
-
-
-    /*
-      Admin codes override replaces
-      the current code database.
-    */
-
     if (
 
       override &&
@@ -263,10 +243,8 @@ export const Api = {
 
     ) {
 
-
       codes =
         override;
-
 
     }
 
@@ -285,6 +263,7 @@ export const Api = {
 
 
   },
+
 
 
 
@@ -311,6 +290,7 @@ export const Api = {
 
 
 
+
   invalidateCache() {
 
 
@@ -323,7 +303,16 @@ export const Api = {
     };
 
 
-  },  saveGamesOverride(games) {
+  },
+
+
+
+
+
+
+
+
+  saveGamesOverride(games) {
 
 
     try {
@@ -338,7 +327,6 @@ export const Api = {
         )
 
       );
-
 
 
       this.invalidateCache();
@@ -364,6 +352,7 @@ export const Api = {
 
 
 
+
   saveCodesOverride(codes) {
 
 
@@ -379,7 +368,6 @@ export const Api = {
         )
 
       );
-
 
 
       this.invalidateCache();
@@ -405,6 +393,7 @@ export const Api = {
 
 
 
+
   clearAdminOverrides() {
 
 
@@ -416,11 +405,9 @@ export const Api = {
       );
 
 
-
       localStorage.removeItem(
         ADMIN_KEYS.CODES_OVERRIDE
       );
-
 
 
       this.invalidateCache();
@@ -439,7 +426,6 @@ export const Api = {
 
 
   },
-
 
 
 };
