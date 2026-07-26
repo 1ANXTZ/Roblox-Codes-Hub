@@ -1,8 +1,10 @@
 /**
  * search.js
- * Real-time search engine: filters by name, category and tags.
- * Pure — receives the full game list and criteria, returns
- * the filtered list.
+ * Real-time search engine: filters by name, category,
+ * tags and description.
+ *
+ * Pure — receives data and criteria,
+ * returns filtered results.
  */
 
 
@@ -10,40 +12,68 @@ export const Search = {
 
 
   filter(
+
     games = [],
+
     {
       query = '',
       category = 'All'
+
     } = {}
+
   ) {
 
 
+
     const q =
+
       String(query)
+
         .trim()
-        .toLowerCase();
+
+        .toLocaleLowerCase();
+
+
 
 
 
     return games.filter(game => {
 
 
+
       if (!game) {
+
         return false;
+
       }
 
 
 
+
+
+
       const gameCategory =
-        game.category || 'Other';
+
+        String(
+
+          game.category || 'Other'
+
+        );
+
+
 
 
 
       const matchesCategory =
 
+
         category === 'All' ||
 
+
         gameCategory === category;
+
+
+
 
 
 
@@ -55,6 +85,10 @@ export const Search = {
 
 
 
+
+
+
+
       if (!q) {
 
         return true;
@@ -63,25 +97,70 @@ export const Search = {
 
 
 
+
+
+
+
+      const tags =
+
+
+        Array.isArray(game.tags)
+
+          ? game.tags
+
+              .map(tag =>
+
+                String(tag)
+
+                  .trim()
+
+              )
+
+          : [];
+
+
+
+
+
+
+
+
+
       const haystack = [
+
+
 
         game.name || '',
 
+
+
+        game.description || '',
+
+
+
         gameCategory,
 
-        ...(Array.isArray(game.tags)
-          ? game.tags
-          : [])
+
+
+        ...tags
+
+
 
       ]
 
       .join(' ')
 
-      .toLowerCase();
+      .toLocaleLowerCase();
+
+
+
+
 
 
 
       return haystack.includes(q);
+
+
 
 
     });
