@@ -44,14 +44,32 @@ function escapeHTML(value = '') {
 async function copyText(text) {
 
 
+  const value =
+    String(text ?? '').trim();
+
+
+
+  if (!value) {
+
+    throw new Error(
+      'Empty text'
+    );
+
+  }
+
+
+
   if (
+
     navigator.clipboard &&
+
     window.isSecureContext
+
   ) {
 
 
     await navigator.clipboard.writeText(
-      text
+      value
     );
 
 
@@ -69,7 +87,7 @@ async function copyText(text) {
 
 
   textarea.value =
-    text;
+    value;
 
 
 
@@ -117,14 +135,20 @@ export const UI = {
 
 
 
+
   /* ---------------- Categories ---------------- */
 
 
   renderCategoryChips(
+
     container,
+
     categories = [],
+
     activeCategory,
+
     onSelect
+
   ) {
 
 
@@ -140,8 +164,8 @@ export const UI = {
     const list = [
 
       {
-        name:'All',
-        count:null
+        name: 'All',
+        count: null
       },
 
       ...categories
@@ -162,11 +186,17 @@ export const UI = {
 
 
       button.className =
+
         'chip' +
+
         (
+
           category.name === activeCategory
+
             ? ' is-active'
+
             : ''
+
         );
 
 
@@ -187,10 +217,13 @@ export const UI = {
 
 
       button.setAttribute(
+
         'aria-selected',
+
         String(
           category.name === activeCategory
         )
+
       );
 
 
@@ -233,12 +266,19 @@ export const UI = {
 
 
   renderGameGrid(
+
     container,
+
     emptyStateEl,
+
     games = [],
+
     {
+
       onToggleFavorite
+
     } = {}
+
   ) {
 
 
@@ -295,7 +335,9 @@ export const UI = {
           game,
 
           {
+
             onToggleFavorite
+
           }
 
         )
@@ -324,10 +366,15 @@ export const UI = {
 
 
   buildGameCard(
+
     game,
+
     {
+
       onToggleFavorite
+
     } = {}
+
   ) {
 
 
@@ -375,9 +422,13 @@ export const UI = {
 
 
           <span class="game-card__badge-count">
+
             ${game.activeCount ?? 0}
+
             code${game.activeCount === 1 ? '' : 's'}
+
           </span>
+
 
         </div>
 
@@ -388,45 +439,71 @@ export const UI = {
       <button
         class="game-card__fav${isFav ? ' is-fav' : ''}"
         aria-pressed="${isFav}"
+        aria-label="${isFav ? 'Remove' : 'Add'} ${escapeHTML(game.name)} ${isFav ? 'from' : 'to'} favorites"
         type="button"
       >
+
         ${isFav ? '★' : '☆'}
+
       </button>
+
 
 
       <div class="game-card__body">
 
+
         <span class="game-card__category">
+
           ${escapeHTML(game.category || 'Other')}
+
         </span>
+
 
 
         <a href="game.html?id=${encodeURIComponent(game.id)}">
 
+
           <h3 class="game-card__name">
+
             ${escapeHTML(game.name)}
+
           </h3>
 
+
         </a>
+
 
 
         <span class="game-card__meta">
+
           Updated ${
             game.lastVerified
+
             ? Utils.relativeFromToday(game.lastVerified)
+
             : '—'
+
           }
+
         </span>
 
 
+
         <a
+
           class="game-card__cta"
+
           href="game.html?id=${encodeURIComponent(game.id)}"
+
         >
+
           View codes
+
         </a>
 
+
       </div>
+
 
     `;
 
@@ -447,6 +524,7 @@ export const UI = {
 
 
         const state =
+
           Storage.toggleFavorite(
             game.id
           );
@@ -454,29 +532,51 @@ export const UI = {
 
 
         favBtn.classList.toggle(
+
           'is-fav',
+
           state
+
         );
 
 
 
         favBtn.textContent =
+
           state
-          ? '★'
-          : '☆';
+
+            ? '★'
+
+            : '☆';
 
 
 
         favBtn.setAttribute(
+
           'aria-pressed',
+
           String(state)
+
+        );
+
+
+
+        favBtn.setAttribute(
+
+          'aria-label',
+
+          `${state ? 'Remove' : 'Add'} ${game.name} ${state ? 'from' : 'to'} favorites`
+
         );
 
 
 
         onToggleFavorite?.(
+
           game.id,
+
           state
+
         );
 
 
@@ -493,11 +593,17 @@ export const UI = {
 
 
   renderCodes(
+
     container,
+
     codes = [],
+
     {
+
       onCopy
+
     } = {}
+
   ) {
 
 
@@ -548,7 +654,9 @@ export const UI = {
           code,
 
           {
+
             onCopy
+
           }
 
         )
@@ -577,10 +685,15 @@ export const UI = {
 
 
   buildCodeCard(
+
     code,
+
     {
+
       onCopy
+
     } = {}
+
   ) {
 
 
@@ -609,131 +722,195 @@ export const UI = {
 
     card.innerHTML = `
 
+
       <div class="code-card__top">
+
 
         <span class="code-card__status status-${escapeHTML(status)}">
 
+
           ${STATUS_LABEL[status] || status}
 
+
         </span>
+
 
       </div>
 
 
 
+
       <code class="code-card__value">
 
+
         ${escapeHTML(code.code || '')}
+
 
       </code>
 
 
 
+
+      <p class="code-card__reward">
+
+
+        ${escapeHTML(
+
+          code.reward ||
+
+          'Reward unavailable'
+
+        )}
+
+
+      </p>
+
+
+
+
+
       <button
+
         class="code-card__copy"
+
         type="button"
+
+        aria-label="Copy code ${escapeHTML(code.code || '')}"
+
       >
+
 
         Copy
 
+
       </button>
+
 
 
     `;
 
 
 
+
     const button =
+
       card.querySelector(
+
         '.code-card__copy'
+
       );
+
+
 
 
 
     button?.addEventListener(
 
+
       'click',
 
+
       async () => {
+
 
 
         try {
 
 
+
           await copyText(
+
             code.code
+
           );
+
 
 
 
           button.textContent =
+
             'Copied!';
 
 
 
+
           this.showToast(
+
             'Code copied!'
+
           );
+
 
 
 
           onCopy?.(
+
             code.code
+
           );
+
 
 
 
           setTimeout(() => {
 
+
             button.textContent =
+
               'Copy';
 
-          },1500);
+
+          }, 1500);
+
+
 
 
 
         } catch {
 
 
+
           button.textContent =
+
             'Error';
 
 
 
+
           this.showToast(
+
             'Could not copy code',
+
             'error'
+
           );
 
 
         }
 
 
+
+
       }
 
+
     );
+
 
 
 
     return card;
 
 
-  },
-
-
-
-
-
-
-
-
-
-  /* ---------------- Stats ---------------- */
+  },  /* ---------------- Stats ---------------- */
 
 
   renderStats(
+
     elements,
+
     stats = {}
+
   ) {
 
 
@@ -744,6 +921,7 @@ export const UI = {
     if (elements.games) {
 
       elements.games.textContent =
+
         stats.games ?? 0;
 
     }
@@ -753,6 +931,7 @@ export const UI = {
     if (elements.codes) {
 
       elements.codes.textContent =
+
         stats.codes ?? 0;
 
     }
@@ -762,6 +941,7 @@ export const UI = {
     if (elements.categories) {
 
       elements.categories.textContent =
+
         stats.categories ?? 0;
 
     }
@@ -781,35 +961,71 @@ export const UI = {
 
 
   showToast(
+
     message,
+
     type = 'success'
+
   ) {
 
 
+
     let toast =
+
       document.querySelector(
+
         '.toast'
+
       );
+
+
 
 
 
     if (!toast) {
 
 
+
       toast =
+
         document.createElement(
+
           'div'
+
         );
 
 
 
       toast.className =
+
         'toast';
 
 
 
+      toast.setAttribute(
+
+        'role',
+
+        'status'
+
+      );
+
+
+
+      toast.setAttribute(
+
+        'aria-live',
+
+        'polite'
+
+      );
+
+
+
       document.body.appendChild(
+
         toast
+
       );
 
 
@@ -817,100 +1033,167 @@ export const UI = {
 
 
 
+
+
     toast.textContent =
+
       message;
 
 
 
     toast.dataset.type =
+
       type;
+
+
 
 
 
     requestAnimationFrame(() => {
 
+
+
       toast.classList.add(
+
         'show'
+
       );
+
+
 
     });
 
 
 
+
+
     clearTimeout(
+
       this.toastTimer
+
     );
 
 
 
+
+
     this.toastTimer =
+
       setTimeout(() => {
 
 
+
         toast.classList.remove(
+
           'show'
+
         );
 
 
-      },2500);
+
+      }, 2500);
 
 
-  },  /* ---------------- Theme ---------------- */
+
+  },
+
+
+
+
+
+
+
+
+
+  /* ---------------- Theme ---------------- */
 
 
   initThemeToggle(
+
     button
+
   ) {
+
 
 
     if (!button) return;
 
 
 
+
+
     const savedTheme =
+
       Storage.getTheme();
 
 
 
+
+
     if (
+
       savedTheme === 'light'
+
     ) {
 
+
+
       document.documentElement.classList.add(
+
         'light'
+
       );
+
 
     }
 
 
 
 
+
     button.addEventListener(
 
+
       'click',
+
 
       () => {
 
 
+
         const light =
+
           document.documentElement.classList.toggle(
+
             'light'
+
           );
+
+
 
 
 
         Storage.setTheme(
 
+
+
           light
+
             ? 'light'
+
             : 'dark'
+
+
 
         );
 
 
+
       }
 
+
     );
+
 
 
   },
@@ -927,27 +1210,42 @@ export const UI = {
 
 
   initBackToTop(
+
     button
+
   ) {
+
 
 
     if (!button) return;
 
 
 
+
+
     const updateVisibility = () => {
+
 
 
       button.classList.toggle(
 
+
+
         'is-visible',
 
+
+
         window.scrollY > 500
+
+
 
       );
 
 
+
     };
+
+
 
 
 
@@ -955,39 +1253,68 @@ export const UI = {
 
 
 
+
+
     window.addEventListener(
+
+
 
       'scroll',
 
+
+
       updateVisibility,
 
+
+
       {
-        passive:true
+
+        passive: true
+
       }
 
+
+
     );
+
+
 
 
 
     button.addEventListener(
 
+
+
       'click',
+
+
 
       () => {
 
 
+
         window.scrollTo({
 
-          top:0,
 
-          behavior:'smooth'
+
+          top: 0,
+
+
+
+          behavior: 'smooth'
+
+
 
         });
 
 
+
       }
 
+
+
     );
+
 
 
   }
