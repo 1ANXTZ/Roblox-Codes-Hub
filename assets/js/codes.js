@@ -10,14 +10,13 @@ import { Utils } from './utils.js';
 export const Codes = {
 
 
-  /**
-   * Adds computed status to every code.
-   */
   withStatus(codes = []) {
 
 
     if (!Array.isArray(codes)) {
+
       return [];
+
     }
 
 
@@ -35,13 +34,15 @@ export const Codes = {
 
     return codes
 
+      .filter(Boolean)
+
       .map(code => ({
 
         ...code,
 
         status:
           Utils.getCodeStatus(
-            code.expires
+            code?.expires
           ),
 
       }))
@@ -61,29 +62,33 @@ export const Codes = {
 
 
 
-  /**
-   * Counts codes by status.
-   */
   countByStatus(codes = [], status) {
 
 
     if (!Array.isArray(codes)) {
+
       return 0;
+
     }
 
 
 
-    return codes.filter(code =>
+    return codes.filter(code => {
 
-      (
+
+      const currentStatus =
+
         code.status ??
+
         Utils.getCodeStatus(
-          code.expires
-        )
+          code?.expires
+        );
 
-      ) === status
 
-    ).length;
+      return currentStatus === status;
+
+
+    }).length;
 
 
   },
@@ -92,17 +97,37 @@ export const Codes = {
 
 
 
-  /**
-   * Splits visible and expired codes.
-   */
   splitVisible(codesWithStatus = []) {
+
+
+    if (!Array.isArray(codesWithStatus)) {
+
+      return {
+
+        visible: [],
+
+        expired: [],
+
+      };
+
+    }
+
+
+
+    const prepared =
+
+      this.withStatus(
+        codesWithStatus
+      );
+
 
 
     return {
 
+
       visible:
 
-        codesWithStatus.filter(
+        prepared.filter(
           code =>
             code.status !== 'expired'
         ),
@@ -111,10 +136,11 @@ export const Codes = {
 
       expired:
 
-        codesWithStatus.filter(
+        prepared.filter(
           code =>
             code.status === 'expired'
         ),
+
 
     };
 
@@ -125,48 +151,51 @@ export const Codes = {
 
 
 
-  /**
-   * Gets latest verification date.
-   */
   mostRecentVerification(codes = []) {
 
 
-    if (!codes.length) {
+    if (!Array.isArray(codes) || !codes.length) {
+
       return null;
+
     }
 
 
 
-    return codes.reduce(
-      (latest, code) => {
+    const dates =
 
+      codes
 
-        if (!code.verified) {
-          return latest;
-        }
+        .map(code => code?.verified)
 
+        .filter(Boolean)
 
+        .filter(date =>
 
-        if (
-          !latest ||
-          new Date(code.verified) >
-          new Date(latest)
-        ) {
+          !Number.isNaN(
+            new Date(date).getTime()
+          )
 
-          return code.verified;
-
-        }
+        );
 
 
 
-        return latest;
+    if (!dates.length) {
+
+      return null;
+
+    }
 
 
-      },
 
-      null
+    return dates.sort(
 
-    );
+      (a, b) =>
+
+        new Date(b) -
+        new Date(a)
+
+    )[0];
 
 
   },
