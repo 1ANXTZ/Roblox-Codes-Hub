@@ -5,28 +5,49 @@
  * Reads static JSON files and applies local admin overrides.
  */
 
-const DATA_URL_GAMES = 'data/games.json';
-const DATA_URL_CODES = 'data/codes.json';
+
+const DATA_URL_GAMES =
+  'data/games.json';
+
+
+const DATA_URL_CODES =
+  'data/codes.json';
+
+
+
 
 
 const ADMIN_KEYS = {
 
+
   GAMES_OVERRIDE:
     'rch:admin:games',
+
 
   CODES_OVERRIDE:
     'rch:admin:codes',
 
+
 };
+
+
+
 
 
 let _cache = {
 
+
   games: null,
+
 
   codes: null,
 
+
 };
+
+
+
+
 
 
 
@@ -34,27 +55,48 @@ let _cache = {
 
 function readAdminOverride(key) {
 
+
   try {
+
+
+    if (!window.localStorage) {
+
+      return null;
+
+    }
+
+
 
     const raw =
       localStorage.getItem(key);
 
 
+
     if (!raw) {
+
       return null;
+
     }
+
 
 
     return JSON.parse(raw);
 
 
+
   } catch {
+
 
     return null;
 
+
   }
 
+
 }
+
+
+
 
 
 
@@ -63,25 +105,77 @@ function readAdminOverride(key) {
 
 function clone(data) {
 
-  if (data === null || data === undefined) {
+
+  if (
+    data === null ||
+    data === undefined
+  ) {
+
     return data;
+
   }
 
 
+
   try {
+
 
     return JSON.parse(
       JSON.stringify(data)
     );
 
 
+
   } catch {
+
 
     return data;
 
+
   }
 
+
 }
+
+
+
+
+
+
+
+
+
+function saveLocal(key, value) {
+
+
+  try {
+
+
+    localStorage.setItem(
+
+      key,
+
+      JSON.stringify(value)
+
+    );
+
+
+    return true;
+
+
+
+  } catch {
+
+
+    return false;
+
+
+  }
+
+
+}
+
+
 
 
 
@@ -92,16 +186,22 @@ function clone(data) {
 export const Api = {
 
 
+
   async fetchGames() {
 
 
+
     if (_cache.games) {
+
 
       return clone(
         _cache.games
       );
 
+
     }
+
+
 
 
 
@@ -117,11 +217,15 @@ export const Api = {
 
     if (!response.ok) {
 
+
       throw new Error(
-        'Could not load games.json'
+        `Failed loading games.json (${response.status})`
       );
 
+
     }
+
+
 
 
 
@@ -130,33 +234,51 @@ export const Api = {
 
 
 
+
+
     let games =
+
+
       Array.isArray(json.games)
+
         ? json.games
+
         : [];
 
 
 
 
+
+
+
     const override =
+
       readAdminOverride(
         ADMIN_KEYS.GAMES_OVERRIDE
       );
 
 
 
+
+
     if (Array.isArray(override)) {
+
 
       games =
         override;
+
 
     }
 
 
 
 
+
+
     _cache.games =
       games;
+
+
 
 
 
@@ -174,16 +296,22 @@ export const Api = {
 
 
 
+
   async fetchCodes() {
 
 
+
     if (_cache.codes) {
+
 
       return clone(
         _cache.codes
       );
 
+
     }
+
+
 
 
 
@@ -199,11 +327,16 @@ export const Api = {
 
     if (!response.ok) {
 
+
       throw new Error(
-        'Could not load codes.json'
+        `Failed loading codes.json (${response.status})`
       );
 
+
     }
+
+
+
 
 
 
@@ -213,12 +346,20 @@ export const Api = {
 
 
 
+
     let codes =
+
+
+
       json.codes &&
+
       typeof json.codes === 'object' &&
+
       !Array.isArray(json.codes)
 
+
         ? json.codes
+
 
         : {};
 
@@ -226,10 +367,16 @@ export const Api = {
 
 
 
+
+
     const override =
+
       readAdminOverride(
         ADMIN_KEYS.CODES_OVERRIDE
       );
+
+
+
 
 
 
@@ -243,10 +390,14 @@ export const Api = {
 
     ) {
 
+
       codes =
         override;
 
+
     }
+
+
 
 
 
@@ -257,12 +408,16 @@ export const Api = {
 
 
 
+
+
     return clone(
       codes
     );
 
 
+
   },
+
 
 
 
@@ -274,15 +429,30 @@ export const Api = {
   async fetchCodesForGame(gameId) {
 
 
+    if (!gameId) {
+
+      return [];
+
+    }
+
+
+
     const all =
       await this.fetchCodes();
 
 
 
-    return all[gameId] || [];
+
+    return Array.isArray(all[gameId])
+
+      ? clone(all[gameId])
+
+      : [];
+
 
 
   },
+
 
 
 
@@ -296,9 +466,12 @@ export const Api = {
 
     _cache = {
 
+
       games: null,
 
+
       codes: null,
+
 
     };
 
@@ -312,39 +485,44 @@ export const Api = {
 
 
 
+
   saveGamesOverride(games) {
 
 
-    try {
+    if (!Array.isArray(games)) {
 
-
-      localStorage.setItem(
-
-        ADMIN_KEYS.GAMES_OVERRIDE,
-
-        JSON.stringify(
-          games
-        )
-
-      );
-
-
-      this.invalidateCache();
-
-
-
-    } catch {
-
-
-      console.warn(
-        'Could not save games override'
-      );
-
+      return false;
 
     }
 
 
+
+
+
+    const saved =
+      saveLocal(
+
+        ADMIN_KEYS.GAMES_OVERRIDE,
+
+        games
+
+      );
+
+
+
+    if (saved) {
+
+      this.invalidateCache();
+
+    }
+
+
+
+    return saved;
+
+
   },
+
 
 
 
@@ -356,36 +534,51 @@ export const Api = {
   saveCodesOverride(codes) {
 
 
-    try {
+    if (
 
+      !codes ||
 
-      localStorage.setItem(
+      typeof codes !== 'object' ||
 
-        ADMIN_KEYS.CODES_OVERRIDE,
+      Array.isArray(codes)
 
-        JSON.stringify(
-          codes
-        )
+    ) {
 
-      );
-
-
-      this.invalidateCache();
-
-
-
-    } catch {
-
-
-      console.warn(
-        'Could not save codes override'
-      );
-
+      return false;
 
     }
 
 
+
+
+
+
+    const saved =
+      saveLocal(
+
+        ADMIN_KEYS.CODES_OVERRIDE,
+
+        codes
+
+      );
+
+
+
+
+    if (saved) {
+
+      this.invalidateCache();
+
+    }
+
+
+
+
+    return saved;
+
+
   },
+
 
 
 
@@ -410,16 +603,19 @@ export const Api = {
       );
 
 
+
       this.invalidateCache();
+
+
+
+      return true;
 
 
 
     } catch {
 
 
-      console.warn(
-        'Could not clear admin overrides'
-      );
+      return false;
 
 
     }
