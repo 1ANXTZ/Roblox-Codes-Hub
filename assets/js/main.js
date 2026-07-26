@@ -1,8 +1,8 @@
 /**
  * main.js
- * Entry point for the home page (index.html).
+ * Entry point for index.html.
  *
- * Orchestrates:
+ * Flow:
  * Api -> Games -> Search -> UI
  *
  * No business rules here.
@@ -17,6 +17,7 @@ import { Utils } from './utils.js';
 
 
 
+
 const state = {
 
   allGames: [],
@@ -28,6 +29,8 @@ const state = {
   sort: 'popular',
 
 };
+
+
 
 
 
@@ -98,29 +101,47 @@ const els = {
 
 
 
+
+
+
 function applyFiltersAndRender() {
 
 
-  let list =
-    Search.filter(
-      state.allGames,
-      {
-        query: state.query,
+  let filtered =
 
-        category: state.category,
+    Search.filter(
+
+      state.allGames,
+
+      {
+
+        query:
+          state.query,
+
+
+        category:
+          state.category,
 
       }
+
     );
 
 
 
-  list =
+
+
+  filtered =
+
     Games.sort(
-      list,
+
+      filtered,
 
       state.sort
 
     );
+
+
+
 
 
 
@@ -130,7 +151,7 @@ function applyFiltersAndRender() {
 
     els.emptyState,
 
-    list,
+    filtered,
 
     {
 
@@ -146,21 +167,42 @@ function applyFiltersAndRender() {
 
 
 
+
+
+
+
   if (els.resultCount) {
 
 
     els.resultCount.textContent =
 
-      `${list.length} game${list.length === 1 ? '' : 's'} found`;
+      `${filtered.length} game${filtered.length === 1 ? '' : 's'} found`;
 
 
   }
 
 
+
 }async function init() {
 
 
+  if (!els.grid) {
+
+    return;
+
+  }
+
+
+
   try {
+
+
+    UI.setLoading?.(
+      els.grid,
+      true
+    );
+
+
 
 
     const [
@@ -171,11 +213,16 @@ function applyFiltersAndRender() {
 
     ] = await Promise.all([
 
+
       Api.fetchGames(),
+
 
       Api.fetchCodes()
 
+
     ]);
+
+
 
 
 
@@ -192,6 +239,9 @@ function applyFiltersAndRender() {
 
 
 
+
+
+
     const categories =
 
       Games.extractCategories(
@@ -204,12 +254,16 @@ function applyFiltersAndRender() {
 
 
 
+
+
+
     function onCategorySelect(category) {
 
 
       state.category =
 
         category;
+
 
 
 
@@ -227,10 +281,13 @@ function applyFiltersAndRender() {
 
 
 
+
       applyFiltersAndRender();
 
 
     }
+
+
 
 
 
@@ -253,13 +310,20 @@ function applyFiltersAndRender() {
 
 
 
-    const totalCodes =
+
+
+
+    const totalActiveCodes =
 
       state.allGames.reduce(
 
-        (sum, game) =>
+        (total, game) =>
 
-          sum + game.activeCount,
+          total + (
+
+            game.activeCount || 0
+
+          ),
 
         0
 
@@ -270,43 +334,45 @@ function applyFiltersAndRender() {
 
 
 
-    if (els.statGames) {
 
 
-      els.statGames.textContent =
+    UI.renderStats(
 
-        state.allGames.length;
+      {
 
-
-    }
-
-
+        games:
+          els.statGames,
 
 
-
-    if (els.statCodes) {
-
-
-      els.statCodes.textContent =
-
-        totalCodes;
+        codes:
+          els.statCodes,
 
 
-    }
+        categories:
+          els.statCategories,
 
 
+      },
+
+      {
+
+        games:
+          state.allGames.length,
 
 
-
-    if (els.statCategories) {
-
-
-      els.statCategories.textContent =
-
-        categories.length;
+        codes:
+          totalActiveCodes,
 
 
-    }
+        categories:
+          categories.length,
+
+
+      }
+
+    );
+
+
 
 
 
@@ -316,6 +382,7 @@ function applyFiltersAndRender() {
     const initialQuery =
 
       Utils.getURLParam('q');
+
 
 
 
@@ -332,13 +399,14 @@ function applyFiltersAndRender() {
 
       state.query =
 
-        initialQuery;
+        initialQuery.trim();
+
 
 
 
       els.searchInput.value =
 
-        initialQuery;
+        state.query;
 
 
 
@@ -347,10 +415,14 @@ function applyFiltersAndRender() {
 
         ?.classList
 
-        .add('is-visible');
+        .add(
+          'is-visible'
+        );
 
 
     }
+
+
 
 
 
@@ -363,9 +435,6 @@ function applyFiltersAndRender() {
 
 
 
-    /*
-      Search
-    */
 
 
     els.searchInput?.addEventListener(
@@ -392,7 +461,9 @@ function applyFiltersAndRender() {
 
               'is-visible',
 
-              Boolean(state.query)
+              Boolean(
+                state.query
+              )
 
             );
 
@@ -400,6 +471,7 @@ function applyFiltersAndRender() {
 
 
           applyFiltersAndRender();
+
 
 
         },
@@ -414,9 +486,8 @@ function applyFiltersAndRender() {
 
 
 
-    /*
-      Clear search
-    */
+
+
 
 
     els.searchClear?.addEventListener(
@@ -428,7 +499,10 @@ function applyFiltersAndRender() {
 
         if (els.searchInput) {
 
-          els.searchInput.value = '';
+
+          els.searchInput.value =
+            '';
+
 
         }
 
@@ -441,9 +515,11 @@ function applyFiltersAndRender() {
 
         els.searchClear
 
-          .classList
+          ?.classList
 
-          .remove('is-visible');
+          .remove(
+            'is-visible'
+          );
 
 
 
@@ -456,6 +532,7 @@ function applyFiltersAndRender() {
         els.searchInput?.focus();
 
 
+
       }
 
     );
@@ -464,9 +541,8 @@ function applyFiltersAndRender() {
 
 
 
-    /*
-      Sort
-    */
+
+
 
 
     els.sortSelect?.addEventListener(
@@ -486,6 +562,7 @@ function applyFiltersAndRender() {
         applyFiltersAndRender();
 
 
+
       }
 
     );
@@ -493,9 +570,9 @@ function applyFiltersAndRender() {
 
 
 
-    /*
-      Theme
-    */
+
+
+
 
 
     UI.initThemeToggle(
@@ -507,10 +584,6 @@ function applyFiltersAndRender() {
 
 
 
-    /*
-      Back to top
-    */
-
 
     UI.initBackToTop(
 
@@ -519,21 +592,40 @@ function applyFiltersAndRender() {
     );
 
 
-  } catch (error) {
 
 
-    showLoadError(error);
+  } catch(error) {
+
+
+    showLoadError(
+      error
+    );
+
+
+  } finally {
+
+
+    UI.setLoading?.(
+
+      els.grid,
+
+      false
+
+    );
 
 
   }
 
 
+
 }
 
 
-/*
-  Error handler
-*/
+
+
+
+
+
 
 
 function showLoadError(error) {
@@ -550,77 +642,51 @@ function showLoadError(error) {
 
 
 
-  if (els.grid) {
+  if (!els.grid) {
+
+    return;
+
+  }
 
 
-    els.grid.innerHTML = '';
 
 
 
-    els.grid.innerHTML = `
+  els.grid.innerHTML = `
 
-      <div class="empty-state">
 
-        <h3>Error loading games</h3>
+    <div class="empty-state">
 
-        <p>
-          Check your connection and try again.
-        </p>
+
+      <div class="empty-state__icon">
+
+        ⚠️
 
       </div>
 
-    `;
 
 
-  }
+      <h3>
 
+        Error loading games
 
-
-  if (els.emptyState) {
-
-
-    els.emptyState.hidden = false;
+      </h3>
 
 
 
-    const title =
+      <p>
 
-      els.emptyState.querySelector('h3');
+        Check your connection and try again.
 
-
-
-    const text =
-
-      els.emptyState.querySelector('p');
+      </p>
 
 
 
-
-    if (title) {
-
-
-      title.textContent =
-
-        'Error loading games';
+    </div>
 
 
-    }
+  `;
 
-
-
-
-    if (text) {
-
-
-      text.textContent =
-
-        'Check your connection and try again.';
-
-
-    }
-
-
-  }
 
 
 }
@@ -630,9 +696,7 @@ function showLoadError(error) {
 
 
 
-/*
-  Start app
-*/
+
 
 
 init();
