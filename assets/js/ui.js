@@ -43,10 +43,8 @@ function escapeHTML(value = '') {
 
 async function copyText(text) {
 
-
   const value =
     String(text ?? '').trim();
-
 
 
   if (!value) {
@@ -67,17 +65,13 @@ async function copyText(text) {
 
   ) {
 
-
     await navigator.clipboard.writeText(
       value
     );
 
-
     return;
 
-
   }
-
 
 
 
@@ -119,10 +113,7 @@ async function copyText(text) {
 
   textarea.remove();
 
-
 }
-
-
 
 
 
@@ -132,7 +123,6 @@ export const UI = {
 
 
   toastTimer: null,
-
 
 
 
@@ -259,8 +249,6 @@ export const UI = {
 
 
 
-
-
   /* ---------------- Game cards ---------------- */
 
 
@@ -363,8 +351,6 @@ export const UI = {
 
 
 
-
-
   buildGameCard(
 
     game,
@@ -402,48 +388,105 @@ export const UI = {
 
 
 
+    const gameImage =
+      game.icon || game.image || '';
+
+
+
     card.innerHTML = `
+
 
       <a
         href="game.html?id=${encodeURIComponent(game.id)}"
         class="game-card__thumb-link"
       >
 
+
         <div
+
           class="game-card__thumb"
+
           style="background:${Utils.gradientFor(game.name)}"
+
         >
 
-          <span>
-            ${escapeHTML(
-              Utils.initials(game.name)
-            )}
-          </span>
+
+          ${
+            gameImage
+
+              ?
+
+              `
+
+                <img
+
+                  class="game-card__image"
+
+                  src="${escapeHTML(gameImage)}"
+
+                  alt="${escapeHTML(game.name)} icon"
+
+                  loading="lazy"
+
+                >
+
+              `
+
+              :
+
+              `
+
+                <span>
+
+                  ${escapeHTML(
+
+                    Utils.initials(game.name)
+
+                  )}
+
+                </span>
+
+              `
+
+          }
+
 
 
           <span class="game-card__badge-count">
 
+
             ${game.activeCount ?? 0}
 
+
             code${game.activeCount === 1 ? '' : 's'}
+
 
           </span>
 
 
+
         </div>
+
 
       </a>
 
 
 
       <button
+
         class="game-card__fav${isFav ? ' is-fav' : ''}"
+
         aria-pressed="${isFav}"
+
         aria-label="${isFav ? 'Remove' : 'Add'} ${escapeHTML(game.name)} ${isFav ? 'from' : 'to'} favorites"
+
         type="button"
+
       >
 
+
         ${isFav ? '★' : '☆'}
+
 
       </button>
 
@@ -454,7 +497,9 @@ export const UI = {
 
         <span class="game-card__category">
 
+
           ${escapeHTML(game.category || 'Other')}
+
 
         </span>
 
@@ -465,7 +510,9 @@ export const UI = {
 
           <h3 class="game-card__name">
 
+
             ${escapeHTML(game.name)}
+
 
           </h3>
 
@@ -476,6 +523,7 @@ export const UI = {
 
         <span class="game-card__meta">
 
+
           Updated ${
             game.lastVerified
 
@@ -484,6 +532,7 @@ export const UI = {
             : '—'
 
           }
+
 
         </span>
 
@@ -682,8 +731,6 @@ export const UI = {
 
 
 
-
-
   buildCodeCard(
 
     code,
@@ -740,6 +787,7 @@ export const UI = {
 
 
 
+
       <code class="code-card__value">
 
 
@@ -751,14 +799,18 @@ export const UI = {
 
 
 
+
       <p class="code-card__reward">
 
 
         ${escapeHTML(
 
+
           code.reward ||
 
+
           'Reward unavailable'
+
 
         )}
 
@@ -769,13 +821,19 @@ export const UI = {
 
 
 
+
+
       <button
+
 
         class="code-card__copy"
 
+
         type="button"
 
+
         aria-label="Copy code ${escapeHTML(code.code || '')}"
+
 
       >
 
@@ -804,6 +862,8 @@ export const UI = {
 
 
 
+
+
     button?.addEventListener(
 
 
@@ -827,9 +887,11 @@ export const UI = {
 
 
 
+
           button.textContent =
 
             'Copied!';
+
 
 
 
@@ -843,11 +905,13 @@ export const UI = {
 
 
 
+
           onCopy?.(
 
             code.code
 
           );
+
 
 
 
@@ -866,6 +930,7 @@ export const UI = {
 
 
 
+
         } catch {
 
 
@@ -873,6 +938,7 @@ export const UI = {
           button.textContent =
 
             'Error';
+
 
 
 
@@ -891,6 +957,7 @@ export const UI = {
 
 
 
+
       }
 
 
@@ -902,7 +969,16 @@ export const UI = {
     return card;
 
 
-  },  /* ---------------- Stats ---------------- */
+  },
+
+
+
+
+
+
+
+  /* ---------------- Stats ---------------- */
+
 
 
   renderStats(
@@ -914,50 +990,52 @@ export const UI = {
   ) {
 
 
+
     if (!elements) return;
+
 
 
 
     if (elements.games) {
 
+
       elements.games.textContent =
 
         stats.games ?? 0;
 
+
     }
+
+
 
 
 
     if (elements.codes) {
 
+
       elements.codes.textContent =
 
         stats.codes ?? 0;
 
+
     }
+
+
 
 
 
     if (elements.categories) {
 
+
       elements.categories.textContent =
 
         stats.categories ?? 0;
 
+
     }
 
 
-  },
-
-
-
-
-
-
-
-
-
-  /* ---------------- Toast ---------------- */
+  },  /* ---------------- Toast ---------------- */
 
 
   showToast(
@@ -1035,6 +1113,8 @@ export const UI = {
 
 
 
+
+
     toast.textContent =
 
       message;
@@ -1044,6 +1124,8 @@ export const UI = {
     toast.dataset.type =
 
       type;
+
+
 
 
 
@@ -1067,11 +1149,15 @@ export const UI = {
 
 
 
+
+
     clearTimeout(
 
       this.toastTimer
 
     );
+
+
 
 
 
@@ -1108,6 +1194,7 @@ export const UI = {
   /* ---------------- Theme ---------------- */
 
 
+
   initThemeToggle(
 
     button
@@ -1122,9 +1209,13 @@ export const UI = {
 
 
 
+
+
     const savedTheme =
 
       Storage.getTheme();
+
+
 
 
 
@@ -1151,10 +1242,14 @@ export const UI = {
 
 
 
+
+
     button.addEventListener(
 
 
+
       'click',
+
 
 
       () => {
@@ -1168,6 +1263,8 @@ export const UI = {
             'light'
 
           );
+
+
 
 
 
@@ -1209,6 +1306,7 @@ export const UI = {
   /* ---------------- Back to top ---------------- */
 
 
+
   initBackToTop(
 
     button
@@ -1218,6 +1316,8 @@ export const UI = {
 
 
     if (!button) return;
+
+
 
 
 
@@ -1249,7 +1349,11 @@ export const UI = {
 
 
 
+
+
     updateVisibility();
+
+
 
 
 
@@ -1276,6 +1380,8 @@ export const UI = {
 
 
     );
+
+
 
 
 
