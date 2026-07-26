@@ -17,58 +17,44 @@ const els = {
   breadcrumbName:
     document.getElementById('breadcrumb-name'),
 
-
   thumb:
     document.getElementById('game-thumb'),
-
 
   category:
     document.getElementById('game-category'),
 
-
   name:
     document.getElementById('game-name'),
-
 
   desc:
     document.getElementById('game-desc'),
 
-
   activeCount:
     document.getElementById('game-active-count'),
-
 
   lastVerified:
     document.getElementById('game-last-verified'),
 
-
   favBtn:
     document.getElementById('fav-btn'),
-
 
   shareBtn:
     document.getElementById('share-btn'),
 
-
   ticketGrid:
     document.getElementById('ticket-grid'),
-
 
   codesEmpty:
     document.getElementById('codes-empty'),
 
-
   revealExpired:
     document.getElementById('reveal-expired'),
-
 
   backToTop:
     document.getElementById('back-to-top'),
 
-
   themeToggle:
     document.getElementById('theme-toggle'),
-
 
   searchInput:
     document.getElementById('search-input'),
@@ -84,6 +70,16 @@ async function init() {
 
   const gameId =
     Utils.getURLParam('id');
+
+
+
+  if (!gameId) {
+
+    showGameNotFound();
+
+    return;
+
+  }
 
 
 
@@ -121,56 +117,9 @@ async function init() {
 
   if (!game) {
 
-
-    const hero =
-      document.querySelector(
-        '.game-hero'
-      );
-
-
-
-    if (hero) {
-
-
-      hero.innerHTML = `
-
-        <div class="empty-state"
-             style="grid-column:1 / -1;">
-
-
-          <div class="empty-state__icon">
-            🔍
-          </div>
-
-
-          <h3>
-            Game not found
-          </h3>
-
-
-          <p>
-            The game you're looking for doesn't exist or was removed.
-
-            <a href="index.html"
-               style="color:var(--accent-amber)">
-
-              Back to home
-
-            </a>.
-
-          </p>
-
-
-        </div>
-
-      `;
-
-
-    }
-
+    showGameNotFound();
 
     return;
-
 
   }
 
@@ -261,9 +210,10 @@ async function init() {
 
 
   renderCodes(
-    game.id,
     codesMap[game.id] || []
   );
+
+
 
   UI.initThemeToggle(
     els.themeToggle
@@ -311,8 +261,55 @@ async function init() {
 
 
 
+function showGameNotFound() {
 
-/* ---------------- Game info ---------------- */
+
+  const hero =
+    document.querySelector(
+      '.game-hero'
+    );
+
+
+
+  if (!hero) return;
+
+
+
+  hero.innerHTML = `
+
+    <div class="empty-state"
+         style="grid-column:1 / -1;">
+
+
+      <div class="empty-state__icon">
+        🔍
+      </div>
+
+
+      <h3>
+        Game not found
+      </h3>
+
+
+      <p>
+        The game you're looking for doesn't exist or was removed.
+
+        <a href="index.html"
+           style="color:var(--accent-amber)">
+
+          Back to home
+
+        </a>.
+
+      </p>
+
+
+    </div>
+
+  `;
+
+
+}/* ---------------- Game info ---------------- */
 
 
 function renderGameInfo(game) {
@@ -333,7 +330,7 @@ function renderGameInfo(game) {
     els.thumb.style.background =
 
       Utils.gradientFor(
-        game.name
+        game.name || 'Game'
       );
 
 
@@ -342,7 +339,9 @@ function renderGameInfo(game) {
 
       <span aria-hidden="true">
 
-        ${Utils.initials(game.name)}
+        ${Utils.initials(
+          game.name || 'Game'
+        )}
 
       </span>
 
@@ -385,7 +384,7 @@ function renderGameInfo(game) {
 
     els.activeCount.textContent =
 
-      `${game.activeCount} active code${
+      `${game.activeCount ?? 0} active code${
         game.activeCount === 1
           ? ''
           : 's'
@@ -410,7 +409,13 @@ function renderGameInfo(game) {
       }`;
 
 
-  }  if (els.favBtn) {
+  }
+
+
+
+
+
+  if (els.favBtn) {
 
 
     const updateFavoriteButton =
@@ -432,6 +437,12 @@ function renderGameInfo(game) {
             ? '★ Favorited'
 
             : '☆ Favorite';
+
+
+        els.favBtn.setAttribute(
+          'aria-pressed',
+          String(isFav)
+        );
 
 
       };
@@ -486,6 +497,7 @@ function renderGameInfo(game) {
 
 
   }
+
 
 
 
@@ -550,15 +562,30 @@ function renderGameInfo(game) {
         try {
 
 
-          await navigator.clipboard.writeText(
-            window.location.href
-          );
+          if (
+            navigator.clipboard
+          ) {
 
 
+            await navigator.clipboard.writeText(
+              window.location.href
+            );
 
-          UI.showToast(
-            'Link copied!'
-          );
+
+            UI.showToast(
+              'Link copied!'
+            );
+
+
+          } else {
+
+
+            throw new Error(
+              'Clipboard unavailable'
+            );
+
+
+          }
 
 
 
@@ -566,8 +593,11 @@ function renderGameInfo(game) {
 
 
           UI.showToast(
+
             'Could not copy link',
+
             'error'
+
           );
 
 
@@ -583,17 +613,10 @@ function renderGameInfo(game) {
   );
 
 
-}
-
-
-
-
-
-/* ---------------- Codes ---------------- */
+}/* ---------------- Codes ---------------- */
 
 
 function renderCodes(
-  gameId,
   rawCodes
 ) {
 
@@ -612,6 +635,8 @@ function renderCodes(
     Codes.withStatus(
       rawCodes
     );
+
+
 
   const {
 
@@ -678,7 +703,6 @@ function renderCodes(
 
         {
 
-
           onCopy(code) {
 
 
@@ -701,20 +725,30 @@ function renderCodes(
 
 
 
+
   draw(
     visible
   );
 
 
 
+
   if (
+
     expired.length &&
+
     els.revealExpired
+
   ) {
 
 
 
     els.revealExpired.hidden =
+      false;
+
+
+
+    let showing =
       false;
 
 
@@ -727,10 +761,6 @@ function renderCodes(
           : 's'
       }`;
 
-
-
-    let showing =
-      false;
 
 
 
@@ -789,6 +819,7 @@ function renderCodes(
 
 
 
+
 init()
 
   .catch(
@@ -797,6 +828,7 @@ init()
 
 
       console.error(
+        'Error loading game page:',
         error
       );
 
