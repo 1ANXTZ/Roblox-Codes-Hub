@@ -1,29 +1,44 @@
 /**
  * games.js
  * Business rules related to games: active code counts,
- * list of available categories, sorting.
- * Doesn't touch the DOM — only receives/returns data.
+ * categories and sorting.
+ *
+ * No DOM dependency.
  */
 
 import { Codes } from './codes.js';
 
 
+
 export const Games = {
 
 
+
   /**
-   * Enriches each game with computed data.
+   * Adds computed fields to games.
    */
   withComputedFields(
     games = [],
     codesMap = {}
   ) {
 
+
+    if (!Array.isArray(games)) {
+
+      return [];
+
+    }
+
+
+
     return games.map(game => {
 
 
       const codes =
-        codesMap[game.id] || [];
+        Array.isArray(codesMap?.[game.id])
+          ? codesMap[game.id]
+          : [];
+
 
 
 
@@ -43,10 +58,15 @@ export const Games = {
 
 
 
+
+
       const lastVerified =
+
         Codes.mostRecentVerification(
           codes
         );
+
+
 
 
 
@@ -63,20 +83,34 @@ export const Games = {
 
     });
 
+
   },
 
 
 
+
+
+
+
   /**
-   * Extracts categories with game counts.
+   * Extracts categories with counts.
    */
   extractCategories(
     games = []
   ) {
 
 
+    if (!Array.isArray(games)) {
+
+      return [];
+
+    }
+
+
+
     const counts =
       new Map();
+
 
 
 
@@ -98,6 +132,8 @@ export const Games = {
 
 
     });
+
+
 
 
 
@@ -125,6 +161,11 @@ export const Games = {
 
 
 
+
+
+
+
+
   /**
    * Sort games.
    */
@@ -134,57 +175,93 @@ export const Games = {
   ) {
 
 
+
+    if (!Array.isArray(games)) {
+
+      return [];
+
+    }
+
+
+
     const list =
       [...games];
+
+
 
 
 
     switch(mode) {
 
 
+
       case 'popular':
 
         return list.sort(
+
           (a, b) =>
-            (b.popularity ?? 0) -
-            (a.popularity ?? 0)
+
+            Number(b.popularity || 0) -
+
+            Number(a.popularity || 0)
+
         );
+
+
+
 
 
 
       case 'recent':
 
         return list.sort(
+
           (a, b) => {
 
+
             const dateA =
-              new Date(
-                a.lastVerified || 0
-              );
+              a.lastVerified
+                ? new Date(a.lastVerified).getTime()
+                : 0;
+
 
             const dateB =
-              new Date(
-                b.lastVerified || 0
-              );
+              b.lastVerified
+                ? new Date(b.lastVerified).getTime()
+                : 0;
+
 
 
             return dateB - dateA;
 
+
           }
+
         );
+
+
+
+
 
 
 
       case 'az':
 
         return list.sort(
+
           (a, b) =>
-            String(a.name)
+
+            String(a.name || '')
               .localeCompare(
-                String(b.name),
+                String(b.name || ''),
                 'en-US'
               )
+
         );
+
+
+
+
 
 
 
@@ -200,26 +277,43 @@ export const Games = {
 
 
 
+
+
+
+
+
   /**
-   * Finds a game by ID.
+   * Find game by ID.
    */
   findById(
     games = [],
     id
   ) {
 
-    if (!id) return null;
+
+    if (
+      !Array.isArray(games) ||
+      !id
+    ) {
+
+      return null;
+
+    }
+
+
 
 
     return games.find(
 
       game =>
-        game.id === id
+
+        String(game.id) === String(id)
 
     ) || null;
 
 
   },
+
 
 
 };
