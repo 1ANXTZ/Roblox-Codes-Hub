@@ -3,6 +3,7 @@
  * Local persistence layer.
  */
 
+
 const KEYS = {
 
   FAVORITES: 'rch:favorites',
@@ -15,46 +16,110 @@ const KEYS = {
 
 
 
+
+
 function read(key, fallback) {
 
+
   try {
+
+
+    if (!window.localStorage) {
+
+      return fallback;
+
+    }
+
+
 
     const value =
       localStorage.getItem(key);
 
 
-    return value
-      ? JSON.parse(value)
-      : fallback;
+
+    if (!value) {
+
+      return fallback;
+
+    }
+
+
+
+    return JSON.parse(value);
+
 
 
   } catch {
 
+
     return fallback;
+
 
   }
 
+
 }
+
+
+
+
 
 
 
 function write(key, value) {
 
+
   try {
 
+
+    if (!window.localStorage) {
+
+      return false;
+
+    }
+
+
+
     localStorage.setItem(
+
       key,
+
       JSON.stringify(value)
+
     );
+
+
+
+    return true;
+
 
 
   } catch {
 
-    // Ignore storage errors.
+
+    return false;
+
 
   }
 
+
 }
+
+
+
+
+
+
+
+function normalize(value) {
+
+  return String(value ?? '')
+    .trim();
+
+}
+
+
+
 
 
 
@@ -63,7 +128,9 @@ function write(key, value) {
 export const Storage = {
 
 
+
   getFavorites() {
+
 
     const favorites =
       read(
@@ -72,31 +139,60 @@ export const Storage = {
       );
 
 
+
     return Array.isArray(favorites)
 
-      ? [...new Set(favorites)]
+      ? [...new Set(
+          favorites.map(normalize)
+            .filter(Boolean)
+        )]
 
       : [];
 
+
   },
+
+
+
 
 
 
 
   isFavorite(gameId) {
 
+
+    const id =
+      normalize(gameId);
+
+
+
+    if (!id) return false;
+
+
+
     return this
       .getFavorites()
-      .includes(gameId);
+      .includes(id);
+
 
   },
 
 
 
 
+
+
+
   toggleFavorite(gameId) {
 
-    if (!gameId) return false;
+
+    const id =
+      normalize(gameId);
+
+
+
+    if (!id) return false;
+
 
 
     const favorites =
@@ -105,19 +201,27 @@ export const Storage = {
 
 
     const index =
-      favorites.indexOf(gameId);
+      favorites.indexOf(id);
 
 
 
     if (index >= 0) {
 
-      favorites.splice(index, 1);
+
+      favorites.splice(
+        index,
+        1
+      );
+
 
     } else {
 
-      favorites.push(gameId);
+
+      favorites.push(id);
+
 
     }
+
 
 
 
@@ -127,55 +231,101 @@ export const Storage = {
     );
 
 
-    return favorites.includes(gameId);
+
+    return favorites.includes(id);
+
 
   },
+
+
+
+
+
 
 
 
 
   getTheme() {
 
+
     try {
 
-      return localStorage.getItem(
-        KEYS.THEME
-      ) || 'dark';
+
+      const theme =
+        localStorage.getItem(
+          KEYS.THEME
+        );
+
+
+
+      return (
+
+        theme === 'light' ||
+
+        theme === 'dark'
+
+      )
+
+        ? theme
+
+        : 'dark';
+
 
 
     } catch {
 
+
       return 'dark';
+
 
     }
 
+
   },
+
+
+
+
+
 
 
 
 
   setTheme(theme) {
 
-    try {
 
-      localStorage.setItem(
-        KEYS.THEME,
-        theme
-      );
+    if (
+      theme !== 'light' &&
+      theme !== 'dark'
+    ) {
 
-
-    } catch {
-
-      // Ignore storage errors.
+      return false;
 
     }
+
+
+
+    return write(
+
+      KEYS.THEME,
+
+      theme
+
+    );
+
 
   },
 
 
 
 
+
+
+
+
+
   getUsedMap() {
+
 
     const map =
       read(
@@ -184,72 +334,139 @@ export const Storage = {
       );
 
 
-    return map &&
+
+    return (
+
+      map &&
+
       typeof map === 'object' &&
+
       !Array.isArray(map)
+
+    )
 
       ? map
 
       : {};
 
+
   },
+
+
+
+
+
 
 
 
 
   isCodeUsed(gameId, code) {
 
+
+    const id =
+      normalize(gameId);
+
+
+    const value =
+      normalize(code);
+
+
+
+    if (!id || !value) {
+
+      return false;
+
+    }
+
+
+
     const map =
       this.getUsedMap();
 
 
-    return Array.isArray(map[gameId])
 
-      ? map[gameId].includes(code)
+    return Array.isArray(map[id])
+
+      ? map[id].includes(value)
 
       : false;
 
+
   },
+
+
+
+
+
 
 
 
 
   setCodeUsed(gameId, code, used) {
 
-    if (!gameId || !code) {
+
+    const id =
+      normalize(gameId);
+
+
+    const value =
+      normalize(code);
+
+
+
+    if (!id || !value) {
+
       return false;
+
     }
+
 
 
     const map =
       this.getUsedMap();
 
 
-    map[gameId] =
-      Array.isArray(map[gameId])
-        ? map[gameId]
+
+    map[id] =
+      Array.isArray(map[id])
+
+        ? map[id]
+
         : [];
 
 
 
     const index =
-      map[gameId].indexOf(code);
+      map[id].indexOf(value);
+
+
 
 
 
     if (used && index === -1) {
 
-      map[gameId].push(code);
+
+      map[id].push(value);
+
 
     }
+
+
 
 
 
     if (!used && index >= 0) {
 
-      map[gameId].splice(index, 1);
+
+      map[id].splice(
+        index,
+        1
+      );
+
 
     }
+
+
 
 
 
@@ -259,57 +476,58 @@ export const Storage = {
     );
 
 
-    return used;
+
+    return Boolean(used);
+
 
   },
 
 
 
 
+
+
+
+
+
   toggleCodeUsed(gameId, code) {
 
-    if (!gameId || !code) {
+
+    const id =
+      normalize(gameId);
+
+
+    const value =
+      normalize(code);
+
+
+
+    if (!id || !value) {
+
       return false;
-    }
-
-
-    const map =
-      this.getUsedMap();
-
-
-
-    map[gameId] =
-      Array.isArray(map[gameId])
-        ? map[gameId]
-        : [];
-
-
-
-    const index =
-      map[gameId].indexOf(code);
-
-
-
-    if (index >= 0) {
-
-      map[gameId].splice(index, 1);
-
-    } else {
-
-      map[gameId].push(code);
 
     }
 
 
 
-    write(
-      KEYS.USED_CODES,
-      map
+    const currentlyUsed =
+      this.isCodeUsed(
+        id,
+        value
+      );
+
+
+
+    return this.setCodeUsed(
+
+      id,
+
+      value,
+
+      !currentlyUsed
+
     );
 
-
-
-    return map[gameId].includes(code);
 
   },
 
