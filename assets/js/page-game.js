@@ -3,6 +3,7 @@
  * Entry point for a game's detail page (game.html).
  */
 
+
 import { Api } from './api.js';
 import { Games } from './games.js';
 import { Codes } from './codes.js';
@@ -14,47 +15,76 @@ import { Utils } from './utils.js';
 
 const els = {
 
+
   breadcrumbName:
     document.getElementById('breadcrumb-name'),
+
+
 
   thumb:
     document.getElementById('game-thumb'),
 
+
+
   category:
     document.getElementById('game-category'),
+
+
 
   name:
     document.getElementById('game-name'),
 
+
+
   desc:
     document.getElementById('game-desc'),
+
+
 
   activeCount:
     document.getElementById('game-active-count'),
 
+
+
   lastVerified:
     document.getElementById('game-last-verified'),
+
+
 
   favBtn:
     document.getElementById('fav-btn'),
 
+
+
   shareBtn:
     document.getElementById('share-btn'),
+
+
 
   ticketGrid:
     document.getElementById('ticket-grid'),
 
+
+
   codesEmpty:
     document.getElementById('codes-empty'),
+
+
 
   revealExpired:
     document.getElementById('reveal-expired'),
 
+
+
   backToTop:
     document.getElementById('back-to-top'),
 
+
+
   themeToggle:
     document.getElementById('theme-toggle'),
+
+
 
   searchInput:
     document.getElementById('search-input'),
@@ -63,10 +93,13 @@ const els = {
 
 
 
+
+
 async function init() {
 
 
   const gameId =
+
     Utils.getURLParam('id');
 
 
@@ -88,17 +121,25 @@ async function init() {
 
 
   const enrichedGames =
+
     Games.withComputedFields(
+
       games,
+
       codesMap
+
     );
 
 
 
   const game =
+
     Games.findById(
+
       enrichedGames,
+
       gameId
+
     );
 
 
@@ -106,134 +147,17 @@ async function init() {
   if (!game) {
 
 
-    const hero =
-      document.querySelector(
-        '.game-hero'
-      );
-
-
-
-    if (hero) {
-
-
-      hero.innerHTML = `
-
-        <div class="empty-state"
-             style="grid-column:1 / -1;">
-
-          <div class="empty-state__icon">
-            🔍
-          </div>
-
-
-          <h3>
-            Game not found
-          </h3>
-
-
-          <p>
-            The game you're looking for doesn't exist or was removed.
-
-            <a href="index.html"
-               style="color:var(--accent-amber)">
-
-              Back to home
-
-            </a>.
-
-          </p>
-
-
-        </div>
-
-      `;
-
-    }
+    showNotFound();
 
 
     return;
+
 
   }
 
 
 
-  const pageTitle =
-    `${game.name} — Active codes | Roblox Codes Hub`;
-
-
-
-  const pageDesc =
-    `Active codes for ${game.name}: redeem rewards before they expire. Updated ${
-      game.lastVerified
-        ? Utils.relativeFromToday(game.lastVerified)
-        : 'recently'
-    }.`;
-
-
-
-  const pageUrl =
-    `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(game.id)}`;
-
-
-
-  document.title =
-    pageTitle;
-
-
-
-  Utils.qs('#meta-description')
-    ?.setAttribute(
-      'content',
-      pageDesc
-    );
-
-
-
-  Utils.qs('#canonical-link')
-    ?.setAttribute(
-      'href',
-      pageUrl
-    );
-
-
-
-  Utils.qs('#og-title')
-    ?.setAttribute(
-      'content',
-      pageTitle
-    );
-
-
-
-  Utils.qs('#og-description')
-    ?.setAttribute(
-      'content',
-      pageDesc
-    );
-
-
-
-  Utils.qs('#og-url')
-    ?.setAttribute(
-      'href',
-      pageUrl
-    );
-
-
-
-  Utils.qs('#twitter-title')
-    ?.setAttribute(
-      'content',
-      pageTitle
-    );
-
-
-
-  Utils.qs('#twitter-description')
-    ?.setAttribute(
-      'content',
-      pageDesc
-    );
+  updateSEO(game);
 
 
 
@@ -242,22 +166,31 @@ async function init() {
 
 
   renderCodes(
+
     game.id,
+
     codesMap[game.id] || []
+
   );
 
 
 
   UI.initThemeToggle(
+
     els.themeToggle
+
   );
 
 
 
   UI.initBackToTop(
+
     els.backToTop
+
   );  els.searchInput?.addEventListener(
+
     'keydown',
+
     event => {
 
 
@@ -273,7 +206,9 @@ async function init() {
         window.location.href =
 
           `index.html?q=${encodeURIComponent(
+
             event.target.value.trim()
+
           )}`;
 
 
@@ -281,10 +216,222 @@ async function init() {
 
 
     }
+
   );
 
 
 }
+
+
+
+
+
+/* ---------------- SEO ---------------- */
+
+
+function updateSEO(game) {
+
+
+  const pageTitle =
+
+    `${game.name} — Active codes | Roblox Codes Hub`;
+
+
+
+  const pageDesc =
+
+    `Active codes for ${game.name}: redeem rewards before they expire. Updated ${
+      game.lastVerified
+        ? Utils.relativeFromToday(game.lastVerified)
+        : 'recently'
+    }.`;
+
+
+
+  const pageUrl =
+
+    `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(game.id)}`;
+
+
+
+  document.title =
+
+    pageTitle;
+
+
+
+
+  Utils.qs('#meta-description')
+
+    ?.setAttribute(
+
+      'content',
+
+      pageDesc
+
+    );
+
+
+
+
+
+  Utils.qs('#canonical-link')
+
+    ?.setAttribute(
+
+      'href',
+
+      pageUrl
+
+    );
+
+
+
+
+
+  Utils.qs('#og-title')
+
+    ?.setAttribute(
+
+      'content',
+
+      pageTitle
+
+    );
+
+
+
+
+
+  Utils.qs('#og-description')
+
+    ?.setAttribute(
+
+      'content',
+
+      pageDesc
+
+    );
+
+
+
+
+
+  Utils.qs('#og-url')
+
+    ?.setAttribute(
+
+      'content',
+
+      pageUrl
+
+    );
+
+
+
+
+
+  Utils.qs('#twitter-title')
+
+    ?.setAttribute(
+
+      'content',
+
+      pageTitle
+
+    );
+
+
+
+
+
+  Utils.qs('#twitter-description')
+
+    ?.setAttribute(
+
+      'content',
+
+      pageDesc
+
+    );
+
+
+}
+
+
+
+
+
+/* ---------------- Not Found ---------------- */
+
+
+function showNotFound() {
+
+
+  const hero =
+
+    document.querySelector(
+
+      '.game-hero'
+
+    );
+
+
+
+  if (!hero) return;
+
+
+
+
+  hero.innerHTML = `
+
+
+    <div class="empty-state"
+
+         style="grid-column:1 / -1;">
+
+
+      <div class="empty-state__icon">
+
+        🔍
+
+      </div>
+
+
+
+      <h3>
+
+        Game not found
+
+      </h3>
+
+
+
+      <p>
+
+        The game you're looking for doesn't exist or was removed.
+
+        <a href="index.html"
+
+           style="color:var(--accent-amber)">
+
+          Back to home
+
+        </a>.
+
+      </p>
+
+
+
+    </div>
+
+
+  `;
+
+
+}
+
+
 
 
 
@@ -296,10 +443,14 @@ function renderGameInfo(game) {
 
   if (els.breadcrumbName) {
 
+
     els.breadcrumbName.textContent =
+
       game.name;
 
+
   }
+
 
 
 
@@ -309,18 +460,22 @@ function renderGameInfo(game) {
     els.thumb.style.background =
 
       Utils.gradientFor(
+
         game.name
+
       );
 
 
 
     els.thumb.innerHTML = `
 
+
       <span aria-hidden="true">
 
         ${Utils.initials(game.name)}
 
       </span>
+
 
     `;
 
@@ -329,34 +484,42 @@ function renderGameInfo(game) {
 
 
 
+
   if (els.category) {
 
+
     els.category.textContent =
-      game.category;
+
+      game.category || 'Other';
+
 
   }
+
 
 
 
   if (els.name) {
 
+
     els.name.textContent =
+
       game.name;
 
+
   }
+
 
 
 
   if (els.desc) {
 
+
     els.desc.textContent =
+
       game.description || '';
 
-  }
 
-
-
-  if (els.activeCount) {
+  }  if (els.activeCount) {
 
 
     els.activeCount.textContent =
@@ -372,6 +535,8 @@ function renderGameInfo(game) {
 
 
 
+
+
   if (els.lastVerified) {
 
 
@@ -379,14 +544,17 @@ function renderGameInfo(game) {
 
       `Verified ${
         game.lastVerified
+
           ? Utils.relativeFromToday(
               game.lastVerified
             )
+
           : 'recently'
       }`;
 
 
   }
+
 
 
 
@@ -400,8 +568,11 @@ function renderGameInfo(game) {
 
 
         els.favBtn.classList.toggle(
+
           'is-fav',
+
           isFav
+
         );
 
 
@@ -409,7 +580,9 @@ function renderGameInfo(game) {
         els.favBtn.textContent =
 
           isFav
+
             ? '★ Favorited'
+
             : '☆ Favorite';
 
 
@@ -417,13 +590,19 @@ function renderGameInfo(game) {
 
 
 
+
+
     updateFavoriteButton(
 
       Storage.isFavorite(
+
         game.id
+
       )
 
     );
+
+
 
 
 
@@ -437,13 +616,17 @@ function renderGameInfo(game) {
         const nowFav =
 
           Storage.toggleFavorite(
+
             game.id
+
           );
 
 
 
         updateFavoriteButton(
+
           nowFav
+
         );
 
 
@@ -470,12 +653,12 @@ function renderGameInfo(game) {
 
 
 
+
   els.shareBtn?.addEventListener(
 
     'click',
 
     async () => {
-
 
 
       const shareData = {
@@ -502,6 +685,8 @@ function renderGameInfo(game) {
 
 
 
+
+
       if (navigator.share) {
 
 
@@ -509,14 +694,16 @@ function renderGameInfo(game) {
 
 
           await navigator.share(
+
             shareData
+
           );
 
 
         } catch {
 
 
-          // cancelled
+          // user cancelled share
 
 
         }
@@ -530,13 +717,17 @@ function renderGameInfo(game) {
 
 
           await navigator.clipboard.writeText(
+
             window.location.href
+
           );
 
 
 
           UI.showToast(
+
             'Link copied!'
+
           );
 
 
@@ -545,8 +736,11 @@ function renderGameInfo(game) {
 
 
           UI.showToast(
+
             'Could not copy link',
+
             'error'
+
           );
 
 
@@ -554,7 +748,6 @@ function renderGameInfo(game) {
 
 
       }
-
 
 
     }
@@ -567,29 +760,42 @@ function renderGameInfo(game) {
 
 
 
+
 /* ---------------- Codes ---------------- */
 
 
 function renderCodes(
+
   gameId,
+
   rawCodes
+
 ) {
 
 
   if (els.revealExpired) {
 
+
     els.revealExpired.hidden =
+
       true;
 
+
   }
+
+
 
 
 
   const withStatus =
 
     Codes.withStatus(
+
       rawCodes
+
     );
+
+
 
 
 
@@ -600,8 +806,12 @@ function renderCodes(
     expired
 
   } = Codes.splitVisible(
+
     withStatus
+
   );
+
+
 
 
 
@@ -610,40 +820,56 @@ function renderCodes(
     list => {
 
 
-
       if (!els.ticketGrid) {
+
+
         return;
+
+
       }
+
 
 
 
       if (!list.length) {
 
 
-
         els.ticketGrid.innerHTML =
+
           '';
 
 
 
         els.codesEmpty
+
           ?.classList
+
           .add(
+
             'is-visible'
+
           );
 
 
+
         return;
+
 
       }
 
 
 
+
       els.codesEmpty
+
         ?.classList
+
         .remove(
+
           'is-visible'
+
         );
+
 
 
 
@@ -657,6 +883,16 @@ function renderCodes(
 
 
           onCopy(code) {
+
+
+            Storage.toggleCodeUsed(
+
+              gameId,
+
+              code
+
+            );
+
 
 
             UI.showToast(
@@ -678,110 +914,165 @@ function renderCodes(
 
 
 
+
   draw(
+
     visible
-  );
+
+  );  /* ---------------- Toast ---------------- */
 
 
-
-  if (expired.length && els.revealExpired) {
-
-
-
-    els.revealExpired.hidden =
-      false;
+  showToast(
+    message,
+    type = 'success'
+  ) {
 
 
-
-    els.revealExpired.textContent =
-
-      `Show ${expired.length} expired code${
-        expired.length === 1
-          ? ''
-          : 's'
-      }`;
-
-
-
-    let showing = false;
-
-
-
-    els.revealExpired.addEventListener(
-
-      'click',
-
-      () => {
-
-
-
-        showing =
-          !showing;
-
-
-
-        draw(
-
-          showing
-
-            ? withStatus
-
-            : visible
-
-        );
-
-
-
-        els.revealExpired.textContent =
-
-
-          showing
-
-            ? 'Hide expired codes'
-
-            : `Show ${expired.length} expired code${
-                expired.length === 1
-                  ? ''
-                  : 's'
-              }`;
-
-
-
-      }
-
-    );
-
-
-  }
-
-
-}
-
-
-
-
-init()
-
-  .catch(
-
-    error => {
-
-
-      console.error(
-        error
+    let toast =
+      document.querySelector(
+        '.toast'
       );
 
 
 
-      UI.showToast(
+    if (!toast) {
 
-        'Error loading game data.',
 
-        'error'
+      toast =
+        document.createElement(
+          'div'
+        );
 
+
+
+      toast.className =
+        'toast';
+
+
+
+      document.body.appendChild(
+        toast
       );
 
 
     }
 
-  );
+
+
+    toast.textContent =
+      message;
+
+
+
+    toast.dataset.type =
+      type;
+
+
+
+    toast.classList.add(
+      'show'
+    );
+
+
+
+    clearTimeout(
+      this.toastTimer
+    );
+
+
+
+    this.toastTimer =
+      setTimeout(
+        () => {
+
+          toast.classList.remove(
+            'show'
+          );
+
+        },
+        2500
+      );
+
+
+  },
+
+
+
+
+  /* ---------------- Loading ---------------- */
+
+
+  setLoading(
+    container,
+    loading
+  ) {
+
+
+    if (!container) return;
+
+
+
+    container.classList.toggle(
+      'is-loading',
+      loading
+    );
+
+
+  },
+
+
+
+
+  /* ---------------- Theme ---------------- */
+
+
+  initThemeToggle(
+    button
+  ) {
+
+
+    if (!button) return;
+
+
+
+    const savedTheme =
+      Storage.getTheme();
+
+
+
+    if (savedTheme === 'light') {
+
+
+      document.documentElement.classList.add(
+        'light'
+      );
+
+
+    }
+
+
+
+    button.addEventListener(
+      'click',
+      () => {
+
+
+        const light =
+          document.documentElement.classList.toggle(
+            'light'
+          );
+
+
+
+        Storage.setTheme(
+          light
+            ? 'light'
+            : 'dark'
+        );
+
+
+      }
+    );
+
+
+  },
