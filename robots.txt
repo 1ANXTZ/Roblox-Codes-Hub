@@ -3,4 +3,4 @@ Allow: /
 
 Disallow: /admin.html
 
-Sitemap: https://SEU-DOMINIO/sitemap.xml
+Sitemap: https://1anxtz.github.io/Roblox-Codes-Hub/sitemap.xml
