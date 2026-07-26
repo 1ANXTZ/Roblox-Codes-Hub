@@ -2,8 +2,7 @@
  * ui.js
  * All DOM rendering lives here.
  *
- * This module is responsible only for UI.
- * Data rules stay in Games, Codes and Storage.
+ * Responsible only for DOM rendering.
  */
 
 import { Utils } from './utils.js';
@@ -19,6 +18,7 @@ const STATUS_LABEL = {
   expired: 'Expired',
 
 };
+
 
 
 
@@ -41,7 +41,80 @@ function escapeHTML(value = '') {
 
 
 
+async function copyText(text) {
+
+
+  if (
+    navigator.clipboard &&
+    window.isSecureContext
+  ) {
+
+
+    await navigator.clipboard.writeText(
+      text
+    );
+
+
+    return;
+
+
+  }
+
+
+
+
+  const textarea =
+    document.createElement('textarea');
+
+
+
+  textarea.value =
+    text;
+
+
+
+  textarea.style.position =
+    'fixed';
+
+
+
+  textarea.style.opacity =
+    '0';
+
+
+
+  document.body.appendChild(
+    textarea
+  );
+
+
+
+  textarea.select();
+
+
+
+  document.execCommand(
+    'copy'
+  );
+
+
+
+  textarea.remove();
+
+
+}
+
+
+
+
+
+
+
 export const UI = {
+
+
+  toastTimer: null,
+
 
 
   /* ---------------- Categories ---------------- */
@@ -58,15 +131,17 @@ export const UI = {
     if (!container) return;
 
 
-    container.innerHTML = '';
+
+    container.innerHTML =
+      '';
 
 
 
-    const all = [
+    const list = [
 
       {
-        name: 'All',
-        count: null
+        name:'All',
+        count:null
       },
 
       ...categories
@@ -75,15 +150,18 @@ export const UI = {
 
 
 
-    all.forEach(category => {
+
+    list.forEach(category => {
 
 
-      const chip =
-        document.createElement('button');
+      const button =
+        document.createElement(
+          'button'
+        );
 
 
 
-      chip.className =
+      button.className =
         'chip' +
         (
           category.name === activeCategory
@@ -93,8 +171,14 @@ export const UI = {
 
 
 
-      chip.textContent =
-        category.count != null
+      button.type =
+        'button';
+
+
+
+      button.textContent =
+
+        category.count !== null
 
           ? `${category.name} (${category.count})`
 
@@ -102,14 +186,7 @@ export const UI = {
 
 
 
-      chip.setAttribute(
-        'role',
-        'tab'
-      );
-
-
-
-      chip.setAttribute(
+      button.setAttribute(
         'aria-selected',
         String(
           category.name === activeCategory
@@ -118,20 +195,41 @@ export const UI = {
 
 
 
-      chip.addEventListener(
+      button.addEventListener(
+
         'click',
-        () => onSelect?.(category.name)
+
+        () => {
+
+          onSelect?.(
+            category.name
+          );
+
+        }
+
       );
 
 
 
-      container.appendChild(chip);
+      container.appendChild(
+        button
+      );
 
 
     });
 
 
-  },  /* ---------------- Game cards ---------------- */
+  },
+
+
+
+
+
+
+
+
+  /* ---------------- Game cards ---------------- */
+
 
 
   renderGameGrid(
@@ -148,21 +246,24 @@ export const UI = {
 
 
 
-    container.innerHTML = '';
+    container.innerHTML =
+      '';
 
 
 
-    if (!games || !games.length) {
+    if (!games.length) {
 
 
       if (emptyStateEl) {
 
-        emptyStateEl.hidden = false;
+        emptyStateEl.hidden =
+          false;
 
       }
 
 
       return;
+
 
     }
 
@@ -170,31 +271,33 @@ export const UI = {
 
     if (emptyStateEl) {
 
-      emptyStateEl.hidden = true;
+      emptyStateEl.hidden =
+        true;
 
     }
 
 
 
-    const frag =
+
+    const fragment =
       document.createDocumentFragment();
+
 
 
 
     games.forEach(game => {
 
 
-      if (!game) return;
-
-
-
-      frag.appendChild(
+      fragment.appendChild(
 
         this.buildGameCard(
+
           game,
+
           {
             onToggleFavorite
           }
+
         )
 
       );
@@ -204,10 +307,17 @@ export const UI = {
 
 
 
-    container.appendChild(frag);
+
+    container.appendChild(
+      fragment
+    );
 
 
   },
+
+
+
+
 
 
 
@@ -222,17 +332,14 @@ export const UI = {
 
 
     const card =
-      document.createElement('article');
+      document.createElement(
+        'article'
+      );
 
 
 
     card.className =
       'game-card';
-
-
-
-    card.dataset.gameId =
-      game.id;
 
 
 
@@ -243,161 +350,92 @@ export const UI = {
 
 
 
-    card.innerHTML = `
+    card.dataset.gameId =
+      game.id;
 
+
+
+    card.innerHTML = `
 
       <a
         href="game.html?id=${encodeURIComponent(game.id)}"
         class="game-card__thumb-link"
-        style="text-decoration:none;"
       >
-
 
         <div
           class="game-card__thumb"
-          style="background:${Utils.gradientFor(game.name || '')}"
+          style="background:${Utils.gradientFor(game.name)}"
         >
 
-
-          <span aria-hidden="true">
-
+          <span>
             ${escapeHTML(
-              Utils.initials(game.name || 'Game')
+              Utils.initials(game.name)
             )}
-
           </span>
-
 
 
           <span class="game-card__badge-count">
-
             ${game.activeCount ?? 0}
-
             code${game.activeCount === 1 ? '' : 's'}
-
           </span>
 
-
         </div>
-
 
       </a>
 
 
 
-
       <button
-
         class="game-card__fav${isFav ? ' is-fav' : ''}"
-
         aria-pressed="${isFav}"
-
-        aria-label="Favorite ${escapeHTML(game.name)}"
-
         type="button"
-
       >
-
         ${isFav ? '★' : '☆'}
-
       </button>
-
-
 
 
       <div class="game-card__body">
 
-
-
         <span class="game-card__category">
-
-          ${escapeHTML(
-            game.category || 'Other'
-          )}
-
+          ${escapeHTML(game.category || 'Other')}
         </span>
 
 
-
-
-        <a
-
-          href="game.html?id=${encodeURIComponent(game.id)}"
-
-          style="text-decoration:none;"
-
-        >
-
+        <a href="game.html?id=${encodeURIComponent(game.id)}">
 
           <h3 class="game-card__name">
-
-            ${escapeHTML(
-              game.name || 'Unnamed game'
-            )}
-
+            ${escapeHTML(game.name)}
           </h3>
 
-
         </a>
-
-
-
 
 
         <span class="game-card__meta">
-
-
           Updated ${
-
             game.lastVerified
-
-              ? Utils.relativeFromToday(
-                  game.lastVerified
-                )
-
-              : '—'
-
+            ? Utils.relativeFromToday(game.lastVerified)
+            : '—'
           }
-
-
         </span>
 
 
-
-
-
         <a
-
           class="game-card__cta"
-
           href="game.html?id=${encodeURIComponent(game.id)}"
-
         >
-
           View codes
-
         </a>
 
-
-
-
       </div>
-
-
 
     `;
 
 
 
-
-
     const favBtn =
-
       card.querySelector(
         '.game-card__fav'
       );
-
-
 
 
 
@@ -405,15 +443,10 @@ export const UI = {
 
       'click',
 
-      event => {
+      () => {
 
 
-        event.preventDefault();
-
-
-
-        const nowFav =
-
+        const state =
           Storage.toggleFavorite(
             game.id
           );
@@ -421,39 +454,29 @@ export const UI = {
 
 
         favBtn.classList.toggle(
-
           'is-fav',
-
-          nowFav
-
+          state
         );
 
 
 
         favBtn.textContent =
-
-          nowFav
-            ? '★'
-            : '☆';
+          state
+          ? '★'
+          : '☆';
 
 
 
         favBtn.setAttribute(
-
           'aria-pressed',
-
-          String(nowFav)
-
+          String(state)
         );
 
 
 
         onToggleFavorite?.(
-
           game.id,
-
-          nowFav
-
+          state
         );
 
 
@@ -482,11 +505,12 @@ export const UI = {
 
 
 
-    container.innerHTML = '';
+    container.innerHTML =
+      '';
 
 
 
-    if (!codes || !codes.length) {
+    if (!codes.length) {
 
 
       container.innerHTML = `
@@ -502,29 +526,31 @@ export const UI = {
 
       return;
 
+
     }
 
 
 
-    const frag =
+
+    const fragment =
       document.createDocumentFragment();
+
 
 
 
     codes.forEach(code => {
 
 
-      if (!code) return;
-
-
-
-      frag.appendChild(
+      fragment.appendChild(
 
         this.buildCodeCard(
+
           code,
+
           {
             onCopy
           }
+
         )
 
       );
@@ -534,10 +560,17 @@ export const UI = {
 
 
 
-    container.appendChild(frag);
+
+    container.appendChild(
+      fragment
+    );
 
 
   },
+
+
+
+
 
 
 
@@ -552,7 +585,9 @@ export const UI = {
 
 
     const card =
-      document.createElement('article');
+      document.createElement(
+        'article'
+      );
 
 
 
@@ -571,43 +606,32 @@ export const UI = {
 
 
 
-    card.innerHTML = `
 
+    card.innerHTML = `
 
       <div class="code-card__top">
 
-
-        <span class="code-card__status status-${status}">
+        <span class="code-card__status status-${escapeHTML(status)}">
 
           ${STATUS_LABEL[status] || status}
 
         </span>
 
-
       </div>
-
-
 
 
 
       <code class="code-card__value">
 
-        ${escapeHTML(
-          code.code || ''
-        )}
+        ${escapeHTML(code.code || '')}
 
       </code>
 
 
 
-
-
       <button
-
         class="code-card__copy"
-
         type="button"
-
       >
 
         Copy
@@ -615,117 +639,74 @@ export const UI = {
       </button>
 
 
-
     `;
 
 
 
-
-
-    const copyBtn =
-
+    const button =
       card.querySelector(
         '.code-card__copy'
       );
 
 
 
-
-
-    copyBtn?.addEventListener(
+    button?.addEventListener(
 
       'click',
 
       async () => {
 
 
-
         try {
 
 
-
-          await navigator.clipboard.writeText(
-
+          await copyText(
             code.code
-
           );
 
 
 
-
-
-          copyBtn.textContent =
-
+          button.textContent =
             'Copied!';
 
 
 
-
-
-          UI.showToast(
-
+          this.showToast(
             'Code copied!'
-
           );
-
-
 
 
 
           onCopy?.(
-
             code.code
-
           );
 
 
 
+          setTimeout(() => {
 
+            button.textContent =
+              'Copy';
 
-          setTimeout(
-
-            () => {
-
-
-              copyBtn.textContent =
-
-                'Copy';
-
-
-
-            },
-
-            1500
-
-          );
-
-
+          },1500);
 
 
 
         } catch {
 
 
-
-          copyBtn.textContent =
-
+          button.textContent =
             'Error';
 
 
 
-
-          UI.showToast(
-
+          this.showToast(
             'Could not copy code',
-
             'error'
-
           );
 
 
-
         }
-
 
 
       }
@@ -743,6 +724,10 @@ export const UI = {
 
 
 
+
+
+
+
   /* ---------------- Stats ---------------- */
 
 
@@ -752,17 +737,14 @@ export const UI = {
   ) {
 
 
-    if (!elements || !stats) return;
+    if (!elements) return;
 
 
 
     if (elements.games) {
 
-
       elements.games.textContent =
-
         stats.games ?? 0;
-
 
     }
 
@@ -770,11 +752,8 @@ export const UI = {
 
     if (elements.codes) {
 
-
       elements.codes.textContent =
-
         stats.codes ?? 0;
-
 
     }
 
@@ -782,16 +761,23 @@ export const UI = {
 
     if (elements.categories) {
 
-
       elements.categories.textContent =
-
         stats.categories ?? 0;
-
 
     }
 
 
-  },  /* ---------------- Toast ---------------- */
+  },
+
+
+
+
+
+
+
+
+
+  /* ---------------- Toast ---------------- */
 
 
   showToast(
@@ -841,9 +827,13 @@ export const UI = {
 
 
 
-    toast.classList.add(
-      'show'
-    );
+    requestAnimationFrame(() => {
+
+      toast.classList.add(
+        'show'
+      );
+
+    });
 
 
 
@@ -854,31 +844,18 @@ export const UI = {
 
 
     this.toastTimer =
-
-      setTimeout(
-
-        () => {
+      setTimeout(() => {
 
 
-          toast.classList.remove(
-            'show'
-          );
+        toast.classList.remove(
+          'show'
+        );
 
 
-        },
-
-        2500
-
-      );
+      },2500);
 
 
-  },
-
-
-
-
-
-  /* ---------------- Theme ---------------- */
+  },  /* ---------------- Theme ---------------- */
 
 
   initThemeToggle(
@@ -891,23 +868,19 @@ export const UI = {
 
 
     const savedTheme =
-
       Storage.getTheme();
 
 
 
-
-
-    if (savedTheme === 'light') {
-
+    if (
+      savedTheme === 'light'
+    ) {
 
       document.documentElement.classList.add(
         'light'
       );
 
-
     }
-
 
 
 
@@ -919,27 +892,20 @@ export const UI = {
       () => {
 
 
-
-        const isLight =
-
+        const light =
           document.documentElement.classList.toggle(
             'light'
           );
 
 
 
-
-
         Storage.setTheme(
 
-          isLight
-
+          light
             ? 'light'
-
             : 'dark'
 
         );
-
 
 
       }
@@ -948,6 +914,10 @@ export const UI = {
 
 
   },
+
+
+
+
 
 
 
@@ -965,27 +935,37 @@ export const UI = {
 
 
 
+    const updateVisibility = () => {
+
+
+      button.classList.toggle(
+
+        'is-visible',
+
+        window.scrollY > 500
+
+      );
+
+
+    };
+
+
+
+    updateVisibility();
+
+
+
     window.addEventListener(
 
       'scroll',
 
-      () => {
+      updateVisibility,
 
-
-        button.classList.toggle(
-
-          'is-visible',
-
-          window.scrollY > 500
-
-        );
-
-
+      {
+        passive:true
       }
 
     );
-
-
 
 
 
@@ -996,15 +976,13 @@ export const UI = {
       () => {
 
 
-
         window.scrollTo({
 
-          top: 0,
+          top:0,
 
-          behavior: 'smooth'
+          behavior:'smooth'
 
         });
-
 
 
       }
@@ -1013,6 +991,7 @@ export const UI = {
 
 
   }
+
 
 
 };
