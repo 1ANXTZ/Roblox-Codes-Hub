@@ -15,7 +15,7 @@ const STATUS_LABEL = {
 
   expiring: 'Expiring',
 
-  expired: 'Expired',
+  expired: 'Expired'
 
 };
 
@@ -40,13 +40,6 @@ function escapeHTML(value = '') {
 
 
 
-/**
- * Roblox thumbnail
- *
- * Uses direct CDN URL to avoid CORS
- * problems on GitHub Pages.
- */
-
 function getRobloxIcon(game) {
 
   if (!game?.robloxId) {
@@ -66,15 +59,12 @@ function getRobloxIcon(game) {
 
 async function copyText(text) {
 
-  const value =
-    String(text ?? '').trim();
+  const value = String(text ?? '').trim();
 
 
   if (!value) {
 
-    throw new Error(
-      'Empty text'
-    );
+    throw new Error('Empty text');
 
   }
 
@@ -88,64 +78,35 @@ async function copyText(text) {
 
   ) {
 
-
-    await navigator.clipboard.writeText(
-
-      value
-
-    );
-
+    await navigator.clipboard.writeText(value);
 
     return;
-
 
   }
 
 
 
-
-  const textarea =
-    document.createElement('textarea');
+  const textarea = document.createElement('textarea');
 
 
-
-  textarea.value =
-    value;
+  textarea.value = value;
 
 
+  textarea.style.position = 'fixed';
 
-  textarea.style.position =
-    'fixed';
-
-
-
-  textarea.style.opacity =
-    '0';
+  textarea.style.opacity = '0';
 
 
-
-  document.body.appendChild(
-
-    textarea
-
-  );
-
+  document.body.appendChild(textarea);
 
 
   textarea.select();
 
 
-
-  document.execCommand(
-
-    'copy'
-
-  );
-
+  document.execCommand('copy');
 
 
   textarea.remove();
-
 
 }
 
@@ -161,7 +122,8 @@ export const UI = {
   toastTimer: null,
 
 
-  /* ---------------- Categories ---------------- */  renderCategoryChips(
+
+  renderCategoryChips(
 
     container,
 
@@ -198,14 +160,10 @@ export const UI = {
     list.forEach(category => {
 
 
-      const button =
+      const button = document.createElement('button');
 
-        document.createElement(
 
-          'button'
-
-        );
-
+      button.type = 'button';
 
 
       button.className =
@@ -221,12 +179,6 @@ export const UI = {
             : ''
 
         );
-
-
-
-      button.type =
-
-        'button';
 
 
 
@@ -246,11 +198,7 @@ export const UI = {
 
         () => {
 
-          onSelect?.(
-
-            category.name
-
-          );
+          onSelect?.(category.name);
 
         }
 
@@ -258,23 +206,13 @@ export const UI = {
 
 
 
-      container.appendChild(
-
-        button
-
-      );
+      container.appendChild(button);
 
 
     });
 
 
   },
-
-
-
-
-
-  /* ---------------- Game cards ---------------- */
 
 
 
@@ -315,7 +253,6 @@ export const UI = {
 
       return;
 
-
     }
 
 
@@ -328,68 +265,37 @@ export const UI = {
 
 
 
-
-
-    const fragment =
-
-      document.createDocumentFragment();
-
-
+    const fragment = document.createDocumentFragment();
 
 
 
     games.forEach(game => {
 
 
-      const card =
+      const card = this.buildGameCard(
 
-        this.buildGameCard(
+        game,
 
-          game,
+        {
 
-          {
+          onToggleFavorite
 
-            onToggleFavorite
+        }
 
-          }
-
-        );
+      );
 
 
-      if (card) {
-
-        fragment.appendChild(
-
-          card
-
-        );
-
-      }
+      fragment.appendChild(card);
 
 
     });
 
 
 
-
-
-    container.appendChild(
-
-      fragment
-
-    );
+    container.appendChild(fragment);
 
 
   },
-
-
-
-
-
-
-
-
-
   buildGameCard(
 
     game,
@@ -403,45 +309,23 @@ export const UI = {
   ) {
 
 
-    const card =
+    const card = document.createElement('article');
 
-      document.createElement(
 
-        'article'
-
-      );
+    card.className = 'game-card';
 
 
 
-    card.className =
-
-      'game-card';
+    const isFav = Storage.isFavorite(game.id);
 
 
 
-    const isFav =
-
-      Storage.isFavorite(
-
-        game.id
-
-      );
+    card.dataset.gameId = game.id;
 
 
 
-    card.dataset.gameId =
+    const fallback = Utils.initials(game.name);
 
-      game.id;
-
-
-
-    const fallback =
-
-      Utils.initials(
-
-        game.name
-
-      );
 
 
 
@@ -514,7 +398,11 @@ export const UI = {
 
 
 
-        <a href="game.html?id=${encodeURIComponent(game.id)}">
+        <a
+
+          href="game.html?id=${encodeURIComponent(game.id)}"
+
+        >
 
           <h3 class="game-card__name">
 
@@ -562,57 +450,34 @@ export const UI = {
 
 
 
+    const thumb = card.querySelector(
 
-    const thumb =
+      '.game-card__thumb'
 
-      card.querySelector(
-
-        '.game-card__thumb'
-
-      );
+    );
 
 
 
-    const imageUrl =
-
-      getRobloxIcon(game);
+    const imageUrl = getRobloxIcon(game);
 
 
 
     if (imageUrl && thumb) {
 
 
-      const img =
-
-        document.createElement(
-
-          'img'
-
-        );
+      const img = document.createElement('img');
 
 
-
-      img.className =
-
-        'game-card__image';
+      img.className = 'game-card__image';
 
 
-
-      img.src =
-
-        imageUrl;
+      img.src = imageUrl;
 
 
-
-      img.alt =
-
-        `${game.name} icon`;
+      img.alt = `${game.name} icon`;
 
 
-
-      img.loading =
-
-        'lazy';
+      img.loading = 'lazy';
 
 
 
@@ -624,27 +489,99 @@ export const UI = {
 
 
 
-      thumb.prepend(
+      thumb.prepend(img);
 
-        img
+
+
+      const loading = thumb.querySelector(
+
+        '.game-card__loading'
 
       );
 
 
 
-      const loading =
+      loading?.remove();
 
-        thumb.querySelector(
 
-          '.game-card__loading'
+    }
+
+
+
+
+    const favBtn = card.querySelector(
+
+      '.game-card__fav'
+
+    );
+
+
+
+    favBtn?.addEventListener(
+
+      'click',
+
+      () => {
+
+
+        const state = Storage.toggleFavorite(
+
+          game.id
 
         );
 
 
-      loading?.remove();
+
+        favBtn.classList.toggle(
+
+          'is-fav',
+
+          state
+
+        );
 
 
-    }  /* =========================
+
+        favBtn.textContent = state
+
+          ? '★'
+
+          : '☆';
+
+
+
+        favBtn.setAttribute(
+
+          'aria-pressed',
+
+          String(state)
+
+        );
+
+
+
+        onToggleFavorite?.(
+
+          game.id,
+
+          state
+
+        );
+
+
+      }
+
+    );
+
+
+
+    return card;
+
+
+  },
+
+
+  /* =========================
      Code Cards
   ========================= */
 
@@ -688,7 +625,6 @@ export const UI = {
 
       return;
 
-
     }
 
 
@@ -725,6 +661,7 @@ export const UI = {
 
 
   },
+
 
 
 
@@ -912,37 +849,23 @@ export const UI = {
 
     if (elements.games) {
 
-
-      elements.games.textContent =
-
-        stats.games ?? 0;
-
+      elements.games.textContent = stats.games ?? 0;
 
     }
-
 
 
 
     if (elements.codes) {
 
-
-      elements.codes.textContent =
-
-        stats.codes ?? 0;
-
+      elements.codes.textContent = stats.codes ?? 0;
 
     }
 
 
 
-
     if (elements.categories) {
 
-
-      elements.categories.textContent =
-
-        stats.categories ?? 0;
-
+      elements.categories.textContent = stats.categories ?? 0;
 
     }
 
@@ -968,11 +891,7 @@ export const UI = {
   ) {
 
 
-    let toast = document.querySelector(
-
-      '.toast'
-
-    );
+    let toast = document.querySelector('.toast');
 
 
 
@@ -985,6 +904,7 @@ export const UI = {
       toast.className = 'toast';
 
 
+
       toast.setAttribute(
 
         'role',
@@ -994,6 +914,7 @@ export const UI = {
       );
 
 
+
       toast.setAttribute(
 
         'aria-live',
@@ -1001,6 +922,7 @@ export const UI = {
         'polite'
 
       );
+
 
 
       document.body.appendChild(toast);
@@ -1021,35 +943,21 @@ export const UI = {
     requestAnimationFrame(() => {
 
 
-      toast.classList.add(
-
-        'show'
-
-      );
+      toast.classList.add('show');
 
 
     });
 
 
 
-
-    clearTimeout(
-
-      this.toastTimer
-
-    );
-
+    clearTimeout(this.toastTimer);
 
 
 
     this.toastTimer = setTimeout(() => {
 
 
-      toast.classList.remove(
-
-        'show'
-
-      );
+      toast.classList.remove('show');
 
 
     }, 2500);
