@@ -3,9 +3,8 @@
     {
       "id": "blox-fruits",
       "name": "Blox Fruits",
-      "robloxId": "2753915549",
       "category": "Adventure",
-      "image": "assets/images/games/blox-fruits.webp",
+      "robloxId": 994732206,
       "tags": [
         "one-piece-inspired",
         "adventure",
@@ -17,9 +16,8 @@
     {
       "id": "blue-lock-rivals",
       "name": "Blue Lock Rivals",
-      "robloxId": "18668065416",
       "category": "Anime",
-      "image": "assets/images/games/blue-lock-rivals.webp",
+      "robloxId": 18668065416,
       "tags": [
         "blue-lock",
         "football",
@@ -31,9 +29,8 @@
     {
       "id": "anime-rangers-x",
       "name": "Anime Rangers X",
-      "robloxId": "0",
       "category": "Tower Defense",
-      "image": "assets/images/games/anime-rangers-x.webp",
+      "robloxId": 13257346998,
       "tags": [
         "anime",
         "tower-defense"
@@ -44,9 +41,8 @@
     {
       "id": "anime-vanguards",
       "name": "Anime Vanguards",
-      "robloxId": "16146832113",
       "category": "Tower Defense",
-      "image": "assets/images/games/anime-vanguards.webp",
+      "robloxId": 16146832113,
       "tags": [
         "anime",
         "tower-defense",
@@ -58,9 +54,8 @@
     {
       "id": "anime-last-stand",
       "name": "Anime Last Stand",
-      "robloxId": "0",
       "category": "Tower Defense",
-      "image": "assets/images/games/anime-last-stand.webp",
+      "robloxId": 13401297431,
       "tags": [
         "anime",
         "tower-defense"
@@ -71,9 +66,8 @@
     {
       "id": "grow-a-garden",
       "name": "Grow a Garden",
-      "robloxId": "126884695634066",
       "category": "Simulator",
-      "image": "assets/images/games/grow-a-garden.webp",
+      "robloxId": 126884695634066,
       "tags": [
         "farming",
         "simulator",
@@ -85,9 +79,8 @@
     {
       "id": "pet-simulator-99",
       "name": "Pet Simulator 99",
-      "robloxId": "8737899170",
       "category": "Pet Games",
-      "image": "assets/images/games/pet-simulator-99.webp",
+      "robloxId": 8737899170,
       "tags": [
         "pets",
         "simulator",
@@ -99,9 +92,8 @@
     {
       "id": "fisch",
       "name": "Fisch",
-      "robloxId": "16732694052",
       "category": "Simulator",
-      "image": "assets/images/games/fisch.webp",
+      "robloxId": 16732694052,
       "tags": [
         "fishing",
         "simulator",
@@ -113,9 +105,8 @@
     {
       "id": "dead-rails",
       "name": "Dead Rails",
-      "robloxId": "116495829188952",
       "category": "Survival",
-      "image": "assets/images/games/dead-rails.webp",
+      "robloxId": 116495829188952,
       "tags": [
         "survival",
         "western",
@@ -127,9 +118,8 @@
     {
       "id": "volleyball-legends",
       "name": "Volleyball Legends",
-      "robloxId": "73817065165",
       "category": "Sports",
-      "image": "assets/images/games/volleyball-legends.webp",
+      "robloxId": 7381708107,
       "tags": [
         "volleyball",
         "sports",
@@ -137,264 +127,247 @@
       ],
       "description": "Build your team, train special skills, and win anime-style volleyball tournaments.",
       "popularity": 78
-    },    {
-      "id": "king-legacy",
-      "name": "King Legacy",
-      "robloxId": "4520749081",
-      "category": "Adventure",
-      "image": "assets/images/games/king-legacy.webp",
-      "tags": [
-        "one-piece-inspired",
-        "adventure",
-        "pvp"
-      ],
-      "description": "Adventure across the seas, train combat styles, and claim your place as pirate king.",
-      "popularity": 86
-    },
-    {
-      "id": "shindo-life",
-      "name": "Shindo Life",
-      "robloxId": "4616652839",
-      "category": "Naruto",
-      "image": "assets/images/games/shindo-life.webp",
-      "tags": [
-        "naruto-inspired",
-        "rpg",
-        "ninja"
-      ],
-      "description": "Create your own ninja, unlock Bloodlines, and face off against other villages.",
-      "popularity": 83
-    },
-    {
-      "id": "blade-ball",
-      "name": "Blade Ball",
-      "robloxId": "13772394625",
-      "category": "Fighting",
-      "image": "assets/images/games/blade-ball.webp",
-      "tags": [
-        "pvp",
-        "reflex",
-        "fighting"
-      ],
-      "description": "Dodge the ball, block at the right moment, and be the last one standing in the arena.",
-      "popularity": 87
-    },
-    {
-      "id": "basketball-zero",
-      "name": "Basketball Zero",
-      "robloxId": "0",
-      "category": "Sports",
-      "image": "assets/images/games/basketball-zero.webp",
-      "tags": [
-        "basketball",
-        "sports"
-      ],
-      "description": "Level up your player, unlock styles, and dominate the court in 3v3 matches.",
-      "popularity": 75
-    },
-    {
-      "id": "ninja-time",
-      "name": "Ninja Time",
-      "robloxId": "0",
-      "category": "Naruto",
-      "image": "assets/images/games/ninja-time.webp",
-      "tags": [
-        "naruto-inspired",
-        "open-world"
-      ],
-      "description": "Explore an open ninja world, train jutsu, and form your squad.",
-      "popularity": 70
-    },
-    {
-      "id": "type-soul",
-      "name": "Type Soul",
-      "robloxId": "6284583030",
-      "category": "Bleach",
-      "image": "assets/images/games/type-soul.webp",
-      "tags": [
-        "bleach-inspired",
-        "rpg",
-        "pvp"
-      ],
-      "description": "Choose your race, train your Zanpakuto, and battle in a world inspired by Bleach.",
-      "popularity": 89
-    },
-    {
-      "id": "dress-to-impress",
-      "name": "Dress To Impress",
-      "robloxId": "15101393099",
-      "category": "Sandbox",
-      "image": "assets/images/games/dress-to-impress.webp",
-      "tags": [
-        "fashion",
-        "casual",
-        "creative"
-      ],
-      "description": "Put together themed looks, join votes, and show off your style on the runway.",
-      "popularity": 93
-    },
-    {
-      "id": "all-star-tower-defense",
-      "name": "All Star Tower Defense",
-      "robloxId": "4996049426",
-      "category": "Tower Defense",
-      "image": "assets/images/games/all-star-tower-defense.webp",
-      "tags": [
-        "anime",
-        "tower-defense",
-        "gacha"
-      ],
-      "description": "Gather characters from multiple anime to defend your base through intense waves.",
-      "popularity": 82
-    },
-    {
-      "id": "anime-defenders",
-      "name": "Anime Defenders",
-      "robloxId": "17009779172",
-      "category": "Tower Defense",
-      "image": "assets/images/games/anime-defenders.webp",
-      "tags": [
-        "anime",
-        "tower-defense"
-      ],
-      "description": "Anime tower defense with evolving units and increasingly difficult modes.",
-      "popularity": 81
-    },
-    {
-      "id": "fruit-battlegrounds",
-      "name": "Fruit Battlegrounds",
-      "robloxId": "9224601490",
-      "category": "Fighting",
-      "image": "assets/images/games/fruit-battlegrounds.webp",
-      "tags": [
-        "one-piece-inspired",
-        "pvp",
-        "fighting"
-      ],
-      "description": "Pick a Devil Fruit and fight other players in chaotic arenas.",
-      "popularity": 79
-    },    {
-      "id": "ghoul-re",
-      "name": "Ghoul RE",
-      "robloxId": "0",
-      "category": "Horror",
-      "image": "assets/images/games/ghoul-re.webp",
-      "tags": [
-        "tokyo-ghoul-inspired",
-        "horror",
-        "rpg"
-      ],
-      "description": "Survive as a human or ghoul in a dark world inspired by Tokyo Ghoul.",
-      "popularity": 74
-    },
-    {
-      "id": "project-egoist",
-      "name": "Project Egoist",
-      "robloxId": "0",
-      "category": "Solo Leveling",
-      "image": "assets/images/games/project-egoist.webp",
-      "tags": [
-        "solo-leveling",
-        "rpg",
-        "dungeon"
-      ],
-      "description": "Rank up as a hunter, raid dungeons, and grow stronger in this Solo Leveling-inspired game.",
-      "popularity": 77
-    },
-    {
-      "id": "demon-slayer-rpg-2",
-      "name": "Demon Slayer RPG 2",
-      "robloxId": "473326083",
-      "category": "Demon Slayer",
-      "image": "assets/images/games/demon-slayer-rpg-2.webp",
-      "tags": [
-        "demon-slayer",
-        "rpg"
-      ],
-      "description": "Train breathing techniques, face demons, and walk the path of a demon slayer.",
-      "popularity": 76
-    },
-    {
-      "id": "jujutsu-shenanigans",
-      "name": "Jujutsu Shenanigans",
-      "robloxId": "9391468976",
-      "category": "Jujutsu Kaisen",
-      "image": "assets/images/games/jujutsu-shenanigans.webp",
-      "tags": [
-        "jujutsu-kaisen",
-        "pvp",
-        "fighting"
-      ],
-      "description": "Master cursed techniques and battle sorcerers in fast-paced fights.",
-      "popularity": 73
-    },
-    {
-      "id": "obby-tower-of-hell",
-      "name": "Tower of Misery",
-      "robloxId": "0",
-      "category": "Obby",
-      "image": "assets/images/games/tower-of-misery.webp",
-      "tags": [
-        "obby",
-        "platformer",
-        "difficult"
-      ],
-      "description": "Climb an endless tower full of randomly generated obstacles.",
-      "popularity": 68
-    },
-    {
-      "id": "car-dealership-tycoon",
-      "name": "Car Dealership Tycoon",
-      "robloxId": "703342218",
-      "category": "Tycoon",
-      "image": "assets/images/games/car-dealership-tycoon.webp",
-      "tags": [
-        "tycoon",
-        "cars",
-        "business"
-      ],
-      "description": "Build and manage your own luxury car dealership.",
-      "popularity": 71
-    },
-    {
-      "id": "speed-racing-legends",
-      "name": "Speed Racing Legends",
-      "robloxId": "0",
-      "category": "Racing",
-      "image": "assets/images/games/speed-racing-legends.webp",
-      "tags": [
-        "racing",
-        "cars"
-      ],
-      "description": "Race across varied tracks, customize your car, and climb the global leaderboard.",
-      "popularity": 65
-    },
-    {
-      "id": "world-domination-strategy",
-      "name": "World Domination",
-      "robloxId": "0",
-      "category": "Strategy",
-      "image": "assets/images/games/world-domination.webp",
-      "tags": [
-        "strategy",
-        "war"
-      ],
-      "description": "Build armies, form alliances, and conquer territory in real time.",
-      "popularity": 60
-    },
-    {
-      "id": "military-tycoon",
-      "name": "Military Tycoon",
-      "robloxId": "6872265039",
-      "category": "FPS",
-      "image": "assets/images/games/military-tycoon.webp",
-      "tags": [
-        "fps",
-        "military",
-        "tycoon"
-      ],
-      "description": "Build your military base and take part in tactical first-person combat.",
-      "popularity": 72
     }
   ]
+},
+{
+  "id": "king-legacy",
+  "name": "King Legacy",
+  "category": "Adventure",
+  "robloxId": 4520749081,
+  "tags": [
+    "one-piece-inspired",
+    "adventure",
+    "pvp"
+  ],
+  "description": "Adventure across the seas, train combat styles, and claim your place as pirate king.",
+  "popularity": 86
+},
+{
+  "id": "shindo-life",
+  "name": "Shindo Life",
+  "category": "Naruto",
+  "robloxId": 4616652839,
+  "tags": [
+    "naruto-inspired",
+    "rpg",
+    "ninja"
+  ],
+  "description": "Create your own ninja, unlock Bloodlines, and face off against other villages.",
+  "popularity": 83
+},
+{
+  "id": "blade-ball",
+  "name": "Blade Ball",
+  "category": "Fighting",
+  "robloxId": 13772394625,
+  "tags": [
+    "pvp",
+    "reflex",
+    "fighting"
+  ],
+  "description": "Dodge the ball, block at the right moment, and be the last one standing in the arena.",
+  "popularity": 87
+},
+{
+  "id": "basketball-zero",
+  "name": "Basketball Zero",
+  "category": "Sports",
+  "robloxId": 15243603669,
+  "tags": [
+    "basketball",
+    "sports"
+  ],
+  "description": "Level up your player, unlock styles, and dominate the court in 3v3 matches.",
+  "popularity": 75
+},
+{
+  "id": "ninja-time",
+  "name": "Ninja Time",
+  "category": "Naruto",
+  "robloxId": 138074090904,
+  "tags": [
+    "naruto-inspired",
+    "open-world"
+  ],
+  "description": "Explore an open ninja world, train jutsu, and form your squad.",
+  "popularity": 70
+},
+{
+  "id": "type-soul",
+  "name": "Type Soul",
+  "category": "Bleach",
+  "robloxId": 14185299894,
+  "tags": [
+    "bleach-inspired",
+    "rpg",
+    "pvp"
+  ],
+  "description": "Choose your race, train your Zanpakuto, and battle in a world inspired by Bleach.",
+  "popularity": 89
+},
+{
+  "id": "dress-to-impress",
+  "name": "Dress To Impress",
+  "category": "Sandbox",
+  "robloxId": 15101393044,
+  "tags": [
+    "fashion",
+    "casual",
+    "creative"
+  ],
+  "description": "Put together themed looks, join votes, and show off your style on the runway.",
+  "popularity": 93
+},
+{
+  "id": "all-star-tower-defense",
+  "name": "All Star Tower Defense",
+  "category": "Tower Defense",
+  "robloxId": 4996049426,
+  "tags": [
+    "anime",
+    "tower-defense",
+    "gacha"
+  ],
+  "description": "Gather characters from multiple anime to defend your base through intense waves.",
+  "popularity": 82
+},
+{
+  "id": "anime-defenders",
+  "name": "Anime Defenders",
+  "category": "Tower Defense",
+  "robloxId": 17017769292,
+  "tags": [
+    "anime",
+    "tower-defense"
+  ],
+  "description": "Anime tower defense with evolving units and increasingly difficult modes.",
+  "popularity": 81
+},
+{
+  "id": "fruit-battlegrounds",
+  "name": "Fruit Battlegrounds",
+  "category": "Fighting",
+  "robloxId": 9224601490,
+  "tags": [
+    "one-piece-inspired",
+    "pvp",
+    "fighting"
+  ],
+  "description": "Pick a Devil Fruit and fight other players in chaotic arenas.",
+  "popularity": 79
+},
+{
+  "id": "ghoul-re",
+  "name": "Ghoul RE",
+  "category": "Horror",
+  "robloxId": 914010731,
+  "tags": [
+    "tokyo-ghoul-inspired",
+    "horror",
+    "rpg"
+  ],
+  "description": "Survive as a human or ghoul in a dark world inspired by Tokyo Ghoul.",
+  "popularity": 74
+},
+{
+  "id": "project-egoist",
+  "name": "Project Egoist",
+  "category": "Solo Leveling",
+  "robloxId": 12739181643,
+  "tags": [
+    "solo-leveling",
+    "rpg",
+    "dungeon"
+  ],
+  "description": "Rank up as a hunter, raid dungeons, and grow stronger in this Solo Leveling-inspired game.",
+  "popularity": 77
+},
+{
+  "id": "demon-slayer-rpg-2",
+  "name": "Demon Slayer RPG 2",
+  "category": "Demon Slayer",
+  "robloxId": 4981114784,
+  "tags": [
+    "demon-slayer",
+    "rpg"
+  ],
+  "description": "Train breathing techniques, face demons, and walk the path of a demon slayer.",
+  "popularity": 76
+},
+{
+  "id": "jujutsu-shenanigans",
+  "name": "Jujutsu Shenanigans",
+  "category": "Jujutsu Kaisen",
+  "robloxId": 9391468976,
+  "tags": [
+    "jujutsu-kaisen",
+    "pvp",
+    "fighting"
+  ],
+  "description": "Master cursed techniques and battle sorcerers in fast-paced fights.",
+  "popularity": 73
+},
+{
+  "id": "obby-tower-of-hell",
+  "name": "Tower of Misery",
+  "category": "Obby",
+  "robloxId": 1962086868,
+  "tags": [
+    "obby",
+    "platformer",
+    "difficult"
+  ],
+  "description": "Climb an endless tower full of randomly generated obstacles.",
+  "popularity": 68
+},
+{
+  "id": "car-dealership-tycoon",
+  "name": "Car Dealership Tycoon",
+  "category": "Tycoon",
+  "robloxId": 3351674303,
+  "tags": [
+    "tycoon",
+    "cars",
+    "business"
+  ],
+  "description": "Build and manage your own luxury car dealership.",
+  "popularity": 71
+},
+{
+  "id": "speed-racing-legends",
+  "name": "Speed Racing Legends",
+  "category": "Racing",
+  "robloxId": 12549924644,
+  "tags": [
+    "racing",
+    "cars"
+  ],
+  "description": "Race across varied tracks, customize your car, and climb the global leaderboard.",
+  "popularity": 65
+},
+{
+  "id": "world-domination-strategy",
+  "name": "World Domination",
+  "category": "Strategy",
+  "robloxId": 6161235818,
+  "tags": [
+    "strategy",
+    "war"
+  ],
+  "description": "Build armies, form alliances, and conquer territory in real time.",
+  "popularity": 60
+},
+{
+  "id": "military-tycoon",
+  "name": "Military Tycoon",
+  "category": "FPS",
+  "robloxId": 6872265039,
+  "tags": [
+    "fps",
+    "military",
+    "tycoon"
+  ],
+  "description": "Build your military base and take part in tactical first-person combat.",
+  "popularity": 72
 }
