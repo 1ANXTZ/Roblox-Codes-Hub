@@ -100,17 +100,25 @@ async function init() {
 
 
   const enrichedGames =
+
     Games.withComputedFields(
+
       games,
+
       codesMap
+
     );
 
 
 
   const game =
+
     Games.findById(
+
       enrichedGames,
+
       gameId
+
     );
 
 
@@ -125,13 +133,60 @@ async function init() {
 
 
 
+  updateSEO(game);
+
+
+
+  renderGameInfo(game);
+
+
+
+  renderCodes(
+
+    codesMap[game.id] || []
+
+  );
+
+
+
+  UI.initThemeToggle(
+
+    els.themeToggle
+
+  );
+
+
+
+  UI.initBackToTop(
+
+    els.backToTop
+
+  );
+
+
+
+  initSearch();
+
+
+}
+
+
+
+
+
+
+function updateSEO(game) {
+
+
   const pageTitle =
+
     `${game.name} — Active codes | Roblox Codes Hub`;
 
 
 
   const pageDesc =
-    `Active codes for ${game.name}: redeem rewards before they expire. Updated ${
+
+    `Active codes for ${game.name}. Redeem rewards before they expire. Updated ${
       game.lastVerified
         ? Utils.relativeFromToday(game.lastVerified)
         : 'recently'
@@ -140,6 +195,7 @@ async function init() {
 
 
   const pageUrl =
+
     `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(game.id)}`;
 
 
@@ -204,31 +260,19 @@ async function init() {
     );
 
 
-
-  renderGameInfo(game);
-
-
-
-  renderCodes(
-    codesMap[game.id] || []
-  );
+}
 
 
 
-  UI.initThemeToggle(
-    els.themeToggle
-  );
 
 
-
-  UI.initBackToTop(
-    els.backToTop
-  );
-
+function initSearch() {
 
 
   els.searchInput?.addEventListener(
+
     'keydown',
+
     event => {
 
 
@@ -244,7 +288,9 @@ async function init() {
         window.location.href =
 
           `index.html?q=${encodeURIComponent(
+
             event.target.value.trim()
+
           )}`;
 
 
@@ -252,21 +298,19 @@ async function init() {
 
 
     }
+
   );
 
 
-}
-
-
-
-
-
-function showGameNotFound() {
+}function showGameNotFound() {
 
 
   const hero =
+
     document.querySelector(
+
       '.game-hero'
+
     );
 
 
@@ -292,6 +336,7 @@ function showGameNotFound() {
 
 
       <p>
+
         The game you're looking for doesn't exist or was removed.
 
         <a href="index.html"
@@ -309,38 +354,56 @@ function showGameNotFound() {
   `;
 
 
-}/* ---------------- Game info ---------------- */
+}
+
+
+
+
+
+
+
+/* ---------------- Game info ---------------- */
 
 
 function renderGameInfo(game) {
 
 
+
   if (els.breadcrumbName) {
 
+
     els.breadcrumbName.textContent =
+
       game.name;
 
+
   }
+
 
 
 
   if (els.thumb) {
 
 
+
     els.thumb.style.background =
 
       Utils.gradientFor(
+
         game.name || 'Game'
+
       );
 
 
 
     els.thumb.innerHTML = `
 
-      <span aria-hidden="true">
+      <span class="game-thumb__loading">
 
         ${Utils.initials(
+
           game.name || 'Game'
+
         )}
 
       </span>
@@ -348,152 +411,90 @@ function renderGameInfo(game) {
     `;
 
 
-  }
+
+
+    /*
+      Roblox image
+      Uses CDN directly.
+      No CORS problem.
+    */
+
+
+    if (game.robloxId) {
 
 
 
-  if (els.category) {
+      const img =
 
-    els.category.textContent =
-      game.category || 'Other';
+        document.createElement(
 
-  }
+          'img'
 
-
-
-  if (els.name) {
-
-    els.name.textContent =
-      game.name;
-
-  }
-
-
-
-  if (els.desc) {
-
-    els.desc.textContent =
-      game.description || '';
-
-  }
-
-
-
-  if (els.activeCount) {
-
-
-    els.activeCount.textContent =
-
-      `${game.activeCount ?? 0} active code${
-        game.activeCount === 1
-          ? ''
-          : 's'
-      }`;
-
-
-  }
-
-
-
-  if (els.lastVerified) {
-
-
-    els.lastVerified.textContent =
-
-      `Verified ${
-        game.lastVerified
-          ? Utils.relativeFromToday(
-              game.lastVerified
-            )
-          : 'recently'
-      }`;
-
-
-  }
-
-
-
-
-
-  if (els.favBtn) {
-
-
-    const updateFavoriteButton =
-
-      isFav => {
-
-
-        els.favBtn.classList.toggle(
-          'is-fav',
-          isFav
         );
 
 
 
-        els.favBtn.textContent =
+      img.className =
 
-          isFav
-
-            ? '★ Favorited'
-
-            : '☆ Favorite';
+        'game-thumb__image';
 
 
-        els.favBtn.setAttribute(
-          'aria-pressed',
-          String(isFav)
-        );
+
+      img.src =
+
+        `https://tr.rbxcdn.com/${game.robloxId}/150/150/Image/Png`;
+
+
+
+      img.alt =
+
+        `${game.name} icon`;
+
+
+
+      img.loading =
+
+        'lazy';
+
+
+
+      img.onerror = () => {
+
+
+        img.remove();
 
 
       };
 
 
 
-    updateFavoriteButton(
-
-      Storage.isFavorite(
-        game.id
-      )
-
-    );
+      img.onload = () => {
 
 
+        els.thumb
 
-    els.favBtn.addEventListener(
+          .querySelector(
 
-      'click',
+            '.game-thumb__loading'
 
-      () => {
+          )
+
+          ?.remove();
 
 
-        const nowFav =
-
-          Storage.toggleFavorite(
-            game.id
-          );
+      };
 
 
 
-        updateFavoriteButton(
-          nowFav
-        );
+      els.thumb.prepend(
+
+        img
+
+      );
 
 
+    }
 
-        UI.showToast(
-
-          nowFav
-
-            ? 'Added to favorites'
-
-            : 'Removed from favorites'
-
-        );
-
-
-      }
-
-    );
 
 
   }
@@ -503,9 +504,260 @@ function renderGameInfo(game) {
 
 
 
-  els.shareBtn?.addEventListener(
+
+  if (els.category) {
+
+
+    els.category.textContent =
+
+      game.category || 'Other';
+
+
+  }
+
+
+
+
+
+
+
+  if (els.name) {
+
+
+    els.name.textContent =
+
+      game.name;
+
+
+  }
+
+
+
+
+
+
+
+  if (els.desc) {
+
+
+    els.desc.textContent =
+
+      game.description || '';
+
+
+
+  }
+
+
+
+
+
+
+
+  if (els.activeCount) {
+
+
+
+    els.activeCount.textContent =
+
+
+      `${game.activeCount ?? 0} active code${
+        
+        game.activeCount === 1
+
+          ? ''
+
+          : 's'
+
+      }`;
+
+
+
+  }
+
+
+
+
+
+
+
+  if (els.lastVerified) {
+
+
+
+    els.lastVerified.textContent =
+
+
+      `Verified ${
+        
+        game.lastVerified
+
+          ? Utils.relativeFromToday(
+
+              game.lastVerified
+
+            )
+
+          : 'recently'
+
+      }`;
+
+
+
+  }
+
+
+
+
+
+
+
+  initFavorite(game);
+
+
+
+  initShare(game);
+
+
+
+}
+
+
+
+
+
+
+
+
+function initFavorite(game) {
+
+
+
+  if (!els.favBtn) return;
+
+
+
+
+
+  const updateButton =
+
+    isFav => {
+
+
+
+      els.favBtn.classList.toggle(
+
+        'is-fav',
+
+        isFav
+
+      );
+
+
+
+      els.favBtn.textContent =
+
+
+        isFav
+
+          ? '★ Favorited'
+
+          : '☆ Favorite';
+
+
+
+
+      els.favBtn.setAttribute(
+
+        'aria-pressed',
+
+        String(isFav)
+
+      );
+
+
+    };
+
+
+
+
+
+
+
+  updateButton(
+
+    Storage.isFavorite(
+
+      game.id
+
+    )
+
+  );
+
+
+
+
+
+
+
+  els.favBtn.addEventListener(
 
     'click',
+
+    () => {
+
+
+
+      const state =
+
+        Storage.toggleFavorite(
+
+          game.id
+
+        );
+
+
+
+      updateButton(
+
+        state
+
+      );
+
+
+
+      UI.showToast(
+
+        state
+
+          ? 'Added to favorites'
+
+          : 'Removed from favorites'
+
+      );
+
+
+    }
+
+  );
+
+
+}/* ---------------- Share ---------------- */
+
+
+function initShare(game) {
+
+
+  if (!els.shareBtn) return;
+
+
+
+
+  els.shareBtn.addEventListener(
+
+
+    'click',
+
 
     async () => {
 
@@ -514,9 +766,11 @@ function renderGameInfo(game) {
       const shareData = {
 
 
+
         title:
 
           `${game.name} — Active codes`,
+
 
 
 
@@ -526,70 +780,73 @@ function renderGameInfo(game) {
 
 
 
+
         url:
 
-          window.location.href,
+          window.location.href
+
 
 
       };
 
 
 
+
+
       if (navigator.share) {
+
 
 
         try {
 
 
+
           await navigator.share(
+
             shareData
+
           );
+
 
 
         } catch {
 
 
-          // User cancelled share
 
+          // cancelled
 
         }
+
 
 
 
       } else {
 
 
+
         try {
 
 
-          if (
-            navigator.clipboard
-          ) {
+
+          await navigator.clipboard.writeText(
+
+            window.location.href
+
+          );
 
 
-            await navigator.clipboard.writeText(
-              window.location.href
-            );
 
+          UI.showToast(
 
-            UI.showToast(
-              'Link copied!'
-            );
+            'Link copied!'
 
+          );
 
-          } else {
-
-
-            throw new Error(
-              'Clipboard unavailable'
-            );
-
-
-          }
 
 
 
         } catch {
+
 
 
           UI.showToast(
@@ -601,7 +858,9 @@ function renderGameInfo(game) {
           );
 
 
+
         }
+
 
 
       }
@@ -610,89 +869,396 @@ function renderGameInfo(game) {
 
     }
 
+
   );
 
 
-}/* ---------------- Codes ---------------- */
+}
 
 
-function renderCodes(
-  rawCodes
-) {
+
+
+
+
+
+
+
+/* ---------------- Codes ---------------- */
+
+
+function renderCodes(rawCodes) {
+
 
 
   if (els.revealExpired) {
 
-    els.revealExpired.hidden =
-      true;
+
+    els.revealExpired.hidden = true;
+
 
   }
 
 
 
+
+
+
   const withStatus =
 
+
     Codes.withStatus(
+
       rawCodes
+
     );
+
+
+
 
 
 
   const {
 
+
     visible,
+
 
     expired
 
+
+
   } = Codes.splitVisible(
+
     withStatus
+
   );
 
 
 
-  const draw =
-
-    list => {
 
 
 
-      if (!els.ticketGrid) {
 
-        return;
-
-      }
+  const draw = list => {
 
 
 
-      if (!list.length) {
+
+    if (!els.ticketGrid) return;
 
 
 
-        els.ticketGrid.innerHTML =
-          '';
 
 
 
-        els.codesEmpty
-          ?.classList
-          .add(
-            'is-visible'
-          );
+    if (!list.length) {
 
 
 
-        return;
-
-      }
+      els.ticketGrid.innerHTML = '';
 
 
 
       els.codesEmpty
+
         ?.classList
-        .remove(
+
+        .add(
+
+          'is-visible'
+
+        );
+
+
+
+      return;
+
+
+
+    }
+
+
+
+
+
+
+    els.codesEmpty
+
+      ?.classList
+
+      .remove(
+
+        'is-visible'
+
+      );
+
+
+
+
+
+
+
+    UI.renderCodes(
+
+
+
+      els.ticketGrid,
+
+
+
+      list,
+
+
+
+      {
+
+
+        onCopy(code) {
+
+
+
+          UI.showToast(
+
+
+            `Code "${code}" copied!`
+
+
+          );
+
+
+
+        }
+
+
+
+      }
+
+
+
+    );
+
+
+
+  };
+
+
+
+
+
+
+
+
+  draw(
+
+    visible
+
+  );
+
+
+
+
+
+
+
+
+  if (
+
+
+
+    expired.length &&
+
+    els.revealExpired
+
+
+
+  ) {
+
+
+
+
+
+    els.revealExpired.hidden = false;
+
+
+
+
+
+    let showingExpired = false;
+
+
+
+
+
+
+
+    const expiredText =
+
+
+
+      `Show ${expired.length} expired code${
+        
+        expired.length === 1
+
+          ? ''
+
+          : 's'
+
+      }`;
+
+
+
+
+
+
+
+
+    els.revealExpired.textContent =
+
+      expiredText;
+
+
+
+
+
+
+
+    els.revealExpired.addEventListener(
+
+
+
+      'click',
+
+
+
+      () => {
+
+
+
+
+        showingExpired =
+
+          !showingExpired;
+
+
+
+
+
+
+        draw(
+
+
+
+          showingExpired
+
+            ? withStatus
+
+            : visible
+
+
+
+        );
+
+
+
+
+
+
+
+        els.revealExpired.textContent =
+
+
+
+          showingExpired
+
+            ? 'Hide expired codes'
+
+            : expiredText;
+
+
+
+
+
+      }
+
+
+
+    );
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+
+/* ---------------- Start ---------------- */
+
+
+init()
+
+  .catch(
+
+
+
+    error => {
+
+
+
+      console.error(
+
+        'Error loading game page:',
+
+        error
+
+      );
+
+
+
+
+      UI.showToast(
+
+
+
+        'Error loading game data.',
+
+
+
+        'error'
+
+
+
+      );
+
+
+
+    }
+
+
+
+  );      if (!list.length) {
+
+        els.ticketGrid.innerHTML = '';
+
+        els.codesEmpty?.classList.add(
           'is-visible'
         );
 
+        return;
+
+      }
+
+
+      els.codesEmpty?.classList.remove(
+        'is-visible'
+      );
 
 
       UI.renderCodes(
@@ -705,16 +1271,11 @@ function renderCodes(
 
           onCopy(code) {
 
-
             UI.showToast(
-
               `Code "${code}" copied!`
-
             );
 
-
           }
-
 
         }
 
@@ -725,11 +1286,9 @@ function renderCodes(
 
 
 
-
   draw(
     visible
   );
-
 
 
 
@@ -742,13 +1301,12 @@ function renderCodes(
   ) {
 
 
-
     els.revealExpired.hidden =
       false;
 
 
 
-    let showing =
+    let showingExpired =
       false;
 
 
@@ -763,7 +1321,6 @@ function renderCodes(
 
 
 
-
     els.revealExpired.addEventListener(
 
       'click',
@@ -771,15 +1328,14 @@ function renderCodes(
       () => {
 
 
-
-        showing =
-          !showing;
+        showingExpired =
+          !showingExpired;
 
 
 
         draw(
 
-          showing
+          showingExpired
 
             ? withStatus
 
@@ -792,7 +1348,7 @@ function renderCodes(
         els.revealExpired.textContent =
 
 
-          showing
+          showingExpired
 
             ? 'Hide expired codes'
 
@@ -818,31 +1374,38 @@ function renderCodes(
 
 
 
+/*
+|--------------------------------------------------------------------------
+| Start
+|--------------------------------------------------------------------------
+*/
 
 
 init()
 
-  .catch(
+.catch(
 
-    error => {
-
-
-      console.error(
-        'Error loading game page:',
-        error
-      );
+  error => {
 
 
+    console.error(
 
-      UI.showToast(
+      'Error loading game page:',
 
-        'Error loading game data.',
+      error
 
-        'error'
-
-      );
+    );
 
 
-    }
+    UI.showToast(
 
-  );
+      'Error loading game data.',
+
+      'error'
+
+    );
+
+
+  }
+
+);
