@@ -45,14 +45,6 @@ function escapeHTML(value = '') {
 
 
 
-
-/**
- * Roblox icon loader
- *
- * Converts Roblox universe/place icon response
- * into usable image URL.
- */
-
 async function getRobloxIcon(game) {
 
 
@@ -67,21 +59,48 @@ async function getRobloxIcon(game) {
   try {
 
 
-    const response = await fetch(
+    // Place ID -> Universe ID
 
-      `https://thumbnails.roblox.com/v1/games/icons?universeIds=${game.robloxId}&size=150x150&format=Png&isCircular=false`
+    const universeResponse = await fetch(
+
+      `https://apis.roblox.com/universes/v1/places/${game.robloxId}/universe`
 
     );
 
 
 
-    const data = await response.json();
+    const universeData = await universeResponse.json();
+
+
+
+    const universeId = universeData?.universeId;
+
+
+
+    if (!universeId) {
+
+      return '';
+
+    }
+
+
+
+
+    const iconResponse = await fetch(
+
+      `https://thumbnails.roblox.com/v1/games/icons?universeIds=${universeId}&size=150x150&format=Png&isCircular=false`
+
+    );
+
+
+
+    const iconData = await iconResponse.json();
 
 
 
     return (
 
-      data?.data?.[0]?.imageUrl ||
+      iconData?.data?.[0]?.imageUrl ||
 
       ''
 
@@ -92,9 +111,10 @@ async function getRobloxIcon(game) {
   } catch(error) {
 
 
+
     console.warn(
 
-      'Roblox icon error:',
+      'Roblox icon failed:',
 
       game.name,
 
@@ -103,8 +123,8 @@ async function getRobloxIcon(game) {
     );
 
 
-    return '';
 
+    return '';
 
   }
 
@@ -293,13 +313,7 @@ export const UI = {
 
         () => {
 
-
-          onSelect?.(
-
-            category.name
-
-          );
-
+          onSelect?.(category.name);
 
         }
 
@@ -471,6 +485,7 @@ export const UI = {
     if (!game || !game.id) {
 
 
+
       console.error(
 
         'Invalid game data:',
@@ -480,7 +495,9 @@ export const UI = {
       );
 
 
+
       return null;
+
 
 
     }
@@ -500,13 +517,11 @@ export const UI = {
 
 
 
-
     const isFav = Storage.isFavorite(
 
       game.id
 
     );
-
 
 
 
@@ -518,14 +533,11 @@ export const UI = {
 
 
 
-
     const fallback = Utils.initials(
 
       game.name || 'Game'
 
     );
-
-
 
 
 
@@ -562,6 +574,7 @@ export const UI = {
 
 
 
+
           <span class="game-card__badge-count">
 
             ${game.activeCount ?? 0}
@@ -572,8 +585,8 @@ export const UI = {
 
 
 
-
         </div>
+
 
 
       </a>
@@ -604,8 +617,9 @@ export const UI = {
 
 
 
-
       <div class="game-card__body">
+
+
 
 
 
@@ -619,19 +633,18 @@ export const UI = {
 
 
 
+
         <a
 
           href="game.html?id=${encodeURIComponent(game.id)}"
 
         >
 
-
           <h3 class="game-card__name">
 
             ${escapeHTML(game.name || 'Unknown game')}
 
           </h3>
-
 
         </a>
 
@@ -640,9 +653,7 @@ export const UI = {
 
 
 
-
         <span class="game-card__meta">
-
 
           Updated ${
 
@@ -654,9 +665,7 @@ export const UI = {
 
           }
 
-
         </span>
-
 
 
 
@@ -677,10 +686,13 @@ export const UI = {
 
 
 
+
       </div>
 
 
     `;
+
+
 
 
 
@@ -699,117 +711,92 @@ export const UI = {
 
 
 
+    // Carrega imagem Roblox
 
-    // Load Roblox image
+    getRobloxIcon(game)
 
-    if (thumb) {
+      .then(imageUrl => {
 
 
 
-      getRobloxIcon(game)
+        if (!imageUrl || !thumb) {
 
-        .then(imageUrl => {
+          return;
 
+        }
 
 
-          if (!imageUrl) {
 
-            return;
 
-          }
 
+        const img = document.createElement('img');
 
 
 
 
 
-          const img = document.createElement('img');
+        img.className = 'game-card__image';
 
 
 
-          img.className = 'game-card__image';
 
 
+        img.src = imageUrl;
 
 
 
-          img.src = imageUrl;
 
 
+        img.alt = `${game.name} icon`;
 
 
 
-          img.alt = `${game.name} icon`;
 
 
+        img.loading = 'lazy';
 
 
 
-          img.loading = 'lazy';
 
 
+        img.onerror = () => {
 
 
 
-          img.onerror = () => {
+          img.remove();
 
 
-            img.remove();
 
+        };
 
-          };
 
 
 
 
 
+        thumb.prepend(img);
 
-          thumb.prepend(img);
 
 
 
 
+        const loading = thumb.querySelector(
 
-          const loading =
+          '.game-card__loading'
 
-            thumb.querySelector(
+        );
 
-              '.game-card__loading'
 
-            );
 
 
 
+        loading?.remove();
 
-          loading?.remove();
 
 
 
+      });
 
-
-        })
-
-        .catch(error => {
-
-
-
-          console.warn(
-
-            'Image load failed:',
-
-            game.name,
-
-            error
-
-          );
-
-
-
-        });
-
-
-
-    }
 
 
 
@@ -828,7 +815,6 @@ export const UI = {
 
 
 
-
     favBtn?.addEventListener(
 
       'click',
@@ -837,11 +823,14 @@ export const UI = {
 
 
 
+
+
         const state = Storage.toggleFavorite(
 
           game.id
 
         );
+
 
 
 
@@ -859,11 +848,14 @@ export const UI = {
 
 
 
+
         favBtn.textContent = state
 
           ? '★'
 
           : '☆';
+
+
 
 
 
@@ -881,6 +873,8 @@ export const UI = {
 
 
 
+
+
         onToggleFavorite?.(
 
           game.id,
@@ -891,13 +885,10 @@ export const UI = {
 
 
 
-
       }
 
 
     );
-
-
 
 
 
@@ -913,9 +904,19 @@ export const UI = {
 
 
 
+
+
+
   /* =========================
      Code Cards
-  ========================= */  renderCodes(
+  ========================= */
+
+
+
+
+
+
+  renderCodes(
 
     container,
 
@@ -935,10 +936,7 @@ export const UI = {
 
 
 
-
-
     container.innerHTML = '';
-
 
 
 
@@ -954,7 +952,9 @@ export const UI = {
 
         <p class="empty-state">
 
+
           No codes available.
+
 
         </p>
 
@@ -963,8 +963,8 @@ export const UI = {
 
 
 
-
       return;
+
 
 
     }
@@ -974,11 +974,9 @@ export const UI = {
 
 
 
-
     const fragment =
 
       document.createDocumentFragment();
-
 
 
 
@@ -1011,7 +1009,9 @@ export const UI = {
         fragment.appendChild(card);
 
 
+
       }
+
 
 
 
@@ -1026,49 +1026,23 @@ export const UI = {
 
 
 
-
-
-  },
-
-
-
-
-
-
-
-
-
-  buildCodeCard(
-
-
+  },  buildCodeCard(
 
     code,
 
-
-
     {
-
-
 
       onCopy
 
-
-
     } = {}
-
-
 
   ) {
 
 
 
-
-
     if (!code) {
 
-
       return null;
-
 
     }
 
@@ -1076,11 +1050,7 @@ export const UI = {
 
 
 
-
-
     const card = document.createElement('article');
-
-
 
 
 
@@ -1091,9 +1061,9 @@ export const UI = {
 
 
 
+    const status =
 
-
-    const status = code.status || 'active';
+      code.status || 'active';
 
 
 
@@ -1107,26 +1077,19 @@ export const UI = {
 
 
 
-
-
     card.innerHTML = `
-
 
 
       <div class="code-card__top">
 
 
-
         <span class="code-card__status status-${escapeHTML(status)}">
-
 
 
           ${STATUS_LABEL[status] || status}
 
 
-
         </span>
-
 
 
       </div>
@@ -1140,9 +1103,7 @@ export const UI = {
       <code class="code-card__value">
 
 
-
         ${escapeHTML(code.code || '')}
-
 
 
       </code>
@@ -1156,21 +1117,13 @@ export const UI = {
       <p class="code-card__reward">
 
 
-
         ${escapeHTML(
-
-
 
           code.reward ||
 
-
-
           'Reward unavailable'
 
-
-
         )}
-
 
 
       </p>
@@ -1184,25 +1137,19 @@ export const UI = {
       <button
 
 
-
         class="code-card__copy"
-
 
 
         type="button"
 
 
-
       >
-
 
 
         Copy
 
 
-
       </button>
-
 
 
     `;
@@ -1217,11 +1164,7 @@ export const UI = {
 
     const button = card.querySelector(
 
-
-
       '.code-card__copy'
-
-
 
     );
 
@@ -1230,25 +1173,16 @@ export const UI = {
 
 
 
-
-
     button?.addEventListener(
 
-
-
       'click',
-
-
 
       async () => {
 
 
 
 
-
         try {
-
-
 
 
 
@@ -1258,11 +1192,9 @@ export const UI = {
 
 
 
+          button.textContent =
 
-
-          button.textContent = 'Copied!';
-
-
+            'Copied!';
 
 
 
@@ -1270,14 +1202,9 @@ export const UI = {
 
           this.showToast(
 
-
-
             'Code copied!'
 
-
-
           );
-
 
 
 
@@ -1286,16 +1213,9 @@ export const UI = {
 
           onCopy?.(
 
-
-
             code.code
 
-
-
           );
-
-
-
 
 
 
@@ -1306,11 +1226,9 @@ export const UI = {
 
 
 
+            button.textContent =
 
-
-            button.textContent = 'Copy';
-
-
+              'Copy';
 
 
 
@@ -1321,16 +1239,13 @@ export const UI = {
 
 
 
-
         } catch {
 
 
 
+          button.textContent =
 
-
-          button.textContent = 'Error';
-
-
+            'Error';
 
 
 
@@ -1338,20 +1253,11 @@ export const UI = {
 
           this.showToast(
 
-
-
             'Could not copy code',
-
-
 
             'error'
 
-
-
           );
-
-
-
 
 
 
@@ -1359,12 +1265,7 @@ export const UI = {
 
 
 
-
-
-
-
       }
-
 
 
     );
@@ -1379,9 +1280,10 @@ export const UI = {
 
 
 
-
-
   },
+
+
+
 
 
 
@@ -1403,19 +1305,11 @@ export const UI = {
 
   renderStats(
 
-
-
     elements,
-
-
 
     stats = {}
 
-
-
   ) {
-
-
 
 
 
@@ -1426,10 +1320,7 @@ export const UI = {
 
 
 
-
     if (elements.games) {
-
-
 
 
 
@@ -1439,10 +1330,7 @@ export const UI = {
 
 
 
-
-
     }
-
 
 
 
@@ -1453,18 +1341,13 @@ export const UI = {
 
 
 
-
-
       elements.codes.textContent =
 
         stats.codes ?? 0;
 
 
 
-
-
     }
-
 
 
 
@@ -1475,13 +1358,9 @@ export const UI = {
 
 
 
-
-
       elements.categories.textContent =
 
         stats.categories ?? 0;
-
-
 
 
 
@@ -1490,9 +1369,9 @@ export const UI = {
 
 
 
-
-
   },
+
+
 
 
 
@@ -1512,15 +1391,9 @@ export const UI = {
 
   showToast(
 
-
-
     message,
 
-
-
     type = 'success'
-
-
 
   ) {
 
@@ -1528,8 +1401,10 @@ export const UI = {
 
 
 
-    let toast = document.querySelector('.toast');
 
+    let toast =
+
+      document.querySelector('.toast');
 
 
 
@@ -1542,14 +1417,16 @@ export const UI = {
 
 
 
+
       toast = document.createElement('div');
 
 
 
 
 
-      toast.className = 'toast';
+      toast.className =
 
+        'toast';
 
 
 
@@ -1557,19 +1434,12 @@ export const UI = {
 
 
       toast.setAttribute(
-
-
 
         'role',
 
-
-
         'status'
 
-
-
       );
-
 
 
 
@@ -1578,18 +1448,11 @@ export const UI = {
 
       toast.setAttribute(
 
-
-
         'aria-live',
-
-
 
         'polite'
 
-
-
       );
-
 
 
 
@@ -1597,7 +1460,6 @@ export const UI = {
 
 
       document.body.appendChild(toast);
-
 
 
 
@@ -1611,14 +1473,18 @@ export const UI = {
 
 
 
-    toast.textContent = message;
+
+    toast.textContent =
+
+      message;
 
 
 
 
 
-    toast.dataset.type = type;
+    toast.dataset.type =
 
+      type;
 
 
 
@@ -1629,11 +1495,11 @@ export const UI = {
 
 
 
+      toast.classList.add(
 
+        'show'
 
-      toast.classList.add('show');
-
-
+      );
 
 
 
@@ -1644,14 +1510,9 @@ export const UI = {
 
 
 
-
     clearTimeout(
 
-
-
       this.toastTimer
-
-
 
     );
 
@@ -1660,30 +1521,26 @@ export const UI = {
 
 
 
+    this.toastTimer =
 
-
-    this.toastTimer = setTimeout(() => {
-
-
-
-
-
-      toast.classList.remove('show');
+      setTimeout(() => {
 
 
 
+        toast.classList.remove(
+
+          'show'
+
+        );
 
 
-    }, 2500);
+
+      }, 2500);
 
 
 
 
-
-  },
-
-
-  /* =========================
+  },  /* =========================
      Theme Toggle
   ========================= */
 
@@ -1706,10 +1563,7 @@ export const UI = {
 
 
 
-
     if (savedTheme === 'light') {
-
-
 
 
 
@@ -1718,9 +1572,6 @@ export const UI = {
         'light'
 
       );
-
-
-
 
 
     }
@@ -1732,14 +1583,9 @@ export const UI = {
 
 
 
-
     button.addEventListener(
 
-
-
       'click',
-
-
 
       () => {
 
@@ -1753,16 +1599,9 @@ export const UI = {
 
           document.documentElement.classList.toggle(
 
-
-
             'light'
 
-
-
           );
-
-
-
 
 
 
@@ -1775,11 +1614,7 @@ export const UI = {
 
           light
 
-
-
             ? 'light'
-
-
 
             : 'dark'
 
@@ -1790,13 +1625,10 @@ export const UI = {
 
 
 
-
       }
 
 
-
     );
-
 
 
 
@@ -1820,17 +1652,11 @@ export const UI = {
 
 
 
-
   initBackToTop(button) {
 
 
 
-
-
     if (!button) return;
-
-
-
 
 
 
@@ -1845,18 +1671,11 @@ export const UI = {
 
       button.classList.toggle(
 
-
-
         'is-visible',
-
-
 
         window.scrollY > 500
 
-
-
       );
-
 
 
 
@@ -1878,31 +1697,17 @@ export const UI = {
 
 
 
-
-
     window.addEventListener(
-
-
 
       'scroll',
 
-
-
       updateVisibility,
-
-
 
       {
 
-
-
         passive: true
 
-
-
       }
-
-
 
     );
 
@@ -1916,11 +1721,7 @@ export const UI = {
 
     button.addEventListener(
 
-
-
       'click',
-
-
 
       () => {
 
@@ -1934,8 +1735,6 @@ export const UI = {
 
           top: 0,
 
-
-
           behavior: 'smooth'
 
 
@@ -1945,9 +1744,7 @@ export const UI = {
 
 
 
-
       }
-
 
 
     );
@@ -1955,9 +1752,7 @@ export const UI = {
 
 
 
-
   }
-
 
 
 
