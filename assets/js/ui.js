@@ -41,12 +41,15 @@ function escapeHTML(value = '') {
 
 
 
+
 /**
- * Gets Roblox icon directly from Roblox API.
- * No images stored locally.
+ * Get Roblox thumbnail directly.
+ *
+ * GitHub Pages blocks Roblox API requests
+ * because of CORS, so we use the CDN URL.
  */
 
-async function getRobloxIcon(game) {
+function getRobloxIcon(game) {
 
   if (!game?.robloxId) {
 
@@ -55,43 +58,7 @@ async function getRobloxIcon(game) {
   }
 
 
-  try {
-
-
-    const response = await fetch(
-
-      `https://thumbnails.roblox.com/v1/games/icons?universeIds=${game.robloxId}&size=512x512&format=Png&isCircular=false`
-
-    );
-
-
-    if (!response.ok) {
-
-      return '';
-
-    }
-
-
-    const data =
-      await response.json();
-
-
-
-    return (
-
-      data?.data?.[0]?.imageUrl ||
-
-      ''
-
-    );
-
-
-  } catch {
-
-
-    return '';
-
-  }
+  return `https://tr.rbxcdn.com/${game.robloxId}/150/150/Image/Png`;
 
 }
 
@@ -141,7 +108,6 @@ async function copyText(text) {
 
 
 
-
   const textarea =
     document.createElement('textarea');
 
@@ -184,6 +150,7 @@ async function copyText(text) {
 
   textarea.remove();
 
+
 }
 
 
@@ -197,10 +164,8 @@ export const UI = {
   toastTimer: null,
 
 
-  /* ---------------- Categories ---------------- */
 
-
-  renderCategoryChips(
+  /* ---------------- Categories ---------------- */  renderCategoryChips(
 
     container,
 
@@ -234,8 +199,8 @@ export const UI = {
 
 
 
-
     list.forEach(category => {
+
 
 
       const button =
@@ -262,7 +227,10 @@ export const UI = {
 
 
       button.type =
+
         'button';
+
+
 
 
 
@@ -274,19 +242,6 @@ export const UI = {
 
           : category.name;
 
-
-
-      button.setAttribute(
-
-        'aria-selected',
-
-        String(
-
-          category.name === activeCategory
-
-        )
-
-      );
 
 
 
@@ -325,7 +280,6 @@ export const UI = {
 
 
 
-
   /* ---------------- Game cards ---------------- */
 
 
@@ -347,6 +301,7 @@ export const UI = {
   ) {
 
 
+
     if (!container) return;
 
 
@@ -358,11 +313,13 @@ export const UI = {
     if (!games.length) {
 
 
+
       if (emptyStateEl) {
 
         emptyStateEl.hidden = false;
 
       }
+
 
 
       return;
@@ -389,7 +346,9 @@ export const UI = {
 
 
 
+
     games.forEach(game => {
+
 
 
       fragment.appendChild(
@@ -414,6 +373,7 @@ export const UI = {
 
 
 
+
     container.appendChild(
 
       fragment
@@ -431,7 +391,7 @@ export const UI = {
 
 
 
-  buildGameCard(
+  async buildGameCard(
 
     game,
 
@@ -442,6 +402,7 @@ export const UI = {
     } = {}
 
   ) {
+
 
 
     const card =
@@ -486,7 +447,6 @@ export const UI = {
 
 
 
-
     card.innerHTML = `
 
 
@@ -518,12 +478,9 @@ export const UI = {
 
           <span class="game-card__badge-count">
 
-
             ${game.activeCount ?? 0}
 
-
             code${game.activeCount === 1 ? '' : 's'}
-
 
           </span>
 
@@ -568,6 +525,7 @@ export const UI = {
 
 
 
+
         <a
 
           href="game.html?id=${encodeURIComponent(game.id)}"
@@ -581,6 +539,7 @@ export const UI = {
           </h3>
 
         </a>
+
 
 
 
@@ -629,8 +588,9 @@ export const UI = {
 
 
     /*
-      Load Roblox image after card exists.
+      Load Roblox image after card creation.
     */
+
 
 
     const thumb =
@@ -643,83 +603,79 @@ export const UI = {
 
 
 
-    getRobloxIcon(game)
+    const imageUrl =
 
-      .then(imageUrl => {
-
-
-        if (!imageUrl || !thumb) {
-
-          return;
-
-        }
-
-
-
-        const img =
-
-          document.createElement(
-
-            'img'
-
-          );
-
-
-
-        img.className =
-
-          'game-card__image';
-
-
-
-        img.src =
-
-          imageUrl;
-
-
-
-        img.alt =
-
-          `${game.name} icon`;
-
-
-
-        img.loading =
-
-          'lazy';
-
-
-
-        img.onerror = () => {
-
-          img.remove();
-
-        };
-
-
-
-        thumb.prepend(img);
-
-
-
-        thumb
-
-          .querySelector(
-
-            '.game-card__loading'
-
-          )
-
-          ?.remove();
-
-
-
-      });
+      getRobloxIcon(game);
 
 
 
 
+    if (imageUrl && thumb) {
 
+
+
+      const img =
+
+        document.createElement(
+
+          'img'
+
+        );
+
+
+
+      img.className =
+
+        'game-card__image';
+
+
+
+      img.src =
+
+        imageUrl;
+
+
+
+      img.alt =
+
+        `${game.name} icon`;
+
+
+
+      img.loading =
+
+        'lazy';
+
+
+
+      img.onerror = () => {
+
+        img.remove();
+
+      };
+
+
+
+      thumb.prepend(
+
+        img
+
+      );
+
+
+      const loading =
+
+        thumb.querySelector(
+
+          '.game-card__loading'
+
+        );
+
+
+      loading?.remove();
+
+
+    }id="9m3k3u"
     const favBtn =
 
       card.querySelector(
@@ -730,11 +686,14 @@ export const UI = {
 
 
 
+
+
     favBtn?.addEventListener(
 
       'click',
 
       () => {
+
 
 
         const state =
@@ -796,7 +755,17 @@ export const UI = {
 
 
   },
+
+
+
+
+
+
+
+
+
   /* ---------------- Code cards ---------------- */
+
 
 
   renderCodes(
@@ -814,6 +783,7 @@ export const UI = {
   ) {
 
 
+
     if (!container) return;
 
 
@@ -823,6 +793,7 @@ export const UI = {
 
 
     if (!codes.length) {
+
 
 
       container.innerHTML = `
@@ -836,10 +807,12 @@ export const UI = {
       `;
 
 
+
       return;
 
 
     }
+
 
 
 
@@ -852,7 +825,9 @@ export const UI = {
 
 
 
+
     codes.forEach(code => {
+
 
 
       fragment.appendChild(
@@ -873,6 +848,7 @@ export const UI = {
 
 
     });
+
 
 
 
@@ -905,6 +881,7 @@ export const UI = {
     } = {}
 
   ) {
+
 
 
     const card =
@@ -974,18 +951,14 @@ export const UI = {
 
         ${escapeHTML(
 
-
           code.reward ||
 
-
           'Reward unavailable'
-
 
         )}
 
 
       </p>
-
 
 
 
@@ -1015,7 +988,6 @@ export const UI = {
 
 
     `;
-
 
 
 
@@ -1055,13 +1027,9 @@ export const UI = {
 
 
 
-
-
           button.textContent =
 
             'Copied!';
-
-
 
 
 
@@ -1073,8 +1041,6 @@ export const UI = {
 
 
 
-
-
           onCopy?.(
 
             code.code
@@ -1083,14 +1049,14 @@ export const UI = {
 
 
 
-
-
           setTimeout(() => {
+
 
 
             button.textContent =
 
               'Copy';
+
 
 
           }, 1500);
@@ -1110,8 +1076,6 @@ export const UI = {
 
 
 
-
-
           this.showToast(
 
             'Could not copy code',
@@ -1120,11 +1084,7 @@ export const UI = {
 
           );
 
-
         }
-
-
-
 
 
       }
@@ -1135,11 +1095,11 @@ export const UI = {
 
 
 
+
     return card;
 
 
   },
-
 
 
 
@@ -1167,7 +1127,9 @@ export const UI = {
 
 
 
+
     if (elements.games) {
+
 
 
       elements.games.textContent =
@@ -1184,6 +1146,7 @@ export const UI = {
     if (elements.codes) {
 
 
+
       elements.codes.textContent =
 
         stats.codes ?? 0;
@@ -1198,6 +1161,7 @@ export const UI = {
     if (elements.categories) {
 
 
+
       elements.categories.textContent =
 
         stats.categories ?? 0;
@@ -1206,8 +1170,7 @@ export const UI = {
     }
 
 
-  },
-  /* ---------------- Toast ---------------- */
+  },  /* ---------------- Toast ---------------- */
 
 
   showToast(
