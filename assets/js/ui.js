@@ -41,6 +41,7 @@ function escapeHTML(value = '') {
 
 
 
+
 async function copyText(text) {
 
   const value =
@@ -119,7 +120,72 @@ async function copyText(text) {
 
 
 
+
+
+// Busca imagem do jogo direto no Roblox
+async function getRobloxThumbnail(universeId) {
+
+
+  if (!universeId) {
+
+    return '';
+
+  }
+
+
+
+  try {
+
+
+    const response = await fetch(
+
+      `https://thumbnails.roblox.com/v1/games/icons?universeIds=${universeId}&size=512x512&format=Png&isCircular=false`
+
+    );
+
+
+
+    const data = await response.json();
+
+
+
+    return (
+
+      data?.data?.[0]?.imageUrl ||
+
+      ''
+
+    );
+
+
+
+  } catch(error) {
+
+
+    console.error(
+
+      'Roblox thumbnail error:',
+
+      error
+
+    );
+
+
+    return '';
+
+  }
+
+
+}
+
+
+
+
+
+
+
 export const UI = {
+
 
 
   toastTimer: null,
@@ -211,7 +277,9 @@ export const UI = {
         'aria-selected',
 
         String(
+
           category.name === activeCategory
+
         )
 
       );
@@ -225,7 +293,9 @@ export const UI = {
         () => {
 
           onSelect?.(
+
             category.name
+
           );
 
         }
@@ -235,25 +305,20 @@ export const UI = {
 
 
       container.appendChild(
+
         button
+
       );
 
 
     });
 
 
-  },
+  },  /* ---------------- Game cards ---------------- */
 
 
 
-
-
-
-  /* ---------------- Game cards ---------------- */
-
-
-
-  renderGameGrid(
+  async renderGameGrid(
 
     container,
 
@@ -313,12 +378,12 @@ export const UI = {
 
 
 
-    games.forEach(game => {
+    for (const game of games) {
 
 
       fragment.appendChild(
 
-        this.buildGameCard(
+        await this.buildGameCard(
 
           game,
 
@@ -333,13 +398,15 @@ export const UI = {
       );
 
 
-    });
+    }
 
 
 
 
     container.appendChild(
+
       fragment
+
     );
 
 
@@ -351,7 +418,7 @@ export const UI = {
 
 
 
-  buildGameCard(
+  async buildGameCard(
 
     game,
 
@@ -378,7 +445,9 @@ export const UI = {
 
     const isFav =
       Storage.isFavorite(
+
         game.id
+
       );
 
 
@@ -388,8 +457,44 @@ export const UI = {
 
 
 
-    const gameImage =
-      game.icon || game.image || '';
+
+
+    let gameImage =
+
+      game.robloxImage ||
+
+      game.icon ||
+
+      game.image ||
+
+      '';
+
+
+
+
+
+    // Busca imagem do Roblox automaticamente
+    if (
+
+      !gameImage &&
+
+      game.universeId
+
+    ) {
+
+
+      gameImage =
+
+        await getRobloxThumbnail(
+
+          game.universeId
+
+        );
+
+
+    }
+
+
 
 
 
@@ -559,13 +664,12 @@ export const UI = {
 
 
     const favBtn =
+
       card.querySelector(
+
         '.game-card__fav'
-      );
 
-
-
-    favBtn?.addEventListener(
+      );    favBtn?.addEventListener(
 
       'click',
 
@@ -575,7 +679,9 @@ export const UI = {
         const state =
 
           Storage.toggleFavorite(
+
             game.id
+
           );
 
 
@@ -638,7 +744,18 @@ export const UI = {
     return card;
 
 
-  },  /* ---------------- Code cards ---------------- */
+  },
+
+
+
+
+
+
+
+
+
+  /* ---------------- Code cards ---------------- */
+
 
 
   renderCodes(
@@ -688,12 +805,15 @@ export const UI = {
 
 
     const fragment =
+
       document.createDocumentFragment();
 
 
 
 
+
     codes.forEach(code => {
+
 
 
       fragment.appendChild(
@@ -718,8 +838,11 @@ export const UI = {
 
 
 
+
     container.appendChild(
+
       fragment
+
     );
 
 
@@ -744,24 +867,31 @@ export const UI = {
   ) {
 
 
+
     const card =
+
       document.createElement(
+
         'article'
+
       );
 
 
 
     card.className =
+
       'code-card';
 
 
 
     const status =
+
       code.status || 'active';
 
 
 
     card.dataset.status =
+
       status;
 
 
@@ -857,7 +987,6 @@ export const UI = {
         '.code-card__copy'
 
       );
-
 
 
 
@@ -969,15 +1098,7 @@ export const UI = {
     return card;
 
 
-  },
-
-
-
-
-
-
-
-  /* ---------------- Stats ---------------- */
+  },  /* ---------------- Stats ---------------- */
 
 
 
@@ -1035,7 +1156,18 @@ export const UI = {
     }
 
 
-  },  /* ---------------- Toast ---------------- */
+  },
+
+
+
+
+
+
+
+
+
+  /* ---------------- Toast ---------------- */
+
 
 
   showToast(
