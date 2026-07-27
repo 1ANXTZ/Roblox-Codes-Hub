@@ -44,90 +44,29 @@ function escapeHTML(value = '') {
 
 
 
+/*
+  Game images now come from games.json
 
-async function getRobloxIcon(game) {
+  Example:
+
+  {
+    "name": "Blox Fruits",
+    "image": "assets/images/games/blox-fruits.png"
+  }
+
+*/
 
 
-  if (!game?.robloxId) {
+function getGameImage(game) {
+
+  if (!game?.image) {
 
     return '';
 
   }
 
 
-
-  try {
-
-
-    // Place ID -> Universe ID
-
-    const universeResponse = await fetch(
-
-      `https://apis.roblox.com/universes/v1/places/${game.robloxId}/universe`
-
-    );
-
-
-
-    const universeData = await universeResponse.json();
-
-
-
-    const universeId = universeData?.universeId;
-
-
-
-    if (!universeId) {
-
-      return '';
-
-    }
-
-
-
-
-    const iconResponse = await fetch(
-
-      `https://thumbnails.roblox.com/v1/games/icons?universeIds=${universeId}&size=150x150&format=Png&isCircular=false`
-
-    );
-
-
-
-    const iconData = await iconResponse.json();
-
-
-
-    return (
-
-      iconData?.data?.[0]?.imageUrl ||
-
-      ''
-
-    );
-
-
-
-  } catch(error) {
-
-
-
-    console.warn(
-
-      'Roblox icon failed:',
-
-      game.name,
-
-      error
-
-    );
-
-
-
-    return '';
-
-  }
-
+  return game.image;
 
 }
 
@@ -139,9 +78,7 @@ async function getRobloxIcon(game) {
 
 async function copyText(text) {
 
-
   const value = String(text ?? '').trim();
-
 
 
   if (!value) {
@@ -149,7 +86,6 @@ async function copyText(text) {
     throw new Error('Empty text');
 
   }
-
 
 
 
@@ -161,38 +97,26 @@ async function copyText(text) {
 
   ) {
 
-
     await navigator.clipboard.writeText(value);
-
 
     return;
 
-
   }
-
-
 
 
 
   const textarea = document.createElement('textarea');
 
 
-
   textarea.value = value;
-
 
 
   textarea.style.position = 'fixed';
 
-
-
   textarea.style.opacity = '0';
 
 
-
-
   document.body.appendChild(textarea);
-
 
 
 
@@ -200,18 +124,13 @@ async function copyText(text) {
 
 
 
-
   document.execCommand('copy');
-
 
 
 
   textarea.remove();
 
-
 }
-
-
 
 
 
@@ -222,9 +141,7 @@ async function copyText(text) {
 export const UI = {
 
 
-
   toastTimer: null,
-
 
 
 
@@ -243,13 +160,11 @@ export const UI = {
   ) {
 
 
-
     if (!container) return;
 
 
 
     container.innerHTML = '';
-
 
 
 
@@ -263,7 +178,6 @@ export const UI = {
       ...categories
 
     ];
-
 
 
 
@@ -295,7 +209,6 @@ export const UI = {
 
 
 
-
       button.textContent =
 
         category.count !== null
@@ -303,7 +216,6 @@ export const UI = {
           ? `${category.name} (${category.count})`
 
           : category.name;
-
 
 
 
@@ -321,19 +233,13 @@ export const UI = {
 
 
 
-
       container.appendChild(button);
-
 
 
     });
 
 
   },
-
-
-
-
 
 
 
@@ -365,7 +271,6 @@ export const UI = {
 
 
 
-
     if (!games.length) {
 
 
@@ -377,13 +282,9 @@ export const UI = {
       }
 
 
-
       return;
 
-
     }
-
-
 
 
 
@@ -395,23 +296,14 @@ export const UI = {
 
 
 
-
-
-
-    const fragment =
-
-      document.createDocumentFragment();
-
-
+    const fragment = document.createDocumentFragment();
 
 
 
     games.forEach(game => {
 
 
-
       try {
-
 
 
         const card = this.buildGameCard(
@@ -428,19 +320,15 @@ export const UI = {
 
 
 
-
-        if (card instanceof Node) {
-
+        if (card) {
 
           fragment.appendChild(card);
-
 
         }
 
 
 
       } catch(error) {
-
 
 
         console.error(
@@ -454,21 +342,20 @@ export const UI = {
         );
 
 
-
       }
-
 
 
     });
 
 
 
-
-
     container.appendChild(fragment);
 
 
-  },  buildGameCard(
+  },
+
+
+  buildGameCard(
 
     game,
 
@@ -485,7 +372,6 @@ export const UI = {
     if (!game || !game.id) {
 
 
-
       console.error(
 
         'Invalid game data:',
@@ -495,13 +381,10 @@ export const UI = {
       );
 
 
-
       return null;
 
 
-
     }
-
 
 
 
@@ -545,7 +428,6 @@ export const UI = {
 
     card.innerHTML = `
 
-
       <a
 
         href="game.html?id=${encodeURIComponent(game.id)}"
@@ -553,7 +435,6 @@ export const UI = {
         class="game-card__thumb-link"
 
       >
-
 
         <div
 
@@ -564,14 +445,11 @@ export const UI = {
         >
 
 
-
           <span class="game-card__loading">
 
             ${escapeHTML(fallback)}
 
           </span>
-
-
 
 
 
@@ -588,10 +466,7 @@ export const UI = {
         </div>
 
 
-
       </a>
-
-
 
 
 
@@ -615,12 +490,7 @@ export const UI = {
 
 
 
-
-
       <div class="game-card__body">
-
-
-
 
 
         <span class="game-card__category">
@@ -628,7 +498,6 @@ export const UI = {
           ${escapeHTML(game.category || 'Other')}
 
         </span>
-
 
 
 
@@ -652,7 +521,6 @@ export const UI = {
 
 
 
-
         <span class="game-card__meta">
 
           Updated ${
@@ -666,7 +534,6 @@ export const UI = {
           }
 
         </span>
-
 
 
 
@@ -686,14 +553,9 @@ export const UI = {
 
 
 
-
       </div>
 
-
     `;
-
-
-
 
 
 
@@ -710,74 +572,84 @@ export const UI = {
 
 
 
-
-    // Carrega imagem Roblox
-
-    getRobloxIcon(game)
-
-      .then(imageUrl => {
+    const imageUrl = getGameImage(game);
 
 
 
-        if (!imageUrl || !thumb) {
 
-          return;
+
+    if (imageUrl && thumb) {
+
+
+
+      const img = document.createElement('img');
+
+
+
+      img.className = 'game-card__image';
+
+
+
+      img.src = imageUrl;
+
+
+
+      img.alt = `${game.name} icon`;
+
+
+
+      img.loading = 'lazy';
+
+
+
+
+
+      img.onerror = () => {
+
+
+
+        console.warn(
+
+          'Game image failed:',
+
+          game.name,
+
+          imageUrl
+
+        );
+
+
+
+        img.remove();
+
+
+
+        if (!thumb.querySelector('.game-card__loading')) {
+
+
+          const fallbackText = document.createElement('span');
+
+
+          fallbackText.className = 'game-card__loading';
+
+
+          fallbackText.textContent = fallback;
+
+
+          thumb.appendChild(fallbackText);
+
 
         }
 
 
 
-
-
-        const img = document.createElement('img');
-
-
-
-
-
-        img.className = 'game-card__image';
+      };
 
 
 
 
 
-        img.src = imageUrl;
-
-
-
-
-
-        img.alt = `${game.name} icon`;
-
-
-
-
-
-        img.loading = 'lazy';
-
-
-
-
-
-        img.onerror = () => {
-
-
-
-          img.remove();
-
-
-
-        };
-
-
-
-
-
-
-        thumb.prepend(img);
-
-
-
+      img.onload = () => {
 
 
         const loading = thumb.querySelector(
@@ -787,18 +659,21 @@ export const UI = {
         );
 
 
-
-
-
         loading?.remove();
 
 
 
-
-      });
-
+      };
 
 
+
+
+
+      thumb.prepend(img);
+
+
+
+    }
 
 
 
@@ -823,14 +698,11 @@ export const UI = {
 
 
 
-
-
         const state = Storage.toggleFavorite(
 
           game.id
 
         );
-
 
 
 
@@ -848,14 +720,11 @@ export const UI = {
 
 
 
-
         favBtn.textContent = state
 
           ? '★'
 
           : '☆';
-
-
 
 
 
@@ -873,8 +742,6 @@ export const UI = {
 
 
 
-
-
         onToggleFavorite?.(
 
           game.id,
@@ -887,7 +754,6 @@ export const UI = {
 
       }
 
-
     );
 
 
@@ -897,22 +763,10 @@ export const UI = {
     return card;
 
 
-
   },
-
-
-
-
-
-
-
-
   /* =========================
      Code Cards
   ========================= */
-
-
-
 
 
 
@@ -942,29 +796,23 @@ export const UI = {
 
 
 
-
     if (!codes.length) {
 
 
 
       container.innerHTML = `
 
-
         <p class="empty-state">
-
 
           No codes available.
 
-
         </p>
-
 
       `;
 
 
 
       return;
-
 
 
     }
@@ -974,10 +822,7 @@ export const UI = {
 
 
 
-    const fragment =
-
-      document.createDocumentFragment();
-
+    const fragment = document.createDocumentFragment();
 
 
 
@@ -1003,15 +848,11 @@ export const UI = {
 
 
 
-      if (card instanceof Node) {
-
+      if (card) {
 
         fragment.appendChild(card);
 
-
-
       }
-
 
 
 
@@ -1021,14 +862,25 @@ export const UI = {
 
 
 
-
     container.appendChild(fragment);
 
 
 
-  },  buildCodeCard(
+  },
+
+
+
+
+
+
+
+
+
+  buildCodeCard(
+
 
     code,
+
 
     {
 
@@ -1036,13 +888,18 @@ export const UI = {
 
     } = {}
 
+
   ) {
+
+
 
 
 
     if (!code) {
 
+
       return null;
+
 
     }
 
@@ -1060,17 +917,13 @@ export const UI = {
 
 
 
-
-    const status =
-
-      code.status || 'active';
+    const status = code.status || 'active';
 
 
 
 
 
     card.dataset.status = status;
-
 
 
 
@@ -1098,8 +951,6 @@ export const UI = {
 
 
 
-
-
       <code class="code-card__value">
 
 
@@ -1107,8 +958,6 @@ export const UI = {
 
 
       </code>
-
-
 
 
 
@@ -1127,8 +976,6 @@ export const UI = {
 
 
       </p>
-
-
 
 
 
@@ -1160,14 +1007,11 @@ export const UI = {
 
 
 
-
-
     const button = card.querySelector(
 
       '.code-card__copy'
 
     );
-
 
 
 
@@ -1181,7 +1025,6 @@ export const UI = {
 
 
 
-
         try {
 
 
@@ -1192,9 +1035,7 @@ export const UI = {
 
 
 
-          button.textContent =
-
-            'Copied!';
+          button.textContent = 'Copied!';
 
 
 
@@ -1205,7 +1046,6 @@ export const UI = {
             'Code copied!'
 
           );
-
 
 
 
@@ -1222,13 +1062,12 @@ export const UI = {
 
 
 
+
           setTimeout(() => {
 
 
 
-            button.textContent =
-
-              'Copy';
+            button.textContent = 'Copy';
 
 
 
@@ -1239,13 +1078,12 @@ export const UI = {
 
 
 
+
         } catch {
 
 
 
-          button.textContent =
-
-            'Error';
+          button.textContent = 'Error';
 
 
 
@@ -1268,8 +1106,8 @@ export const UI = {
       }
 
 
-    );
 
+    );
 
 
 
@@ -1290,13 +1128,9 @@ export const UI = {
 
 
 
-
-
-
   /* =========================
      Stats
   ========================= */
-
 
 
 
@@ -1310,6 +1144,8 @@ export const UI = {
     stats = {}
 
   ) {
+
+
 
 
 
@@ -1369,23 +1205,11 @@ export const UI = {
 
 
 
+
   },
-
-
-
-
-
-
-
-
-
   /* =========================
      Toast
   ========================= */
-
-
-
-
 
 
 
@@ -1399,13 +1223,7 @@ export const UI = {
 
 
 
-
-
-
-    let toast =
-
-      document.querySelector('.toast');
-
+    let toast = document.querySelector('.toast');
 
 
 
@@ -1415,19 +1233,11 @@ export const UI = {
 
 
 
-
-
-
       toast = document.createElement('div');
 
 
 
-
-
-      toast.className =
-
-        'toast';
-
+      toast.className = 'toast';
 
 
 
@@ -1445,7 +1255,6 @@ export const UI = {
 
 
 
-
       toast.setAttribute(
 
         'aria-live',
@@ -1458,9 +1267,7 @@ export const UI = {
 
 
 
-
       document.body.appendChild(toast);
-
 
 
 
@@ -1470,21 +1277,11 @@ export const UI = {
 
 
 
+    toast.textContent = message;
 
 
 
-
-    toast.textContent =
-
-      message;
-
-
-
-
-
-    toast.dataset.type =
-
-      type;
+    toast.dataset.type = type;
 
 
 
@@ -1495,15 +1292,12 @@ export const UI = {
 
 
 
-      toast.classList.add(
-
-        'show'
-
-      );
+      toast.classList.add('show');
 
 
 
     });
+
 
 
 
@@ -1521,32 +1315,39 @@ export const UI = {
 
 
 
-    this.toastTimer =
-
-      setTimeout(() => {
+    this.toastTimer = setTimeout(() => {
 
 
 
-        toast.classList.remove(
-
-          'show'
-
-        );
+      toast.classList.remove('show');
 
 
 
-      }, 2500);
+    }, 2500);
+
+
+
+  },
 
 
 
 
-  },  /* =========================
+
+
+
+
+
+  /* =========================
      Theme Toggle
   ========================= */
 
 
 
+
+
   initThemeToggle(button) {
+
+
 
 
 
@@ -1556,7 +1357,9 @@ export const UI = {
 
 
 
+
     const savedTheme = Storage.getTheme();
+
 
 
 
@@ -1574,8 +1377,8 @@ export const UI = {
       );
 
 
-    }
 
+    }
 
 
 
@@ -1595,8 +1398,6 @@ export const UI = {
 
         const light =
 
-
-
           document.documentElement.classList.toggle(
 
             'light'
@@ -1608,9 +1409,8 @@ export const UI = {
 
 
 
+
         Storage.setTheme(
-
-
 
           light
 
@@ -1618,9 +1418,8 @@ export const UI = {
 
             : 'dark'
 
-
-
         );
+
 
 
 
@@ -1628,8 +1427,8 @@ export const UI = {
       }
 
 
-    );
 
+    );
 
 
 
@@ -1651,8 +1450,9 @@ export const UI = {
 
 
 
-
   initBackToTop(button) {
+
+
 
 
 
@@ -1680,6 +1480,7 @@ export const UI = {
 
 
 
+
     };
 
 
@@ -1687,10 +1488,7 @@ export const UI = {
 
 
 
-
-
     updateVisibility();
-
 
 
 
@@ -1718,7 +1516,6 @@ export const UI = {
 
 
 
-
     button.addEventListener(
 
       'click',
@@ -1735,6 +1532,8 @@ export const UI = {
 
           top: 0,
 
+
+
           behavior: 'smooth'
 
 
@@ -1744,15 +1543,17 @@ export const UI = {
 
 
 
+
       }
+
 
 
     );
 
 
 
-
   }
+
 
 
 
