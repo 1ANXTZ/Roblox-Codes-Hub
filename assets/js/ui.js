@@ -21,7 +21,6 @@ const STATUS_LABEL = {
 
 
 
-
 function escapeHTML(value = '') {
 
   return String(value)
@@ -41,12 +40,11 @@ function escapeHTML(value = '') {
 
 
 
-
 /**
- * Get Roblox thumbnail directly.
+ * Roblox thumbnail
  *
- * GitHub Pages blocks Roblox API requests
- * because of CORS, so we use the CDN URL.
+ * Uses direct CDN URL to avoid CORS
+ * problems on GitHub Pages.
  */
 
 function getRobloxIcon(game) {
@@ -61,8 +59,6 @@ function getRobloxIcon(game) {
   return `https://tr.rbxcdn.com/${game.robloxId}/150/150/Image/Png`;
 
 }
-
-
 
 
 
@@ -158,11 +154,11 @@ async function copyText(text) {
 
 
 
+
 export const UI = {
 
 
   toastTimer: null,
-
 
 
   /* ---------------- Categories ---------------- */  renderCategoryChips(
@@ -202,10 +198,12 @@ export const UI = {
     list.forEach(category => {
 
 
-
       const button =
+
         document.createElement(
+
           'button'
+
         );
 
 
@@ -232,8 +230,6 @@ export const UI = {
 
 
 
-
-
       button.textContent =
 
         category.count !== null
@@ -241,7 +237,6 @@ export const UI = {
           ? `${category.name} (${category.count})`
 
           : category.name;
-
 
 
 
@@ -279,7 +274,6 @@ export const UI = {
 
 
 
-
   /* ---------------- Game cards ---------------- */
 
 
@@ -301,7 +295,6 @@ export const UI = {
   ) {
 
 
-
     if (!container) return;
 
 
@@ -313,13 +306,11 @@ export const UI = {
     if (!games.length) {
 
 
-
       if (emptyStateEl) {
 
         emptyStateEl.hidden = false;
 
       }
-
 
 
       return;
@@ -350,8 +341,7 @@ export const UI = {
     games.forEach(game => {
 
 
-
-      fragment.appendChild(
+      const card =
 
         this.buildGameCard(
 
@@ -363,9 +353,18 @@ export const UI = {
 
           }
 
-        )
+        );
 
-      );
+
+      if (card) {
+
+        fragment.appendChild(
+
+          card
+
+        );
+
+      }
 
 
     });
@@ -391,7 +390,7 @@ export const UI = {
 
 
 
-  async buildGameCard(
+  buildGameCard(
 
     game,
 
@@ -402,7 +401,6 @@ export const UI = {
     } = {}
 
   ) {
-
 
 
     const card =
@@ -449,7 +447,6 @@ export const UI = {
 
     card.innerHTML = `
 
-
       <a
 
         href="game.html?id=${encodeURIComponent(game.id)}"
@@ -457,7 +454,6 @@ export const UI = {
         class="game-card__thumb-link"
 
       >
-
 
         <div
 
@@ -467,13 +463,11 @@ export const UI = {
 
         >
 
-
           <span class="game-card__loading">
 
             ${escapeHTML(fallback)}
 
           </span>
-
 
 
           <span class="game-card__badge-count">
@@ -485,12 +479,9 @@ export const UI = {
           </span>
 
 
-
         </div>
 
-
       </a>
-
 
 
 
@@ -512,7 +503,6 @@ export const UI = {
 
 
 
-
       <div class="game-card__body">
 
 
@@ -524,13 +514,7 @@ export const UI = {
 
 
 
-
-
-        <a
-
-          href="game.html?id=${encodeURIComponent(game.id)}"
-
-        >
+        <a href="game.html?id=${encodeURIComponent(game.id)}">
 
           <h3 class="game-card__name">
 
@@ -542,10 +526,7 @@ export const UI = {
 
 
 
-
-
         <span class="game-card__meta">
-
 
           Updated ${
 
@@ -557,10 +538,7 @@ export const UI = {
 
           }
 
-
         </span>
-
-
 
 
 
@@ -577,19 +555,11 @@ export const UI = {
         </a>
 
 
-
       </div>
-
 
     `;
 
 
-
-
-
-    /*
-      Load Roblox image after card creation.
-    */
 
 
 
@@ -609,9 +579,7 @@ export const UI = {
 
 
 
-
     if (imageUrl && thumb) {
-
 
 
       const img =
@@ -663,6 +631,7 @@ export const UI = {
       );
 
 
+
       const loading =
 
         thumb.querySelector(
@@ -675,97 +644,9 @@ export const UI = {
       loading?.remove();
 
 
-    }id="9m3k3u"
-    const favBtn =
-
-      card.querySelector(
-
-        '.game-card__fav'
-
-      );
-
-
-
-
-
-    favBtn?.addEventListener(
-
-      'click',
-
-      () => {
-
-
-
-        const state =
-
-          Storage.toggleFavorite(
-
-            game.id
-
-          );
-
-
-
-        favBtn.classList.toggle(
-
-          'is-fav',
-
-          state
-
-        );
-
-
-
-        favBtn.textContent =
-
-          state
-
-            ? '★'
-
-            : '☆';
-
-
-
-        favBtn.setAttribute(
-
-          'aria-pressed',
-
-          String(state)
-
-        );
-
-
-
-        onToggleFavorite?.(
-
-          game.id,
-
-          state
-
-        );
-
-
-      }
-
-    );
-
-
-
-    return card;
-
-
-  },
-
-
-
-
-
-
-
-
-
-  /* ---------------- Code cards ---------------- */
-
+    }  /* =========================
+     Code Cards
+  ========================= */
 
 
   renderCodes(
@@ -783,7 +664,6 @@ export const UI = {
   ) {
 
 
-
     if (!container) return;
 
 
@@ -793,7 +673,6 @@ export const UI = {
 
 
     if (!codes.length) {
-
 
 
       container.innerHTML = `
@@ -807,7 +686,6 @@ export const UI = {
       `;
 
 
-
       return;
 
 
@@ -815,19 +693,11 @@ export const UI = {
 
 
 
-
-
-
-    const fragment =
-
-      document.createDocumentFragment();
-
-
+    const fragment = document.createDocumentFragment();
 
 
 
     codes.forEach(code => {
-
 
 
       fragment.appendChild(
@@ -851,21 +721,10 @@ export const UI = {
 
 
 
-
-
-    container.appendChild(
-
-      fragment
-
-    );
+    container.appendChild(fragment);
 
 
   },
-
-
-
-
-
 
 
 
@@ -883,71 +742,44 @@ export const UI = {
   ) {
 
 
+    const card = document.createElement('article');
 
-    const card =
 
-      document.createElement(
-
-        'article'
-
-      );
+    card.className = 'code-card';
 
 
 
-    card.className =
-
-      'code-card';
+    const status = code.status || 'active';
 
 
 
-    const status =
-
-      code.status || 'active';
-
-
-
-    card.dataset.status =
-
-      status;
-
+    card.dataset.status = status;
 
 
 
     card.innerHTML = `
 
-
       <div class="code-card__top">
-
 
         <span class="code-card__status status-${escapeHTML(status)}">
 
-
           ${STATUS_LABEL[status] || status}
 
-
         </span>
-
 
       </div>
 
 
 
-
-
       <code class="code-card__value">
 
-
         ${escapeHTML(code.code || '')}
-
 
       </code>
 
 
 
-
-
       <p class="code-card__reward">
-
 
         ${escapeHTML(
 
@@ -957,79 +789,49 @@ export const UI = {
 
         )}
 
-
       </p>
-
-
-
 
 
 
       <button
 
-
         class="code-card__copy"
-
 
         type="button"
 
-
-        aria-label="Copy code ${escapeHTML(code.code || '')}"
-
-
       >
-
 
         Copy
 
-
       </button>
-
-
 
     `;
 
 
 
+    const button = card.querySelector(
 
-    const button =
+      '.code-card__copy'
 
-      card.querySelector(
-
-        '.code-card__copy'
-
-      );
-
-
-
+    );
 
 
 
     button?.addEventListener(
 
-
       'click',
 
-
       async () => {
-
 
 
         try {
 
 
-
-          await copyText(
-
-            code.code
-
-          );
+          await copyText(code.code);
 
 
 
-          button.textContent =
-
-            'Copied!';
+          button.textContent = 'Copied!';
 
 
 
@@ -1041,38 +843,24 @@ export const UI = {
 
 
 
-          onCopy?.(
-
-            code.code
-
-          );
+          onCopy?.(code.code);
 
 
 
           setTimeout(() => {
 
 
-
-            button.textContent =
-
-              'Copy';
-
+            button.textContent = 'Copy';
 
 
           }, 1500);
 
 
 
-
-
-
         } catch {
 
 
-
-          button.textContent =
-
-            'Error';
+          button.textContent = 'Error';
 
 
 
@@ -1084,15 +872,13 @@ export const UI = {
 
           );
 
+
         }
 
 
       }
 
-
     );
-
-
 
 
 
@@ -1105,10 +891,9 @@ export const UI = {
 
 
 
-
-
-
-  /* ---------------- Stats ---------------- */
+  /* =========================
+     Stats
+  ========================= */
 
 
 
@@ -1121,15 +906,11 @@ export const UI = {
   ) {
 
 
-
     if (!elements) return;
 
 
 
-
-
     if (elements.games) {
-
 
 
       elements.games.textContent =
@@ -1142,9 +923,7 @@ export const UI = {
 
 
 
-
     if (elements.codes) {
-
 
 
       elements.codes.textContent =
@@ -1157,9 +936,7 @@ export const UI = {
 
 
 
-
     if (elements.categories) {
-
 
 
       elements.categories.textContent =
@@ -1170,7 +947,16 @@ export const UI = {
     }
 
 
-  },  /* ---------------- Toast ---------------- */
+  },
+
+
+
+
+
+  /* =========================
+     Toast
+  ========================= */
+
 
 
   showToast(
@@ -1182,37 +968,21 @@ export const UI = {
   ) {
 
 
+    let toast = document.querySelector(
 
-    let toast =
+      '.toast'
 
-      document.querySelector(
-
-        '.toast'
-
-      );
-
-
+    );
 
 
 
     if (!toast) {
 
 
-
-      toast =
-
-        document.createElement(
-
-          'div'
-
-        );
+      toast = document.createElement('div');
 
 
-
-      toast.className =
-
-        'toast';
-
+      toast.className = 'toast';
 
 
       toast.setAttribute(
@@ -1224,7 +994,6 @@ export const UI = {
       );
 
 
-
       toast.setAttribute(
 
         'aria-live',
@@ -1234,12 +1003,7 @@ export const UI = {
       );
 
 
-
-      document.body.appendChild(
-
-        toast
-
-      );
+      document.body.appendChild(toast);
 
 
     }
@@ -1247,25 +1011,14 @@ export const UI = {
 
 
 
-
-    toast.textContent =
-
-      message;
+    toast.textContent = message;
 
 
-
-    toast.dataset.type =
-
-      type;
-
-
-
-
+    toast.dataset.type = type;
 
 
 
     requestAnimationFrame(() => {
-
 
 
       toast.classList.add(
@@ -1275,11 +1028,7 @@ export const UI = {
       );
 
 
-
     });
-
-
-
 
 
 
@@ -1293,73 +1042,37 @@ export const UI = {
 
 
 
+    this.toastTimer = setTimeout(() => {
 
 
+      toast.classList.remove(
 
-    this.toastTimer =
+        'show'
 
-      setTimeout(() => {
-
-
-
-        toast.classList.remove(
-
-          'show'
-
-        );
+      );
 
 
-
-      }, 2500);
-
+    }, 2500);
 
 
   },
+  /* =========================
+     Theme Toggle
+  ========================= */
 
 
-
-
-
-
-
-
-
-  /* ---------------- Theme ---------------- */
-
-
-
-  initThemeToggle(
-
-    button
-
-  ) {
-
+  initThemeToggle(button) {
 
 
     if (!button) return;
 
 
 
+    const savedTheme = Storage.getTheme();
 
 
 
-
-    const savedTheme =
-
-      Storage.getTheme();
-
-
-
-
-
-
-
-    if (
-
-      savedTheme === 'light'
-
-    ) {
-
+    if (savedTheme === 'light') {
 
 
       document.documentElement.classList.add(
@@ -1374,19 +1087,11 @@ export const UI = {
 
 
 
-
-
-
     button.addEventListener(
-
-
 
       'click',
 
-
-
       () => {
-
 
 
         const light =
@@ -1399,13 +1104,7 @@ export const UI = {
 
 
 
-
-
-
-
         Storage.setTheme(
-
-
 
           light
 
@@ -1413,17 +1112,12 @@ export const UI = {
 
             : 'dark'
 
-
-
         );
-
 
 
       }
 
-
     );
-
 
 
   },
@@ -1432,55 +1126,32 @@ export const UI = {
 
 
 
+  /* =========================
+     Back To Top
+  ========================= */
 
 
 
-
-  /* ---------------- Back to top ---------------- */
-
-
-
-  initBackToTop(
-
-    button
-
-  ) {
-
+  initBackToTop(button) {
 
 
     if (!button) return;
 
 
 
-
-
-
-
     const updateVisibility = () => {
-
 
 
       button.classList.toggle(
 
-
-
         'is-visible',
 
-
-
         window.scrollY > 500
-
-
 
       );
 
 
-
     };
-
-
-
-
 
 
 
@@ -1489,20 +1160,11 @@ export const UI = {
 
 
 
-
-
-
     window.addEventListener(
-
-
 
       'scroll',
 
-
-
       updateVisibility,
-
-
 
       {
 
@@ -1510,11 +1172,7 @@ export const UI = {
 
       }
 
-
-
     );
-
-
 
 
 
@@ -1522,38 +1180,23 @@ export const UI = {
 
     button.addEventListener(
 
-
-
       'click',
-
-
 
       () => {
 
 
-
         window.scrollTo({
-
-
 
           top: 0,
 
-
-
           behavior: 'smooth'
-
-
 
         });
 
 
-
       }
 
-
-
     );
-
 
 
   }
