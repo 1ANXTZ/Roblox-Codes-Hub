@@ -18,6 +18,7 @@ import { Utils } from './utils.js';
 
 
 
+
 const state = {
 
   allGames: [],
@@ -104,6 +105,7 @@ const els = {
 
 
 
+
 function applyFiltersAndRender() {
 
 
@@ -176,14 +178,30 @@ function applyFiltersAndRender() {
 
     els.resultCount.textContent =
 
-      `${filtered.length} game${filtered.length === 1 ? '' : 's'} found`;
+      `${filtered.length} game${
+
+        filtered.length === 1
+
+          ? ''
+
+          : 's'
+
+      } found`;
 
 
   }
 
 
+}
 
-}async function init() {
+
+
+
+
+
+
+
+async function init() {
 
 
   if (!els.grid) {
@@ -198,9 +216,14 @@ function applyFiltersAndRender() {
 
 
     UI.setLoading?.(
+
       els.grid,
+
       true
+
     );
+
+
 
 
 
@@ -214,13 +237,17 @@ function applyFiltersAndRender() {
     ] = await Promise.all([
 
 
+
       Api.fetchGames(),
+
 
 
       Api.fetchCodes()
 
 
+
     ]);
+
 
 
 
@@ -241,7 +268,6 @@ function applyFiltersAndRender() {
 
 
 
-
     const categories =
 
       Games.extractCategories(
@@ -249,7 +275,6 @@ function applyFiltersAndRender() {
         state.allGames
 
       );
-
 
 
 
@@ -267,6 +292,7 @@ function applyFiltersAndRender() {
 
 
 
+
       UI.renderCategoryChips(
 
         els.categoryRail,
@@ -278,6 +304,7 @@ function applyFiltersAndRender() {
         onCategorySelect
 
       );
+
 
 
 
@@ -312,18 +339,19 @@ function applyFiltersAndRender() {
 
 
 
-
     const totalActiveCodes =
 
       state.allGames.reduce(
 
         (total, game) =>
 
+
           total + (
 
             game.activeCount || 0
 
           ),
+
 
         0
 
@@ -341,39 +369,43 @@ function applyFiltersAndRender() {
       {
 
         games:
+
           els.statGames,
 
 
         codes:
+
           els.statCodes,
 
 
         categories:
+
           els.statCategories,
 
 
       },
 
+
       {
 
         games:
+
           state.allGames.length,
 
 
         codes:
+
           totalActiveCodes,
 
 
         categories:
+
           categories.length,
 
 
       }
 
     );
-
-
-
 
 
 
@@ -404,9 +436,11 @@ function applyFiltersAndRender() {
 
 
 
+
       els.searchInput.value =
 
         state.query;
+
 
 
 
@@ -416,12 +450,13 @@ function applyFiltersAndRender() {
         ?.classList
 
         .add(
+
           'is-visible'
+
         );
 
 
     }
-
 
 
 
@@ -453,6 +488,7 @@ function applyFiltersAndRender() {
 
 
 
+
           els.searchClear
 
             ?.classList
@@ -462,7 +498,9 @@ function applyFiltersAndRender() {
               'is-visible',
 
               Boolean(
+
                 state.query
+
               )
 
             );
@@ -470,7 +508,9 @@ function applyFiltersAndRender() {
 
 
 
+
           applyFiltersAndRender();
+
 
 
 
@@ -481,7 +521,6 @@ function applyFiltersAndRender() {
       )
 
     );
-
 
 
 
@@ -501,6 +540,7 @@ function applyFiltersAndRender() {
 
 
           els.searchInput.value =
+
             '';
 
 
@@ -508,7 +548,11 @@ function applyFiltersAndRender() {
 
 
 
+
+
         state.query = '';
+
+
 
 
 
@@ -518,13 +562,20 @@ function applyFiltersAndRender() {
           ?.classList
 
           .remove(
+
             'is-visible'
+
           );
 
 
 
 
+
+
+
         applyFiltersAndRender();
+
+
 
 
 
@@ -536,7 +587,6 @@ function applyFiltersAndRender() {
       }
 
     );
-
 
 
 
@@ -559,14 +609,15 @@ function applyFiltersAndRender() {
 
 
 
+
         applyFiltersAndRender();
+
 
 
 
       }
 
     );
-
 
 
 
@@ -585,6 +636,7 @@ function applyFiltersAndRender() {
 
 
 
+
     UI.initBackToTop(
 
       els.backToTop
@@ -594,11 +646,14 @@ function applyFiltersAndRender() {
 
 
 
-  } catch(error) {
+
+  } catch (error) {
 
 
     showLoadError(
+
       error
+
     );
 
 
@@ -642,11 +697,16 @@ function showLoadError(error) {
 
 
 
+
+
   if (!els.grid) {
 
     return;
 
   }
+
+
+
 
 
 
@@ -666,6 +726,8 @@ function showLoadError(error) {
 
 
 
+
+
       <h3>
 
         Error loading games
@@ -674,11 +736,15 @@ function showLoadError(error) {
 
 
 
+
+
       <p>
 
         Check your connection and try again.
 
       </p>
+
+
 
 
 
