@@ -9,6 +9,7 @@ import { Utils } from './utils.js';
 import { Storage } from './storage.js';
 
 
+
 const STATUS_LABEL = {
 
   active: 'Active',
@@ -18,6 +19,8 @@ const STATUS_LABEL = {
   expired: 'Expired'
 
 };
+
+
 
 
 
@@ -41,16 +44,34 @@ function escapeHTML(value = '') {
 
 
 
+
+
 /*
-  Roblox thumbnail direto.
+  Roblox Image System
 
-  Não usa API do Roblox porque GitHub Pages
-  bloqueia chamadas CORS.
+  games.json stores Place IDs.
+  Roblox thumbnails need Universe IDs.
 
-  O robloxId do games.json continua sendo usado.
+  Flow:
+
+  Place ID
+      ↓
+  Universe API
+      ↓
+  Thumbnail API
+      ↓
+  Image URL
 */
 
-function getRobloxIcon(game) {
+
+const robloxCache = {};
+
+
+
+
+
+async function getRobloxIcon(game) {
+
 
   if (!game?.robloxId) {
 
@@ -59,7 +80,134 @@ function getRobloxIcon(game) {
   }
 
 
-  return `https://tr.rbxcdn.com/${game.robloxId}/150/150/Image/Png`;
+
+  const placeId = game.robloxId;
+
+
+
+
+  if (robloxCache[placeId]) {
+
+    return robloxCache[placeId];
+
+  }
+
+
+
+
+
+
+  try {
+
+
+
+    const universeResponse = await fetch(
+
+      `https://apis.roblox.com/universes/v1/places/${placeId}/universe`
+
+    );
+
+
+
+    if (!universeResponse.ok) {
+
+      throw new Error(
+        'Universe request failed'
+      );
+
+    }
+
+
+
+
+
+    const universeData = await universeResponse.json();
+
+
+
+
+    const universeId = universeData.universeId;
+
+
+
+
+    if (!universeId) {
+
+      throw new Error(
+        'Universe ID missing'
+      );
+
+    }
+
+
+
+
+
+
+
+    const imageResponse = await fetch(
+
+      `https://thumbnails.roblox.com/v1/games/icons?universeIds=${universeId}&size=150x150&format=Png&isCircular=false`
+
+    );
+
+
+
+
+    if (!imageResponse.ok) {
+
+      throw new Error(
+        'Thumbnail request failed'
+      );
+
+    }
+
+
+
+
+
+    const imageData = await imageResponse.json();
+
+
+
+
+    const imageUrl =
+
+      imageData?.data?.[0]?.imageUrl || '';
+
+
+
+
+
+
+    robloxCache[placeId] = imageUrl;
+
+
+
+    return imageUrl;
+
+
+
+  } catch(error) {
+
+
+
+    console.warn(
+
+      'Roblox image failed:',
+
+      game.name,
+
+      error.message
+
+    );
+
+
+
+    return '';
+
+  }
+
 
 }
 
@@ -67,16 +215,23 @@ function getRobloxIcon(game) {
 
 
 
+
+
 async function copyText(text) {
+
 
   const value = String(text ?? '').trim();
 
 
+
   if (!value) {
 
-    throw new Error('Empty text');
+    throw new Error(
+      'Empty text'
+    );
 
   }
+
 
 
 
@@ -88,23 +243,31 @@ async function copyText(text) {
 
   ) {
 
+
     await navigator.clipboard.writeText(value);
 
     return;
 
+
   }
+
+
+
 
 
 
   const textarea = document.createElement('textarea');
 
 
+
   textarea.value = value;
+
 
 
   textarea.style.position = 'fixed';
 
   textarea.style.opacity = '0';
+
 
 
 
@@ -115,23 +278,20 @@ async function copyText(text) {
   textarea.select();
 
 
+
   document.execCommand('copy');
+
 
 
   textarea.remove();
 
-}
 
 
-
-
-
-
-
-export const UI = {
+}export const UI = {
 
 
   toastTimer: null,
+
 
 
 
@@ -156,6 +316,7 @@ export const UI = {
 
 
 
+
     const list = [
 
       {
@@ -169,13 +330,18 @@ export const UI = {
 
 
 
+
+
     list.forEach(category => {
+
 
 
       const button = document.createElement('button');
 
 
+
       button.type = 'button';
+
 
 
       button.className =
@@ -194,6 +360,8 @@ export const UI = {
 
 
 
+
+
       button.textContent =
 
         category.count !== null
@@ -204,13 +372,17 @@ export const UI = {
 
 
 
+
+
       button.addEventListener(
 
         'click',
 
         () => {
 
+
           onSelect?.(category.name);
+
 
         }
 
@@ -218,13 +390,21 @@ export const UI = {
 
 
 
+
+
       container.appendChild(button);
+
 
 
     });
 
 
+
   },
+
+
+
+
 
 
 
@@ -247,7 +427,9 @@ export const UI = {
   ) {
 
 
+
     if (!container) return;
+
 
 
 
@@ -255,7 +437,10 @@ export const UI = {
 
 
 
+
+
     if (!games.length) {
+
 
 
       if (emptyStateEl) {
@@ -265,9 +450,13 @@ export const UI = {
       }
 
 
+
       return;
 
+
     }
+
+
 
 
 
@@ -279,11 +468,17 @@ export const UI = {
 
 
 
+
+
+
     const fragment = document.createDocumentFragment();
 
 
 
+
+
     games.forEach(game => {
+
 
 
       const card = this.buildGameCard(
@@ -300,6 +495,8 @@ export const UI = {
 
 
 
+
+
       if (card) {
 
         fragment.appendChild(card);
@@ -307,14 +504,23 @@ export const UI = {
       }
 
 
+
     });
+
+
+
 
 
 
     container.appendChild(fragment);
 
 
+
   },
+
+
+
+
 
 
 
@@ -333,7 +539,9 @@ export const UI = {
   ) {
 
 
-    if (!game || !game.id) {
+
+
+    if (!game?.id) {
 
       return null;
 
@@ -341,18 +549,32 @@ export const UI = {
 
 
 
+
+
     const card = document.createElement('article');
+
 
 
     card.className = 'game-card';
 
 
 
-    const isFav = Storage.isFavorite(game.id);
+
+
+    const isFav = Storage.isFavorite(
+
+      game.id
+
+    );
+
+
+
 
 
 
     card.dataset.gameId = game.id;
+
+
 
 
 
@@ -361,6 +583,9 @@ export const UI = {
       game.name || 'Game'
 
     );
+
+
+
 
 
 
@@ -382,11 +607,13 @@ export const UI = {
 
         >
 
+
           <span class="game-card__loading">
 
             ${escapeHTML(fallback)}
 
           </span>
+
 
 
           <span class="game-card__badge-count">
@@ -398,9 +625,14 @@ export const UI = {
           </span>
 
 
+
         </div>
 
+
       </a>
+
+
+
 
 
       <button
@@ -418,7 +650,11 @@ export const UI = {
       </button>
 
 
+
+
+
       <div class="game-card__body">
+
 
 
         <span class="game-card__category">
@@ -429,15 +665,23 @@ export const UI = {
 
 
 
-        <a href="game.html?id=${encodeURIComponent(game.id)}">
+
+
+        <a
+
+          href="game.html?id=${encodeURIComponent(game.id)}"
+
+        >
 
           <h3 class="game-card__name">
 
-            ${escapeHTML(game.name || 'Unknown game')}
+            ${escapeHTML(game.name || 'Unknown')}
 
           </h3>
 
         </a>
+
+
 
 
 
@@ -457,6 +701,8 @@ export const UI = {
 
 
 
+
+
         <a
 
           class="game-card__cta"
@@ -470,116 +716,128 @@ export const UI = {
         </a>
 
 
+
       </div>
 
-    `;    const thumb = card.querySelector(
+
+    `;
+
+
+
+
+
+    const thumb = card.querySelector(
+
       '.game-card__thumb'
+
     );
 
 
-    const imageUrl = getRobloxIcon(game);
 
 
 
-    if (imageUrl && thumb) {
 
-
-      const img = document.createElement('img');
-
-
-      img.className = 'game-card__image';
-
-
-      img.src = imageUrl;
-
-
-      img.alt = `${game.name} icon`;
-
-
-      img.loading = 'lazy';
+    /*
+      Load Roblox image asynchronously.
+      Card renders first, image enters later.
+    */
 
 
 
-      img.onerror = () => {
+    getRobloxIcon(game)
 
-
-        console.warn(
-
-          'Roblox image failed:',
-
-          game.name
-
-        );
-
-
-        img.remove();
+      .then(imageUrl => {
 
 
 
-        const loading = thumb.querySelector(
+        if (!imageUrl || !thumb) {
 
-          '.game-card__loading'
-
-        );
-
-
-
-        if (!loading) {
-
-
-          const fallback = document.createElement(
-
-            'span'
-
-          );
-
-
-          fallback.className =
-
-            'game-card__loading';
-
-
-
-          fallback.textContent = Utils.initials(
-
-            game.name || 'Game'
-
-          );
-
-
-
-          thumb.prepend(fallback);
-
+          return;
 
         }
 
 
-      };
 
 
 
-      img.onload = () => {
 
-
-        const loading = thumb.querySelector(
-
-          '.game-card__loading'
-
-        );
+        const img = document.createElement('img');
 
 
 
-        loading?.remove();
-
-
-      };
+        img.className = 'game-card__image';
 
 
 
-      thumb.prepend(img);
+        img.src = imageUrl;
 
 
-    }
+
+        img.alt = `${game.name} icon`;
+
+
+
+        img.loading = 'lazy';
+
+
+
+
+
+        img.onload = () => {
+
+
+
+          const loading = thumb.querySelector(
+
+            '.game-card__loading'
+
+          );
+
+
+
+          loading?.remove();
+
+
+
+        };
+
+
+
+
+
+
+        img.onerror = () => {
+
+
+
+          console.warn(
+
+            'Roblox image failed:',
+
+            game.name
+
+          );
+
+
+
+          img.remove();
+
+
+
+        };
+
+
+
+
+
+
+        thumb.prepend(img);
+
+
+
+      });
+
+
 
 
 
@@ -590,6 +848,7 @@ export const UI = {
       '.game-card__fav'
 
     );
+
 
 
 
@@ -610,6 +869,8 @@ export const UI = {
 
 
 
+
+
         favBtn.classList.toggle(
 
           'is-fav',
@@ -620,11 +881,15 @@ export const UI = {
 
 
 
+
+
         favBtn.textContent = state
 
           ? '★'
 
           : '☆';
+
+
 
 
 
@@ -638,6 +903,8 @@ export const UI = {
 
 
 
+
+
         onToggleFavorite?.(
 
           game.id,
@@ -647,6 +914,7 @@ export const UI = {
         );
 
 
+
       }
 
     );
@@ -654,12 +922,16 @@ export const UI = {
 
 
 
+
+
     return card;
+
 
 
   },  /* =========================
      Code Cards
   ========================= */
+
 
 
   renderCodes(
@@ -682,7 +954,11 @@ export const UI = {
 
 
 
+
     container.innerHTML = '';
+
+
+
 
 
 
@@ -705,13 +981,16 @@ export const UI = {
       return;
 
 
+
     }
 
 
 
 
 
+
     const fragment = document.createDocumentFragment();
+
 
 
 
@@ -734,6 +1013,8 @@ export const UI = {
 
 
 
+
+
       if (card) {
 
         fragment.appendChild(card);
@@ -748,11 +1029,13 @@ export const UI = {
 
 
 
+
     container.appendChild(fragment);
 
 
 
   },
+
 
 
 
@@ -784,6 +1067,8 @@ export const UI = {
 
 
 
+
+
     const card = document.createElement('article');
 
 
@@ -793,11 +1078,18 @@ export const UI = {
 
 
 
+
+
     const status = code.status || 'active';
 
 
 
+
+
     card.dataset.status = status;
+
+
+
 
 
 
@@ -816,11 +1108,15 @@ export const UI = {
 
 
 
+
+
       <code class="code-card__value">
 
         ${escapeHTML(code.code || '')}
 
       </code>
+
+
 
 
 
@@ -835,6 +1131,8 @@ export const UI = {
         )}
 
       </p>
+
+
 
 
 
@@ -855,11 +1153,17 @@ export const UI = {
 
 
 
+
+
+
     const button = card.querySelector(
 
       '.code-card__copy'
 
     );
+
+
+
 
 
 
@@ -880,7 +1184,11 @@ export const UI = {
 
 
 
+
+
           button.textContent = 'Copied!';
+
+
 
 
 
@@ -892,11 +1200,15 @@ export const UI = {
 
 
 
+
+
           onCopy?.(
 
             code.code
 
           );
+
+
 
 
 
@@ -912,11 +1224,16 @@ export const UI = {
 
 
 
+
+
+
         } catch {
 
 
 
           button.textContent = 'Error';
+
+
 
 
 
@@ -929,13 +1246,19 @@ export const UI = {
           );
 
 
+
         }
 
 
 
       }
 
+
+
     );
+
+
+
 
 
 
@@ -943,7 +1266,10 @@ export const UI = {
     return card;
 
 
+
   },
+
+
 
 
 
@@ -972,7 +1298,11 @@ export const UI = {
 
 
 
+
+
+
     if (elements.games) {
+
 
 
       elements.games.textContent =
@@ -980,7 +1310,10 @@ export const UI = {
         stats.games ?? 0;
 
 
+
     }
+
+
 
 
 
@@ -989,12 +1322,16 @@ export const UI = {
     if (elements.codes) {
 
 
+
       elements.codes.textContent =
 
         stats.codes ?? 0;
 
 
+
     }
+
+
 
 
 
@@ -1003,17 +1340,21 @@ export const UI = {
     if (elements.categories) {
 
 
+
       elements.categories.textContent =
 
         stats.categories ?? 0;
 
 
+
     }
+
 
 
   },  /* =========================
      Toast
   ========================= */
+
 
 
   showToast(
@@ -1030,6 +1371,10 @@ export const UI = {
 
 
 
+
+
+
+
     if (!toast) {
 
 
@@ -1039,6 +1384,8 @@ export const UI = {
 
 
       toast.className = 'toast';
+
+
 
 
 
@@ -1052,6 +1399,8 @@ export const UI = {
 
 
 
+
+
       toast.setAttribute(
 
         'aria-live',
@@ -1062,10 +1411,16 @@ export const UI = {
 
 
 
+
+
       document.body.appendChild(toast);
 
 
+
     }
+
+
+
 
 
 
@@ -1075,6 +1430,10 @@ export const UI = {
 
 
     toast.dataset.type = type;
+
+
+
+
 
 
 
@@ -1093,11 +1452,15 @@ export const UI = {
 
 
 
+
+
     clearTimeout(
 
       this.toastTimer
 
     );
+
+
 
 
 
@@ -1112,6 +1475,7 @@ export const UI = {
 
 
     }, 2500);
+
 
 
 
@@ -1130,6 +1494,7 @@ export const UI = {
   ========================= */
 
 
+
   initThemeToggle(button) {
 
 
@@ -1139,7 +1504,13 @@ export const UI = {
 
 
 
+
+
+
     const savedTheme = Storage.getTheme();
+
+
+
 
 
 
@@ -1155,7 +1526,10 @@ export const UI = {
       );
 
 
+
     }
+
+
 
 
 
@@ -1182,6 +1556,8 @@ export const UI = {
 
 
 
+
+
         Storage.setTheme(
 
           light
@@ -1196,23 +1572,16 @@ export const UI = {
 
       }
 
+
+
     );
 
 
 
-  },
-
-
-
-
-
-
-
-
-
-  /* =========================
+  },  /* =========================
      Back To Top
   ========================= */
+
 
 
   initBackToTop(button) {
@@ -1220,6 +1589,9 @@ export const UI = {
 
 
     if (!button) return;
+
+
+
 
 
 
@@ -1237,13 +1609,19 @@ export const UI = {
       );
 
 
+
     };
 
 
 
 
 
+
+
     updateVisibility();
+
+
+
 
 
 
@@ -1295,6 +1673,8 @@ export const UI = {
 
 
   }
+
+
 
 
 
