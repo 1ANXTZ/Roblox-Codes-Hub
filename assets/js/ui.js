@@ -41,10 +41,9 @@ function escapeHTML(value = '') {
 
 
 
-
 /**
- * Get Roblox game thumbnail automatically.
- * Uses robloxId from games.json.
+ * Gets Roblox icon directly from Roblox API.
+ * No images stored locally.
  */
 
 async function getRobloxIcon(game) {
@@ -66,7 +65,15 @@ async function getRobloxIcon(game) {
     );
 
 
-    const data = await response.json();
+    if (!response.ok) {
+
+      return '';
+
+    }
+
+
+    const data =
+      await response.json();
 
 
 
@@ -79,7 +86,6 @@ async function getRobloxIcon(game) {
     );
 
 
-
   } catch {
 
 
@@ -88,6 +94,7 @@ async function getRobloxIcon(game) {
   }
 
 }
+
 
 
 
@@ -134,6 +141,7 @@ async function copyText(text) {
 
 
 
+
   const textarea =
     document.createElement('textarea');
 
@@ -176,7 +184,6 @@ async function copyText(text) {
 
   textarea.remove();
 
-
 }
 
 
@@ -188,7 +195,6 @@ export const UI = {
 
 
   toastTimer: null,
-
 
 
   /* ---------------- Categories ---------------- */
@@ -228,6 +234,7 @@ export const UI = {
 
 
 
+
     list.forEach(category => {
 
 
@@ -255,9 +262,7 @@ export const UI = {
 
 
       button.type =
-
         'button';
-
 
 
 
@@ -269,6 +274,19 @@ export const UI = {
 
           : category.name;
 
+
+
+      button.setAttribute(
+
+        'aria-selected',
+
+        String(
+
+          category.name === activeCategory
+
+        )
+
+      );
 
 
 
@@ -300,7 +318,15 @@ export const UI = {
     });
 
 
-  },  /* ---------------- Game cards ---------------- */
+  },
+
+
+
+
+
+
+
+  /* ---------------- Game cards ---------------- */
 
 
 
@@ -355,6 +381,7 @@ export const UI = {
 
 
 
+
     const fragment =
 
       document.createDocumentFragment();
@@ -402,7 +429,9 @@ export const UI = {
 
 
 
-  async buildGameCard(
+
+
+  buildGameCard(
 
     game,
 
@@ -457,6 +486,7 @@ export const UI = {
 
 
 
+
     card.innerHTML = `
 
 
@@ -488,9 +518,12 @@ export const UI = {
 
           <span class="game-card__badge-count">
 
+
             ${game.activeCount ?? 0}
 
+
             code${game.activeCount === 1 ? '' : 's'}
+
 
           </span>
 
@@ -535,7 +568,6 @@ export const UI = {
 
 
 
-
         <a
 
           href="game.html?id=${encodeURIComponent(game.id)}"
@@ -549,7 +581,6 @@ export const UI = {
           </h3>
 
         </a>
-
 
 
 
@@ -598,7 +629,7 @@ export const UI = {
 
 
     /*
-      Load Roblox image after card creation.
+      Load Roblox image after card exists.
     */
 
 
@@ -612,82 +643,78 @@ export const UI = {
 
 
 
-    const imageUrl =
+    getRobloxIcon(game)
 
-      await getRobloxIcon(
-
-        game
-
-      );
+      .then(imageUrl => {
 
 
+        if (!imageUrl || !thumb) {
 
-    if (imageUrl && thumb) {
+          return;
 
-
-      const img =
-
-        document.createElement(
-
-          'img'
-
-        );
+        }
 
 
 
-      img.className =
+        const img =
 
-        'game-card__image';
+          document.createElement(
 
+            'img'
 
-
-      img.src =
-
-        imageUrl;
+          );
 
 
 
-      img.alt =
+        img.className =
 
-        `${game.name} icon`;
-
-
-
-      img.loading =
-
-        'lazy';
+          'game-card__image';
 
 
 
-      img.onerror = () => {
+        img.src =
 
-        img.remove();
-
-      };
+          imageUrl;
 
 
 
-      thumb.prepend(
+        img.alt =
 
-        img
-
-      );
+          `${game.name} icon`;
 
 
-      const loading =
 
-        thumb.querySelector(
+        img.loading =
 
-          '.game-card__loading'
-
-        );
+          'lazy';
 
 
-      loading?.remove();
+
+        img.onerror = () => {
+
+          img.remove();
+
+        };
 
 
-    }
 
+        thumb.prepend(img);
+
+
+
+        thumb
+
+          .querySelector(
+
+            '.game-card__loading'
+
+          )
+
+          ?.remove();
+
+
+
+      });
 
 
 
@@ -700,7 +727,6 @@ export const UI = {
         '.game-card__fav'
 
       );
-
 
 
 
@@ -818,6 +844,7 @@ export const UI = {
 
 
 
+
     const fragment =
 
       document.createDocumentFragment();
@@ -858,6 +885,8 @@ export const UI = {
 
 
   },
+
+
 
 
 
@@ -945,9 +974,12 @@ export const UI = {
 
         ${escapeHTML(
 
+
           code.reward ||
 
+
           'Reward unavailable'
+
 
         )}
 
@@ -987,6 +1019,7 @@ export const UI = {
 
 
 
+
     const button =
 
       card.querySelector(
@@ -1009,7 +1042,9 @@ export const UI = {
       async () => {
 
 
+
         try {
+
 
 
           await copyText(
@@ -1020,9 +1055,13 @@ export const UI = {
 
 
 
+
+
           button.textContent =
 
             'Copied!';
+
+
 
 
 
@@ -1034,11 +1073,15 @@ export const UI = {
 
 
 
+
+
           onCopy?.(
 
             code.code
 
           );
+
+
 
 
 
@@ -1055,12 +1098,17 @@ export const UI = {
 
 
 
+
+
         } catch {
+
 
 
           button.textContent =
 
             'Error';
+
+
 
 
 
@@ -1076,6 +1124,9 @@ export const UI = {
         }
 
 
+
+
+
       }
 
 
@@ -1088,6 +1139,7 @@ export const UI = {
 
 
   },
+
 
 
 
@@ -1155,13 +1207,6 @@ export const UI = {
 
 
   },
-
-
-
-
-
-
-
   /* ---------------- Toast ---------------- */
 
 
@@ -1240,8 +1285,6 @@ export const UI = {
 
 
 
-
-
     toast.textContent =
 
       message;
@@ -1309,6 +1352,15 @@ export const UI = {
 
 
   },
+
+
+
+
+
+
+
+
+
   /* ---------------- Theme ---------------- */
 
 
