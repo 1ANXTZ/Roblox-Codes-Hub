@@ -42,6 +42,58 @@ function escapeHTML(value = '') {
 
 
 
+/**
+ * Get Roblox game thumbnail automatically.
+ * Uses robloxId from games.json.
+ */
+
+async function getRobloxIcon(game) {
+
+  if (!game?.robloxId) {
+
+    return '';
+
+  }
+
+
+  try {
+
+
+    const response = await fetch(
+
+      `https://thumbnails.roblox.com/v1/games/icons?universeIds=${game.robloxId}&size=512x512&format=Png&isCircular=false`
+
+    );
+
+
+    const data = await response.json();
+
+
+
+    return (
+
+      data?.data?.[0]?.imageUrl ||
+
+      ''
+
+    );
+
+
+
+  } catch {
+
+
+    return '';
+
+  }
+
+}
+
+
+
+
+
+
 async function copyText(text) {
 
   const value =
@@ -66,13 +118,19 @@ async function copyText(text) {
 
   ) {
 
+
     await navigator.clipboard.writeText(
+
       value
+
     );
+
 
     return;
 
+
   }
+
 
 
 
@@ -97,7 +155,9 @@ async function copyText(text) {
 
 
   document.body.appendChild(
+
     textarea
+
   );
 
 
@@ -107,77 +167,17 @@ async function copyText(text) {
 
 
   document.execCommand(
+
     'copy'
+
   );
 
 
 
   textarea.remove();
 
-}
-
-
-
-
-
-
-
-// Busca imagem do jogo direto no Roblox
-async function getRobloxThumbnail(universeId) {
-
-
-  if (!universeId) {
-
-    return '';
-
-  }
-
-
-
-  try {
-
-
-    const response = await fetch(
-
-      `https://thumbnails.roblox.com/v1/games/icons?universeIds=${universeId}&size=512x512&format=Png&isCircular=false`
-
-    );
-
-
-
-    const data = await response.json();
-
-
-
-    return (
-
-      data?.data?.[0]?.imageUrl ||
-
-      ''
-
-    );
-
-
-
-  } catch(error) {
-
-
-    console.error(
-
-      'Roblox thumbnail error:',
-
-      error
-
-    );
-
-
-    return '';
-
-  }
-
 
 }
-
 
 
 
@@ -185,7 +185,6 @@ async function getRobloxThumbnail(universeId) {
 
 
 export const UI = {
-
 
 
   toastTimer: null,
@@ -212,8 +211,7 @@ export const UI = {
 
 
 
-    container.innerHTML =
-      '';
+    container.innerHTML = '';
 
 
 
@@ -227,7 +225,6 @@ export const UI = {
       ...categories
 
     ];
-
 
 
 
@@ -258,7 +255,9 @@ export const UI = {
 
 
       button.type =
+
         'button';
+
 
 
 
@@ -270,19 +269,6 @@ export const UI = {
 
           : category.name;
 
-
-
-      button.setAttribute(
-
-        'aria-selected',
-
-        String(
-
-          category.name === activeCategory
-
-        )
-
-      );
 
 
 
@@ -318,7 +304,7 @@ export const UI = {
 
 
 
-  async renderGameGrid(
+  renderGameGrid(
 
     container,
 
@@ -339,8 +325,7 @@ export const UI = {
 
 
 
-    container.innerHTML =
-      '';
+    container.innerHTML = '';
 
 
 
@@ -349,8 +334,7 @@ export const UI = {
 
       if (emptyStateEl) {
 
-        emptyStateEl.hidden =
-          false;
+        emptyStateEl.hidden = false;
 
       }
 
@@ -364,8 +348,7 @@ export const UI = {
 
     if (emptyStateEl) {
 
-      emptyStateEl.hidden =
-        true;
+      emptyStateEl.hidden = true;
 
     }
 
@@ -373,17 +356,18 @@ export const UI = {
 
 
     const fragment =
+
       document.createDocumentFragment();
 
 
 
 
-    for (const game of games) {
+    games.forEach(game => {
 
 
       fragment.appendChild(
 
-        await this.buildGameCard(
+        this.buildGameCard(
 
           game,
 
@@ -398,7 +382,7 @@ export const UI = {
       );
 
 
-    }
+    });
 
 
 
@@ -432,18 +416,23 @@ export const UI = {
 
 
     const card =
+
       document.createElement(
+
         'article'
+
       );
 
 
 
     card.className =
+
       'game-card';
 
 
 
     const isFav =
+
       Storage.isFavorite(
 
         game.id
@@ -453,48 +442,18 @@ export const UI = {
 
 
     card.dataset.gameId =
+
       game.id;
 
 
 
+    const fallback =
 
+      Utils.initials(
 
-    let gameImage =
+        game.name
 
-      game.robloxImage ||
-
-      game.icon ||
-
-      game.image ||
-
-      '';
-
-
-
-
-
-    // Busca imagem do Roblox automaticamente
-    if (
-
-      !gameImage &&
-
-      game.universeId
-
-    ) {
-
-
-      gameImage =
-
-        await getRobloxThumbnail(
-
-          game.universeId
-
-        );
-
-
-    }
-
-
+      );
 
 
 
@@ -502,8 +461,11 @@ export const UI = {
 
 
       <a
+
         href="game.html?id=${encodeURIComponent(game.id)}"
+
         class="game-card__thumb-link"
+
       >
 
 
@@ -516,55 +478,19 @@ export const UI = {
         >
 
 
-          ${
-            gameImage
+          <span class="game-card__loading">
 
-              ?
+            ${escapeHTML(fallback)}
 
-              `
-
-                <img
-
-                  class="game-card__image"
-
-                  src="${escapeHTML(gameImage)}"
-
-                  alt="${escapeHTML(game.name)} icon"
-
-                  loading="lazy"
-
-                >
-
-              `
-
-              :
-
-              `
-
-                <span>
-
-                  ${escapeHTML(
-
-                    Utils.initials(game.name)
-
-                  )}
-
-                </span>
-
-              `
-
-          }
+          </span>
 
 
 
           <span class="game-card__badge-count">
 
-
             ${game.activeCount ?? 0}
 
-
             code${game.activeCount === 1 ? '' : 's'}
-
 
           </span>
 
@@ -577,23 +503,23 @@ export const UI = {
 
 
 
+
+
       <button
 
         class="game-card__fav${isFav ? ' is-fav' : ''}"
 
         aria-pressed="${isFav}"
 
-        aria-label="${isFav ? 'Remove' : 'Add'} ${escapeHTML(game.name)} ${isFav ? 'from' : 'to'} favorites"
-
         type="button"
 
       >
 
-
         ${isFav ? '★' : '☆'}
 
-
       </button>
+
+
 
 
 
@@ -602,27 +528,29 @@ export const UI = {
 
         <span class="game-card__category">
 
-
           ${escapeHTML(game.category || 'Other')}
-
 
         </span>
 
 
 
-        <a href="game.html?id=${encodeURIComponent(game.id)}">
 
+
+        <a
+
+          href="game.html?id=${encodeURIComponent(game.id)}"
+
+        >
 
           <h3 class="game-card__name">
 
-
             ${escapeHTML(game.name)}
-
 
           </h3>
 
-
         </a>
+
+
 
 
 
@@ -630,16 +558,19 @@ export const UI = {
 
 
           Updated ${
+
             game.lastVerified
 
-            ? Utils.relativeFromToday(game.lastVerified)
+              ? Utils.relativeFromToday(game.lastVerified)
 
-            : '—'
+              : '—'
 
           }
 
 
         </span>
+
+
 
 
 
@@ -656,10 +587,109 @@ export const UI = {
         </a>
 
 
+
       </div>
 
 
     `;
+
+
+
+
+
+    /*
+      Load Roblox image after card creation.
+    */
+
+
+    const thumb =
+
+      card.querySelector(
+
+        '.game-card__thumb'
+
+      );
+
+
+
+    const imageUrl =
+
+      await getRobloxIcon(
+
+        game
+
+      );
+
+
+
+    if (imageUrl && thumb) {
+
+
+      const img =
+
+        document.createElement(
+
+          'img'
+
+        );
+
+
+
+      img.className =
+
+        'game-card__image';
+
+
+
+      img.src =
+
+        imageUrl;
+
+
+
+      img.alt =
+
+        `${game.name} icon`;
+
+
+
+      img.loading =
+
+        'lazy';
+
+
+
+      img.onerror = () => {
+
+        img.remove();
+
+      };
+
+
+
+      thumb.prepend(
+
+        img
+
+      );
+
+
+      const loading =
+
+        thumb.querySelector(
+
+          '.game-card__loading'
+
+        );
+
+
+      loading?.remove();
+
+
+    }
+
+
+
 
 
 
@@ -669,7 +699,12 @@ export const UI = {
 
         '.game-card__fav'
 
-      );    favBtn?.addEventListener(
+      );
+
+
+
+
+    favBtn?.addEventListener(
 
       'click',
 
@@ -716,16 +751,6 @@ export const UI = {
 
 
 
-        favBtn.setAttribute(
-
-          'aria-label',
-
-          `${state ? 'Remove' : 'Add'} ${game.name} ${state ? 'from' : 'to'} favorites`
-
-        );
-
-
-
         onToggleFavorite?.(
 
           game.id,
@@ -745,17 +770,7 @@ export const UI = {
 
 
   },
-
-
-
-
-
-
-
-
-
   /* ---------------- Code cards ---------------- */
-
 
 
   renderCodes(
@@ -777,8 +792,7 @@ export const UI = {
 
 
 
-    container.innerHTML =
-      '';
+    container.innerHTML = '';
 
 
 
@@ -811,9 +825,7 @@ export const UI = {
 
 
 
-
     codes.forEach(code => {
-
 
 
       fragment.appendChild(
@@ -834,7 +846,6 @@ export const UI = {
 
 
     });
-
 
 
 
@@ -865,7 +876,6 @@ export const UI = {
     } = {}
 
   ) {
-
 
 
     const card =
@@ -935,12 +945,9 @@ export const UI = {
 
         ${escapeHTML(
 
-
           code.reward ||
 
-
           'Reward unavailable'
-
 
         )}
 
@@ -1002,9 +1009,7 @@ export const UI = {
       async () => {
 
 
-
         try {
-
 
 
           await copyText(
@@ -1015,13 +1020,9 @@ export const UI = {
 
 
 
-
-
           button.textContent =
 
             'Copied!';
-
-
 
 
 
@@ -1033,15 +1034,11 @@ export const UI = {
 
 
 
-
-
           onCopy?.(
 
             code.code
 
           );
-
-
 
 
 
@@ -1058,17 +1055,12 @@ export const UI = {
 
 
 
-
-
         } catch {
-
 
 
           button.textContent =
 
             'Error';
-
-
 
 
 
@@ -1084,9 +1076,6 @@ export const UI = {
         }
 
 
-
-
-
       }
 
 
@@ -1098,7 +1087,16 @@ export const UI = {
     return card;
 
 
-  },  /* ---------------- Stats ---------------- */
+  },
+
+
+
+
+
+
+
+
+  /* ---------------- Stats ---------------- */
 
 
 
@@ -1164,10 +1162,7 @@ export const UI = {
 
 
 
-
-
   /* ---------------- Toast ---------------- */
-
 
 
   showToast(
@@ -1314,15 +1309,6 @@ export const UI = {
 
 
   },
-
-
-
-
-
-
-
-
-
   /* ---------------- Theme ---------------- */
 
 
