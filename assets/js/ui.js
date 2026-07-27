@@ -9,7 +9,6 @@ import { Utils } from './utils.js';
 import { Storage } from './storage.js';
 
 
-
 const STATUS_LABEL = {
 
   active: 'Active',
@@ -19,8 +18,6 @@ const STATUS_LABEL = {
   expired: 'Expired'
 
 };
-
-
 
 
 
@@ -45,32 +42,26 @@ function escapeHTML(value = '') {
 
 
 /*
-  Game images now come from games.json
+  Roblox thumbnail direto.
 
-  Example:
+  Não usa API do Roblox porque GitHub Pages
+  bloqueia chamadas CORS.
 
-  {
-    "name": "Blox Fruits",
-    "image": "assets/images/games/blox-fruits.png"
-  }
-
+  O robloxId do games.json continua sendo usado.
 */
 
+function getRobloxIcon(game) {
 
-function getGameImage(game) {
-
-  if (!game?.image) {
+  if (!game?.robloxId) {
 
     return '';
 
   }
 
 
-  return game.image;
+  return `https://tr.rbxcdn.com/${game.robloxId}/150/150/Image/Png`;
 
 }
-
-
 
 
 
@@ -116,6 +107,7 @@ async function copyText(text) {
   textarea.style.opacity = '0';
 
 
+
   document.body.appendChild(textarea);
 
 
@@ -123,9 +115,7 @@ async function copyText(text) {
   textarea.select();
 
 
-
   document.execCommand('copy');
-
 
 
   textarea.remove();
@@ -142,8 +132,6 @@ export const UI = {
 
 
   toastTimer: null,
-
-
 
 
 
@@ -184,13 +172,10 @@ export const UI = {
     list.forEach(category => {
 
 
-
       const button = document.createElement('button');
 
 
-
       button.type = 'button';
-
 
 
       button.className =
@@ -262,7 +247,6 @@ export const UI = {
   ) {
 
 
-
     if (!container) return;
 
 
@@ -272,7 +256,6 @@ export const UI = {
 
 
     if (!games.length) {
-
 
 
       if (emptyStateEl) {
@@ -303,44 +286,23 @@ export const UI = {
     games.forEach(game => {
 
 
-      try {
+      const card = this.buildGameCard(
 
+        game,
 
-        const card = this.buildGameCard(
+        {
 
-          game,
-
-          {
-
-            onToggleFavorite
-
-          }
-
-        );
-
-
-
-        if (card) {
-
-          fragment.appendChild(card);
+          onToggleFavorite
 
         }
 
+      );
 
 
-      } catch(error) {
 
+      if (card) {
 
-        console.error(
-
-          'Error building game card:',
-
-          error,
-
-          game
-
-        );
-
+        fragment.appendChild(card);
 
       }
 
@@ -353,6 +315,9 @@ export const UI = {
 
 
   },
+
+
+
 
 
   buildGameCard(
@@ -368,51 +333,26 @@ export const UI = {
   ) {
 
 
-
     if (!game || !game.id) {
-
-
-      console.error(
-
-        'Invalid game data:',
-
-        game
-
-      );
-
 
       return null;
 
-
     }
-
-
 
 
 
     const card = document.createElement('article');
 
 
-
     card.className = 'game-card';
 
 
 
-
-
-    const isFav = Storage.isFavorite(
-
-      game.id
-
-    );
-
-
+    const isFav = Storage.isFavorite(game.id);
 
 
 
     card.dataset.gameId = game.id;
-
-
 
 
 
@@ -421,8 +361,6 @@ export const UI = {
       game.name || 'Game'
 
     );
-
-
 
 
 
@@ -444,13 +382,11 @@ export const UI = {
 
         >
 
-
           <span class="game-card__loading">
 
             ${escapeHTML(fallback)}
 
           </span>
-
 
 
           <span class="game-card__badge-count">
@@ -462,14 +398,9 @@ export const UI = {
           </span>
 
 
-
         </div>
 
-
       </a>
-
-
-
 
 
       <button
@@ -487,9 +418,6 @@ export const UI = {
       </button>
 
 
-
-
-
       <div class="game-card__body">
 
 
@@ -501,13 +429,7 @@ export const UI = {
 
 
 
-
-
-        <a
-
-          href="game.html?id=${encodeURIComponent(game.id)}"
-
-        >
+        <a href="game.html?id=${encodeURIComponent(game.id)}">
 
           <h3 class="game-card__name">
 
@@ -516,8 +438,6 @@ export const UI = {
           </h3>
 
         </a>
-
-
 
 
 
@@ -537,8 +457,6 @@ export const UI = {
 
 
 
-
-
         <a
 
           class="game-card__cta"
@@ -552,100 +470,91 @@ export const UI = {
         </a>
 
 
-
       </div>
 
-    `;
-
-
-
-
-
-
-    const thumb = card.querySelector(
-
+    `;    const thumb = card.querySelector(
       '.game-card__thumb'
-
     );
 
 
-
-
-
-    const imageUrl = getGameImage(game);
-
-
+    const imageUrl = getRobloxIcon(game);
 
 
 
     if (imageUrl && thumb) {
 
 
-
       const img = document.createElement('img');
-
 
 
       img.className = 'game-card__image';
 
 
-
       img.src = imageUrl;
 
 
-
       img.alt = `${game.name} icon`;
-
 
 
       img.loading = 'lazy';
 
 
 
-
-
       img.onerror = () => {
-
 
 
         console.warn(
 
-          'Game image failed:',
+          'Roblox image failed:',
 
-          game.name,
-
-          imageUrl
+          game.name
 
         );
-
 
 
         img.remove();
 
 
 
-        if (!thumb.querySelector('.game-card__loading')) {
+        const loading = thumb.querySelector(
+
+          '.game-card__loading'
+
+        );
 
 
-          const fallbackText = document.createElement('span');
+
+        if (!loading) {
 
 
-          fallbackText.className = 'game-card__loading';
+          const fallback = document.createElement(
+
+            'span'
+
+          );
 
 
-          fallbackText.textContent = fallback;
+          fallback.className =
+
+            'game-card__loading';
 
 
-          thumb.appendChild(fallbackText);
+
+          fallback.textContent = Utils.initials(
+
+            game.name || 'Game'
+
+          );
+
+
+
+          thumb.prepend(fallback);
 
 
         }
 
 
-
       };
-
-
 
 
 
@@ -659,22 +568,18 @@ export const UI = {
         );
 
 
-        loading?.remove();
 
+        loading?.remove();
 
 
       };
 
 
 
-
-
       thumb.prepend(img);
 
 
-
     }
-
 
 
 
@@ -685,7 +590,6 @@ export const UI = {
       '.game-card__fav'
 
     );
-
 
 
 
@@ -706,8 +610,6 @@ export const UI = {
 
 
 
-
-
         favBtn.classList.toggle(
 
           'is-fav',
@@ -718,15 +620,11 @@ export const UI = {
 
 
 
-
-
         favBtn.textContent = state
 
           ? '★'
 
           : '☆';
-
-
 
 
 
@@ -740,8 +638,6 @@ export const UI = {
 
 
 
-
-
         onToggleFavorite?.(
 
           game.id,
@@ -751,7 +647,6 @@ export const UI = {
         );
 
 
-
       }
 
     );
@@ -759,15 +654,12 @@ export const UI = {
 
 
 
-
     return card;
 
 
-  },
-  /* =========================
+  },  /* =========================
      Code Cards
   ========================= */
-
 
 
   renderCodes(
@@ -791,8 +683,6 @@ export const UI = {
 
 
     container.innerHTML = '';
-
-
 
 
 
@@ -821,9 +711,7 @@ export const UI = {
 
 
 
-
     const fragment = document.createDocumentFragment();
-
 
 
 
@@ -843,8 +731,6 @@ export const UI = {
         }
 
       );
-
-
 
 
 
@@ -875,12 +761,9 @@ export const UI = {
 
 
 
-
   buildCodeCard(
 
-
     code,
-
 
     {
 
@@ -888,21 +771,15 @@ export const UI = {
 
     } = {}
 
-
   ) {
-
-
 
 
 
     if (!code) {
 
-
       return null;
 
-
     }
-
 
 
 
@@ -916,10 +793,7 @@ export const UI = {
 
 
 
-
     const status = code.status || 'active';
-
-
 
 
 
@@ -928,43 +802,29 @@ export const UI = {
 
 
 
-
-
     card.innerHTML = `
-
 
       <div class="code-card__top">
 
-
         <span class="code-card__status status-${escapeHTML(status)}">
-
 
           ${STATUS_LABEL[status] || status}
 
-
         </span>
-
 
       </div>
 
 
 
-
-
       <code class="code-card__value">
 
-
         ${escapeHTML(code.code || '')}
-
 
       </code>
 
 
 
-
-
       <p class="code-card__reward">
-
 
         ${escapeHTML(
 
@@ -974,35 +834,23 @@ export const UI = {
 
         )}
 
-
       </p>
-
-
 
 
 
       <button
 
-
         class="code-card__copy"
-
 
         type="button"
 
-
       >
-
 
         Copy
 
-
       </button>
 
-
     `;
-
-
-
 
 
 
@@ -1012,7 +860,6 @@ export const UI = {
       '.code-card__copy'
 
     );
-
 
 
 
@@ -1033,11 +880,7 @@ export const UI = {
 
 
 
-
-
           button.textContent = 'Copied!';
-
-
 
 
 
@@ -1049,17 +892,11 @@ export const UI = {
 
 
 
-
-
           onCopy?.(
 
             code.code
 
           );
-
-
-
-
 
 
 
@@ -1075,17 +912,11 @@ export const UI = {
 
 
 
-
-
-
-
         } catch {
 
 
 
           button.textContent = 'Error';
-
-
 
 
 
@@ -1098,18 +929,13 @@ export const UI = {
           );
 
 
-
         }
 
 
 
       }
 
-
-
     );
-
-
 
 
 
@@ -1117,10 +943,7 @@ export const UI = {
     return card;
 
 
-
   },
-
-
 
 
 
@@ -1134,9 +957,6 @@ export const UI = {
 
 
 
-
-
-
   renderStats(
 
     elements,
@@ -1147,11 +967,7 @@ export const UI = {
 
 
 
-
-
     if (!elements) return;
-
-
 
 
 
@@ -1159,15 +975,12 @@ export const UI = {
     if (elements.games) {
 
 
-
       elements.games.textContent =
 
         stats.games ?? 0;
 
 
-
     }
-
 
 
 
@@ -1176,15 +989,12 @@ export const UI = {
     if (elements.codes) {
 
 
-
       elements.codes.textContent =
 
         stats.codes ?? 0;
 
 
-
     }
-
 
 
 
@@ -1193,24 +1003,17 @@ export const UI = {
     if (elements.categories) {
 
 
-
       elements.categories.textContent =
 
         stats.categories ?? 0;
 
 
-
     }
 
 
-
-
-
-  },
-  /* =========================
+  },  /* =========================
      Toast
   ========================= */
-
 
 
   showToast(
@@ -1227,8 +1030,6 @@ export const UI = {
 
 
 
-
-
     if (!toast) {
 
 
@@ -1238,8 +1039,6 @@ export const UI = {
 
 
       toast.className = 'toast';
-
-
 
 
 
@@ -1253,8 +1052,6 @@ export const UI = {
 
 
 
-
-
       toast.setAttribute(
 
         'aria-live',
@@ -1265,14 +1062,10 @@ export const UI = {
 
 
 
-
-
       document.body.appendChild(toast);
 
 
-
     }
-
 
 
 
@@ -1282,8 +1075,6 @@ export const UI = {
 
 
     toast.dataset.type = type;
-
-
 
 
 
@@ -1302,14 +1093,11 @@ export const UI = {
 
 
 
-
-
     clearTimeout(
 
       this.toastTimer
 
     );
-
 
 
 
@@ -1342,12 +1130,7 @@ export const UI = {
   ========================= */
 
 
-
-
-
   initThemeToggle(button) {
-
-
 
 
 
@@ -1356,12 +1139,7 @@ export const UI = {
 
 
 
-
-
     const savedTheme = Storage.getTheme();
-
-
-
 
 
 
@@ -1377,9 +1155,7 @@ export const UI = {
       );
 
 
-
     }
-
 
 
 
@@ -1394,8 +1170,6 @@ export const UI = {
 
 
 
-
-
         const light =
 
           document.documentElement.classList.toggle(
@@ -1403,8 +1177,6 @@ export const UI = {
             'light'
 
           );
-
-
 
 
 
@@ -1422,11 +1194,7 @@ export const UI = {
 
 
 
-
-
       }
-
-
 
     );
 
@@ -1447,12 +1215,7 @@ export const UI = {
   ========================= */
 
 
-
-
-
   initBackToTop(button) {
-
-
 
 
 
@@ -1461,11 +1224,7 @@ export const UI = {
 
 
 
-
-
     const updateVisibility = () => {
-
-
 
 
 
@@ -1478,18 +1237,13 @@ export const UI = {
       );
 
 
-
-
-
     };
 
 
 
 
 
-
     updateVisibility();
-
 
 
 
@@ -1524,37 +1278,23 @@ export const UI = {
 
 
 
-
-
         window.scrollTo({
-
-
 
           top: 0,
 
-
-
           behavior: 'smooth'
-
-
 
         });
 
 
 
-
-
       }
-
-
 
     );
 
 
 
   }
-
-
 
 
 
